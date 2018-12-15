@@ -42,6 +42,7 @@ public class DocumentPDF {
     private Font Font_TexteSimple_Gras = null;
     private Font Font_TexteSimple_Italique = null;
     private Font Font_TexteSimple_Gras_Italique = null;
+    private Date dateFacturation = null;
 
     public final static int TYPE_FACTURE = 0;
     public final static int TYPE_FACTURE_ET_RELEVE_DE_COMPTE = 1;
@@ -50,24 +51,27 @@ public class DocumentPDF {
     
     private int type_doc = TYPE_FACTURE_ET_RELEVE_DE_COMPTE;
 
-    public DocumentPDF(String nomDuDocument, String cheminLogo, String numeroFacture, int type) {
+    public DocumentPDF(String nomDuDocument, String cheminLogo, String numeroFacture, int type, Date date) {
         try {
-            init(nomDuDocument, cheminLogo, numeroFacture, type);
+            init(nomDuDocument, cheminLogo, numeroFacture, type, date);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void init(String nomDuDocument, String cheminLogo, String numeroFacture, int type) {
-        parametre_initialisation_fichier(nomDuDocument, cheminLogo, numeroFacture, type);
+    private void init(String nomDuDocument, String cheminLogo, String numeroFacture, int type, Date date) {
+        parametre_initialisation_fichier(nomDuDocument, cheminLogo, numeroFacture, type, date);
         parametre_construire_fichier();
         parametres_ouvrir_fichier();
     }
 
-    private void parametre_initialisation_fichier(String nomDuDocument, String cheminLogo, String numeroFacture, int type) {
-        this.Font_Titre1 = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD, BaseColor.BLACK);
+    private void parametre_initialisation_fichier(String nomDuDocument, String cheminLogo, String numeroFacture, int type, Date date) {
+        //Les titres du document
+        this.Font_Titre1 = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD, BaseColor.DARK_GRAY);
         this.Font_Titre2 = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD, BaseColor.BLACK);
         this.Font_Titre3 = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL, BaseColor.BLACK);
+        
+        //Les textes simples
         this.Font_TexteSimple = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.NORMAL, BaseColor.BLACK);
         this.Font_TexteSimple_petit = new Font(Font.FontFamily.TIMES_ROMAN, 7, Font.NORMAL, BaseColor.BLACK);
         this.Font_TexteSimple_Gras = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLD, BaseColor.BLACK);
@@ -76,9 +80,10 @@ public class DocumentPDF {
 
         //initialisation des autres attributs
         this.type_doc = type;
-        this.NomfichierPreuve = nomDuDocument;
+        this.NomfichierPreuve = nomDuDocument+".pdf";
         this.logo = cheminLogo;
         
+        //Definition du type du document
         switch (this.type_doc) {
             case TYPE_FACTURE :
                 this.titre = "FACTURE N°" + numeroFacture;
@@ -95,6 +100,21 @@ public class DocumentPDF {
             default:
                 break;
         }
+        
+        //date
+        this.dateFacturation = date;
+    }
+    
+    private void parametre_construire_fichier() {
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream(this.NomfichierPreuve));
+            this.document.open();
+            this.setDonneesBibliographiques();
+            this.addPage();
+            this.document.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void parametres_ouvrir_fichier() {
@@ -108,24 +128,12 @@ public class DocumentPDF {
         }
     }
 
-    private void parametre_construire_fichier() {
-        try {
-            PdfWriter.getInstance(document, new FileOutputStream(this.NomfichierPreuve));
-            document.open();
-            addMetaData();
-            addPage();
-            document.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void addMetaData() {
-        document.addTitle("RAPPORT S2B");
-        document.addSubject("Etat");
-        document.addKeywords("Java, PDF, iText");
-        document.addAuthor("S2B. Simple.Intuitif");
-        document.addCreator("SULA BOSIO Serge");
+    private void setDonneesBibliographiques() {
+        this.document.addTitle("Document généré par JS2BFacture");
+        this.document.addSubject("Etat");
+        this.document.addKeywords("Java, PDF, Facture");
+        this.document.addAuthor("S2B. Simple.Intuitif");
+        this.document.addCreator("SULA BOSIO Serge, S2B, sulabosiog@gmail.com");
     }
 
     private void addEmptyLine(Paragraph paragraph, int number) {
@@ -273,9 +281,8 @@ public class DocumentPDF {
     }
 
     public static void main(String[] a) {
-
-        //BON_SORTIE_CAISSE Bentree = new BON_SORTIE_CAISSE(nomCeluiQuiRecoit, dateEnreg, montant, nomCeluiQuiPaye, motif, 0);
-        DocumentPDF docpdf = new DocumentPDF("Facture S2B", "F://imgTest.png", "00000CDKIN12", DocumentPDF.TYPE_FACTURE_ET_RELEVE_DE_COMPTE);
+        //Exemple
+        DocumentPDF docpdf = new DocumentPDF("Facture S2B", "F://imgTest.png", "00000CDKIN12", DocumentPDF.TYPE_FACTURE_ET_RELEVE_DE_COMPTE, new Date());
     }
 
 }
