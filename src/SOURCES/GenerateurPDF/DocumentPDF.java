@@ -29,49 +29,46 @@ import java.util.logging.Logger;
  */
 public class DocumentPDF {
 
-    public static String OUPUT_S2B = "Output_S2B";
-    //private PREUVE preuve_caisse = null;
     private String logo = "";
-
-    private static int numeroPage = 1;
+    private int numeroPage = 1;
     private String NomfichierPreuve = null;
     private String titre = "";
     private Document document = new Document();
-    private static Font Font_Titre1 = null;
-    private static Font Font_Titre2 = null;
-    private static Font Font_Titre3 = null;
-    private static Font Font_TexteSimple = null;
-    private static Font Font_TexteSimple_petit = null;
-    private static Font Font_TexteSimple_Gras = null;
-    private static Font Font_TexteSimple_Italique = null;
-    private static Font Font_TexteSimple_Gras_Italique = null;
+    private Font Font_Titre1 = null;
+    private Font Font_Titre2 = null;
+    private Font Font_Titre3 = null;
+    private Font Font_TexteSimple = null;
+    private Font Font_TexteSimple_petit = null;
+    private Font Font_TexteSimple_Gras = null;
+    private Font Font_TexteSimple_Italique = null;
+    private Font Font_TexteSimple_Gras_Italique = null;
 
-    public DocumentPDF() {
-        initFont();
-        this.logo = "Photos/logo.png";
-        this.titre = "Reçu N°001245454CVDCDKIN";
-        this.NomfichierPreuve = "Facture S2B";
-        //this.preuve_caisse = preuve;
-        construirePDF();
+    public DocumentPDF(String nomDuDocument, String cheminLogo, String numeroFacture) {
         try {
-            OuvrirFichier();
+            initFont(nomDuDocument, cheminLogo, numeroFacture);
+            parametre_construire_fichier();
+            parametres_ouvrir_fichier();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void initFont() {
-        Font_Titre1 = new Font(Font.FontFamily.TIMES_ROMAN, 15, Font.BOLD, BaseColor.BLACK);
-        Font_Titre2 = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD, BaseColor.BLACK);
-        Font_Titre3 = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.NORMAL, BaseColor.BLACK);
-        Font_TexteSimple = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.NORMAL, BaseColor.BLACK);
-        Font_TexteSimple_petit = new Font(Font.FontFamily.TIMES_ROMAN, 7, Font.NORMAL, BaseColor.BLACK);
-        Font_TexteSimple_Gras = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLD, BaseColor.BLACK);
-        Font_TexteSimple_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.ITALIC, BaseColor.BLACK);
-        Font_TexteSimple_Gras_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLDITALIC, BaseColor.BLACK);
+    private void initFont(String nomDuDocument, String cheminLogo, String numeroFacture) {
+        this.Font_Titre1 = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD, BaseColor.BLACK);
+        this.Font_Titre2 = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD, BaseColor.BLACK);
+        this.Font_Titre3 = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL, BaseColor.BLACK);
+        this.Font_TexteSimple = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.NORMAL, BaseColor.BLACK);
+        this.Font_TexteSimple_petit = new Font(Font.FontFamily.TIMES_ROMAN, 7, Font.NORMAL, BaseColor.BLACK);
+        this.Font_TexteSimple_Gras = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLD, BaseColor.BLACK);
+        this.Font_TexteSimple_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.ITALIC, BaseColor.BLACK);
+        this.Font_TexteSimple_Gras_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLDITALIC, BaseColor.BLACK);
+        //initialisation des autres attributs
+        this.NomfichierPreuve = nomDuDocument;
+        this.logo = cheminLogo;
+        this.titre = "Reçu N°" + numeroFacture;
     }
 
-    public void OuvrirFichier() {
+    private void parametres_ouvrir_fichier() {
         File fic = new File(NomfichierPreuve);
         if (fic.exists() == true) {
             try {
@@ -82,18 +79,7 @@ public class DocumentPDF {
         }
     }
 
-    public void ImprimerFichier() {
-        File fic = new File(NomfichierPreuve);
-        if (fic.exists() == true) {
-            try {
-                Desktop.getDesktop().print(fic);
-            } catch (IOException ex) {
-                Logger.getLogger(DocumentPDF.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    public void construirePDF() {
+    private void parametre_construire_fichier() {
         try {
             PdfWriter.getInstance(document, new FileOutputStream(this.NomfichierPreuve));
             document.open();
@@ -260,7 +246,7 @@ public class DocumentPDF {
     public static void main(String[] a) {
 
         //BON_SORTIE_CAISSE Bentree = new BON_SORTIE_CAISSE(nomCeluiQuiRecoit, dateEnreg, montant, nomCeluiQuiPaye, motif, 0);
-        DocumentPDF docpdf = new DocumentPDF();
+        DocumentPDF docpdf = new DocumentPDF("Facture S2B");
     }
 
 }
