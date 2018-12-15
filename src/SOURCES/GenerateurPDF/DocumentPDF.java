@@ -193,7 +193,7 @@ public class DocumentPDF {
             PdfPCell celluleLogoEntreprise = null;
             File ficLogo = new File(logo);
             if (ficLogo.exists() == true) {
-                //Chargement du log et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
+                //Chargement du logo et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
                 Image Imglogo = Image.getInstance(logo);
                 Imglogo.scaleAbsoluteWidth(80);
                 Imglogo.scaleAbsoluteHeight(80);
@@ -220,12 +220,7 @@ public class DocumentPDF {
             celluleDetailsEntreprise.addElement(getParagraphe("7e RUE LIMETE - Q. INDUSTRIEL\n", Font_TexteSimple_petit, false, true, false));
             celluleDetailsEntreprise.addElement(getParagraphe("E-mail : ecolebilingue@yahoo.fr\n", Font_TexteSimple_petit, false, true, false));
             celluleDetailsEntreprise.addElement(getParagraphe("Tél : 081 508 6526 - 081 508 8711 - 099 897 2146 - 099 020 2744 - 099 994 2280 - 099 993 9650", Font_TexteSimple_petit, false, true, false));
-
-            //celluleDetailsEntreprise.setBorderColor(BaseColor.BLACK);
-            //celluleDetailsEntreprise.setBorderWidthLeft(5);
-            //celluleDetailsEntreprise.setBorderColorLeft(BaseColor.WHITE);
-            //celluleDetailsEntreprise.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            //celluleDetailsEntreprise.setPadding(3);
+            
             tableauEnteteFacture.addCell(celluleDetailsEntreprise);
 
             
