@@ -43,17 +43,28 @@ public class DocumentPDF {
     private Font Font_TexteSimple_Italique = null;
     private Font Font_TexteSimple_Gras_Italique = null;
 
-    public DocumentPDF(String nomDuDocument, String cheminLogo, String numeroFacture) {
+    public final static int TYPE_FACTURE = 0;
+    public final static int TYPE_FACTURE_ET_RELEVE_DE_COMPTE = 1;
+    public final static int TYPE_RELEVE_DE_COMPTE = 2;
+    public final static int TYPE_FACTURE_PROFORMA = 3;
+    
+    private int type_doc = TYPE_FACTURE_ET_RELEVE_DE_COMPTE;
+
+    public DocumentPDF(String nomDuDocument, String cheminLogo, String numeroFacture, int type) {
         try {
-            initFont(nomDuDocument, cheminLogo, numeroFacture);
-            parametre_construire_fichier();
-            parametres_ouvrir_fichier();
+            init(nomDuDocument, cheminLogo, numeroFacture, type);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void initFont(String nomDuDocument, String cheminLogo, String numeroFacture) {
+    private void init(String nomDuDocument, String cheminLogo, String numeroFacture, int type) {
+        parametre_initialisation_fichier(nomDuDocument, cheminLogo, numeroFacture, type);
+        parametre_construire_fichier();
+        parametres_ouvrir_fichier();
+    }
+
+    private void parametre_initialisation_fichier(String nomDuDocument, String cheminLogo, String numeroFacture, int type) {
         this.Font_Titre1 = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD, BaseColor.BLACK);
         this.Font_Titre2 = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD, BaseColor.BLACK);
         this.Font_Titre3 = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL, BaseColor.BLACK);
@@ -62,10 +73,28 @@ public class DocumentPDF {
         this.Font_TexteSimple_Gras = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLD, BaseColor.BLACK);
         this.Font_TexteSimple_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.ITALIC, BaseColor.BLACK);
         this.Font_TexteSimple_Gras_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLDITALIC, BaseColor.BLACK);
+
         //initialisation des autres attributs
+        this.type_doc = type;
         this.NomfichierPreuve = nomDuDocument;
         this.logo = cheminLogo;
-        this.titre = "Reçu N°" + numeroFacture;
+        
+        switch (this.type_doc) {
+            case TYPE_FACTURE :
+                this.titre = "FACTURE N°" + numeroFacture;
+                break;
+            case TYPE_FACTURE_ET_RELEVE_DE_COMPTE :
+                this.titre = "FACTURE (+relevé de compte) N°" + numeroFacture;
+                break;
+            case TYPE_RELEVE_DE_COMPTE :
+                this.titre = "RELEVE DE COMPTE N°" + numeroFacture;
+                break;
+            case TYPE_FACTURE_PROFORMA :
+                this.titre = "FACTURE PRO FORMA N°" + numeroFacture;
+                break;
+            default:
+                break;
+        }
     }
 
     private void parametres_ouvrir_fichier() {
@@ -246,7 +275,7 @@ public class DocumentPDF {
     public static void main(String[] a) {
 
         //BON_SORTIE_CAISSE Bentree = new BON_SORTIE_CAISSE(nomCeluiQuiRecoit, dateEnreg, montant, nomCeluiQuiPaye, motif, 0);
-        DocumentPDF docpdf = new DocumentPDF("Facture S2B");
+        DocumentPDF docpdf = new DocumentPDF("Facture S2B", "F://imgTest.png", "00000CDKIN12", DocumentPDF.TYPE_FACTURE_ET_RELEVE_DE_COMPTE);
     }
 
 }
