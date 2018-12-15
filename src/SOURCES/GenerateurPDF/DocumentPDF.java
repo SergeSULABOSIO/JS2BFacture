@@ -48,7 +48,7 @@ public class DocumentPDF {
     public final static int TYPE_FACTURE_ET_RELEVE_DE_COMPTE = 1;
     public final static int TYPE_RELEVE_DE_COMPTE = 2;
     public final static int TYPE_FACTURE_PROFORMA = 3;
-    
+
     private int type_doc = TYPE_FACTURE_ET_RELEVE_DE_COMPTE;
 
     public DocumentPDF(String nomDuDocument, String cheminLogo, String numeroFacture, int type, Date date) {
@@ -70,7 +70,7 @@ public class DocumentPDF {
         this.Font_Titre1 = new Font(Font.FontFamily.TIMES_ROMAN, 13, Font.BOLD, BaseColor.DARK_GRAY);
         this.Font_Titre2 = new Font(Font.FontFamily.TIMES_ROMAN, 11, Font.BOLD, BaseColor.BLACK);
         this.Font_Titre3 = new Font(Font.FontFamily.TIMES_ROMAN, 10, Font.NORMAL, BaseColor.BLACK);
-        
+
         //Les textes simples
         this.Font_TexteSimple = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.NORMAL, BaseColor.BLACK);
         this.Font_TexteSimple_petit = new Font(Font.FontFamily.TIMES_ROMAN, 7, Font.NORMAL, BaseColor.BLACK);
@@ -80,31 +80,31 @@ public class DocumentPDF {
 
         //initialisation des autres attributs
         this.type_doc = type;
-        this.NomfichierPreuve = nomDuDocument+".pdf";
+        this.NomfichierPreuve = nomDuDocument + ".pdf";
         this.logo = cheminLogo;
-        
+
         //Definition du type du document
         switch (this.type_doc) {
-            case TYPE_FACTURE :
+            case TYPE_FACTURE:
                 this.titre = "FACTURE N°" + numeroFacture;
                 break;
-            case TYPE_FACTURE_ET_RELEVE_DE_COMPTE :
+            case TYPE_FACTURE_ET_RELEVE_DE_COMPTE:
                 this.titre = "FACTURE (+relevé de compte) N°" + numeroFacture;
                 break;
-            case TYPE_RELEVE_DE_COMPTE :
+            case TYPE_RELEVE_DE_COMPTE:
                 this.titre = "RELEVE DE COMPTE N°" + numeroFacture;
                 break;
-            case TYPE_FACTURE_PROFORMA :
+            case TYPE_FACTURE_PROFORMA:
                 this.titre = "FACTURE PRO FORMA N°" + numeroFacture;
                 break;
             default:
                 break;
         }
-        
+
         //date
         this.dateFacturation = date;
     }
-    
+
     private void parametre_construire_fichier() {
         try {
             PdfWriter.getInstance(document, new FileOutputStream(this.NomfichierPreuve));
@@ -182,29 +182,33 @@ public class DocumentPDF {
         return par;
     }
 
-    private void addImage() {
+    private void setLogoEtDetailsEntreprise() {
         try {
             int[] width = new int[2];
             width[0] = 400;
             width[1] = 1460;
 
-            PdfPTable tableEntere = new PdfPTable(2);
-            tableEntere.setHorizontalAlignment(Element.ALIGN_CENTER);
+            PdfPTable tableauEnteteFacture = new PdfPTable(2);
+            tableauEnteteFacture.setHorizontalAlignment(Element.ALIGN_CENTER);
 
+            PdfPCell celluleLogo = null;
             File ficLogo = new File(logo);
             if (ficLogo.exists() == true) {
+                //Chargement du log et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
                 Image Imglogo = Image.getInstance(logo);
                 Imglogo.scaleAbsoluteWidth(80);
                 Imglogo.scaleAbsoluteHeight(80);
-                PdfPCell cell = new PdfPCell(Imglogo);
-
-                cell.setBorderColor(BaseColor.BLACK);
-                cell.setBorderWidthRight(5);
-                cell.setBorderColorRight(BaseColor.WHITE);
-                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                cell.setPadding(3);
-                tableEntere.addCell(cell);
+                celluleLogo = new PdfPCell(Imglogo);
+            } else {
+                celluleLogo = new PdfPCell();
             }
+            celluleLogo.setBorderWidth(1);
+            celluleLogo.setBorderColor(BaseColor.BLACK);
+            celluleLogo.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            tableauEnteteFacture.addCell(celluleLogo);
+            
+            
+            
 
             PdfPCell cell2 = new PdfPCell();
             cell2.addElement(getParagraphe("COLLEGE CARTESIEN DE KINSHASA\n", Font_Titre2, false, true, false));
@@ -219,17 +223,19 @@ public class DocumentPDF {
             cell2.setBorderColorLeft(BaseColor.WHITE);
             cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell2.setPadding(3);
-            tableEntere.addCell(cell2);
+            tableauEnteteFacture.addCell(cell2);
 
-            tableEntere.setWidths(width);
-            document.add(tableEntere);
+            tableauEnteteFacture.setWidths(width);
+
+            //On insère le le tableau entete (logo et détails de l'entreprise) dans la page
+            document.add(tableauEnteteFacture);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void setContenuDeLaPage() throws Exception {
-        addImage();
+        setLogoEtDetailsEntreprise();
         addTitlePage();
         PdfPTable table = new PdfPTable(2);
         table.setHorizontalAlignment(Element.ALIGN_CENTER);
