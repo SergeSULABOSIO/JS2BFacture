@@ -110,7 +110,7 @@ public class DocumentPDF {
             PdfWriter.getInstance(document, new FileOutputStream(this.NomfichierPreuve));
             this.document.open();
             this.setDonneesBibliographiques();
-            this.addPage();
+            this.setContenuDeLaPage();
             this.document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -228,7 +228,7 @@ public class DocumentPDF {
         }
     }
 
-    private void addPage() throws Exception {
+    private void setContenuDeLaPage() throws Exception {
         addImage();
         addTitlePage();
         PdfPTable table = new PdfPTable(2);
