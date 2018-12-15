@@ -184,48 +184,53 @@ public class DocumentPDF {
 
     private void setLogoEtDetailsEntreprise() {
         try {
-            int[] width = new int[2];
-            width[0] = 400;
-            width[1] = 1460;
-
-            PdfPTable tableauEnteteFacture = new PdfPTable(2);
+            int nbColonnes = 2;
+            PdfPTable tableauEnteteFacture = new PdfPTable(nbColonnes);
             tableauEnteteFacture.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-            PdfPCell celluleLogo = null;
+            
+            //CELLULE DU LOGO DE L'ENTREPRISE
+            PdfPCell celluleLogoEntreprise = null;
             File ficLogo = new File(logo);
             if (ficLogo.exists() == true) {
                 //Chargement du log et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
                 Image Imglogo = Image.getInstance(logo);
                 Imglogo.scaleAbsoluteWidth(80);
                 Imglogo.scaleAbsoluteHeight(80);
-                celluleLogo = new PdfPCell(Imglogo);
+                celluleLogoEntreprise = new PdfPCell(Imglogo);
             } else {
-                celluleLogo = new PdfPCell();
+                celluleLogoEntreprise = new PdfPCell();
             }
-            celluleLogo.setBorderWidth(1);
-            celluleLogo.setBorderColor(BaseColor.BLACK);
-            celluleLogo.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            tableauEnteteFacture.addCell(celluleLogo);
+            celluleLogoEntreprise.setPadding(2);
+            celluleLogoEntreprise.setBorderWidth(1);
+            celluleLogoEntreprise.setBorderColor(BaseColor.BLACK);
+            celluleLogoEntreprise.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            tableauEnteteFacture.addCell(celluleLogoEntreprise);
+                        
             
+            //CELLULE DES DETAILS SUR L'ENTREPRISE - TEXTE (Nom, Adresse, Téléphone, Email, etc)
+            PdfPCell celluleDetailsEntreprise = new PdfPCell();
+            celluleDetailsEntreprise.setPadding(2);
+            celluleDetailsEntreprise.setBorderWidth(1);
+            celluleDetailsEntreprise.setBorderColor(BaseColor.BLACK);
+            celluleDetailsEntreprise.setVerticalAlignment(Element.ALIGN_MIDDLE);
             
+            celluleDetailsEntreprise.addElement(getParagraphe("COLLEGE CARTESIEN DE KINSHASA", Font_Titre2, false, true, false));
+            celluleDetailsEntreprise.addElement(getParagraphe("ECOLE INTERNATIONALE BILINGUE\n", Font_Titre3, false, true, false));
+            celluleDetailsEntreprise.addElement(getParagraphe("7e RUE LIMETE - Q. INDUSTRIEL\n", Font_TexteSimple_petit, false, true, false));
+            celluleDetailsEntreprise.addElement(getParagraphe("E-mail : ecolebilingue@yahoo.fr\n", Font_TexteSimple_petit, false, true, false));
+            celluleDetailsEntreprise.addElement(getParagraphe("Tél : 081 508 6526 - 081 508 8711 - 099 897 2146 - 099 020 2744 - 099 994 2280 - 099 993 9650", Font_TexteSimple_petit, false, true, false));
+
+            //celluleDetailsEntreprise.setBorderColor(BaseColor.BLACK);
+            //celluleDetailsEntreprise.setBorderWidthLeft(5);
+            //celluleDetailsEntreprise.setBorderColorLeft(BaseColor.WHITE);
+            //celluleDetailsEntreprise.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            //celluleDetailsEntreprise.setPadding(3);
+            tableauEnteteFacture.addCell(celluleDetailsEntreprise);
+
             
-
-            PdfPCell cell2 = new PdfPCell();
-            cell2.addElement(getParagraphe("COLLEGE CARTESIEN DE KINSHASA\n", Font_Titre2, false, true, false));
-            cell2.addElement(getParagraphe("C.C.K\n", Font_Titre1, false, true, false));
-            cell2.addElement(getParagraphe("ECOLE INTERNATIONALE BILINGUE\n", Font_Titre3, false, true, false));
-            cell2.addElement(getParagraphe("7e RUE LIMETE - Q. INDUSTRIEL\n", Font_TexteSimple_petit, false, true, false));
-            cell2.addElement(getParagraphe("E-mail : ecolebilingue@yahoo.fr\n", Font_TexteSimple_petit, false, true, false));
-            cell2.addElement(getParagraphe("Tél : 081 508 6526 - 081 508 8711 - 099 897 2146 - 099 020 2744 - 099 994 2280 - 099 993 9650", Font_TexteSimple_petit, false, true, false));
-
-            cell2.setBorderColor(BaseColor.BLACK);
-            cell2.setBorderWidthLeft(5);
-            cell2.setBorderColorLeft(BaseColor.WHITE);
-            cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell2.setPadding(3);
-            tableauEnteteFacture.addCell(cell2);
-
-            tableauEnteteFacture.setWidths(width);
+            int[] dimensionsWidthHeight = {400, 1460};            
+            tableauEnteteFacture.setWidths(dimensionsWidthHeight);
 
             //On insère le le tableau entete (logo et détails de l'entreprise) dans la page
             document.add(tableauEnteteFacture);
