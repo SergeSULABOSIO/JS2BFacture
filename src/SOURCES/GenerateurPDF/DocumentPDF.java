@@ -154,7 +154,6 @@ public class DocumentPDF {
         Paragraph preface = new Paragraph();
         preface.add(getParagraphe("Date: " + this.dateFacturation.toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
         preface.add(getParagraphe(this.titre, Font_Titre1, Element.ALIGN_CENTER));
-        addEmptyLine(preface, 1);
         document.add(preface);
         this.numeroPage++;
     }
@@ -180,6 +179,8 @@ public class DocumentPDF {
         try {
             int nbColonnes = 2;
             PdfPTable tableauEnteteFacture = new PdfPTable(nbColonnes);
+            int[] dimensionsWidthHeight = {320, 1460};
+            tableauEnteteFacture.setWidths(dimensionsWidthHeight);
             tableauEnteteFacture.setHorizontalAlignment(Element.ALIGN_LEFT);
 
             //CELLULE DU LOGO DE L'ENTREPRISE
@@ -215,9 +216,6 @@ public class DocumentPDF {
 
             tableauEnteteFacture.addCell(celluleDetailsEntreprise);
 
-            int[] dimensionsWidthHeight = {320, 1460};
-            tableauEnteteFacture.setWidths(dimensionsWidthHeight);
-
             //On insère le le tableau entete (logo et détails de l'entreprise) dans la page
             document.add(tableauEnteteFacture);
         } catch (Exception e) {
@@ -227,15 +225,29 @@ public class DocumentPDF {
 
     private void setClientEtSesCoordonnees() {
         try {
-            PdfPTable table = new PdfPTable(2);
-            table.setHorizontalAlignment(Element.ALIGN_CENTER);
-            table.setLockedWidth(false);
-            addLigne(table, "MONTANT : ", "USD 100\n");
-            addLigne(table, "RECU DE : ", "SERGE SULA BOSIO\n");
-            addLigne(table, "LA SOMME DE (En lettres) : ", "" + Util.getLettres(100, "Dollars Américains") + "\n");
-            addLigne(table, "POUR LE PAIEMENT DE : ", "MINERVALE ET INSCRIPTION" + "\n");
-            addLigne(table, "SOLDE : ", "USD 15\n");
-            document.add(table);
+            PdfPTable tableDetailsClient = new PdfPTable(2);
+            int[] dimensionsWidthHeight = {320, 1460};
+            tableDetailsClient.setWidths(dimensionsWidthHeight);
+            tableDetailsClient.setHorizontalAlignment(Element.ALIGN_LEFT);
+            
+            //Colonne des titres
+            PdfPCell celluleTitres = new PdfPCell();
+            celluleTitres.setPadding(2);
+            celluleTitres.setBorderWidth(0);
+            //celluleTitres.setBorderColor(BaseColor.BLACK);
+            celluleTitres.addElement(getParagraphe("Nom du Client :\nContacts :\nAutres détails :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
+            
+            //Colonne des valeurs = détails sur le client
+            PdfPCell celluleDonnees = new PdfPCell();
+            celluleDonnees.setPadding(2);
+            celluleDonnees.setBorderWidth(0);
+            //celluleDonnees.setBorderColor(BaseColor.BLACK);
+            celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple, Element.ALIGN_LEFT));
+            
+            tableDetailsClient.addCell(celluleTitres);
+            tableDetailsClient.addCell(celluleDonnees);
+            
+            document.add(tableDetailsClient);
             addEmptyLine(1);
         } catch (Exception e) {
             e.printStackTrace();
