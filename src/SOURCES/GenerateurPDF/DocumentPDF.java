@@ -89,7 +89,7 @@ public class DocumentPDF {
                 this.titre = "FACTURE N°" + numeroFacture;
                 break;
             case TYPE_FACTURE_ET_RELEVE_DE_COMPTE:
-                this.titre = "FACTURE (+relevé de compte) N°" + numeroFacture;
+                this.titre = "FACTURE N°" + numeroFacture;
                 break;
             case TYPE_RELEVE_DE_COMPTE:
                 this.titre = "RELEVE DE COMPTE N°" + numeroFacture;
@@ -150,10 +150,11 @@ public class DocumentPDF {
         document.add(paragraphe);
     }
 
-    private void addTitlePage() throws Exception {
+    private void setTitreEtDateDocument() throws Exception {
         Paragraph preface = new Paragraph();
-        preface.add(getParagraphe("DATE : " + (new Date().toLocaleString()), Font_Titre3, false, false, true));
-        preface.add(getParagraphe(this.titre, Font_Titre1, false, true, false));
+        preface.add(getParagraphe("Date: " + this.dateFacturation.toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
+        //addEmptyLine(preface, 1);
+        preface.add(getParagraphe(this.titre, Font_Titre1, Element.ALIGN_CENTER));
         addEmptyLine(preface, 1);
         document.add(preface);
         this.numeroPage++;
@@ -165,20 +166,14 @@ public class DocumentPDF {
                 + "Signature Famille                               "
                 + "                                                      "
                 + "Signature Caissier(ère)"
-                + "", Font_TexteSimple_Gras, false, true, false));
+                + "", Font_TexteSimple_Gras, Element.ALIGN_CENTER));
         addEmptyLine(preface, 1);
         document.add(preface);
     }
 
-    private Paragraph getParagraphe(String texte, Font font, boolean isleft, boolean isCenter, boolean isRight) {
+    private Paragraph getParagraphe(String texte, Font font, int alignement) {
         Paragraph par = new Paragraph(texte, font);
-        if (isleft == true) {
-            par.setAlignment(Element.ALIGN_LEFT);
-        } else if (isCenter == true) {
-            par.setAlignment(Element.ALIGN_CENTER);
-        } else if (isRight == true) {
-            par.setAlignment(Element.ALIGN_RIGHT);
-        }
+        par.setAlignment(alignement);
         return par;
     }
 
@@ -186,7 +181,7 @@ public class DocumentPDF {
         try {
             int nbColonnes = 2;
             PdfPTable tableauEnteteFacture = new PdfPTable(nbColonnes);
-            tableauEnteteFacture.setHorizontalAlignment(Element.ALIGN_CENTER);
+            tableauEnteteFacture.setHorizontalAlignment(Element.ALIGN_LEFT);
 
             
             //CELLULE DU LOGO DE L'ENTREPRISE
@@ -195,36 +190,36 @@ public class DocumentPDF {
             if (ficLogo.exists() == true) {
                 //Chargement du logo et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
                 Image Imglogo = Image.getInstance(logo);
-                Imglogo.scaleAbsoluteWidth(80);
-                Imglogo.scaleAbsoluteHeight(80);
+                Imglogo.scaleAbsoluteWidth(70);
+                Imglogo.scaleAbsoluteHeight(70);
                 celluleLogoEntreprise = new PdfPCell(Imglogo);
             } else {
                 celluleLogoEntreprise = new PdfPCell();
             }
             celluleLogoEntreprise.setPadding(2);
-            celluleLogoEntreprise.setBorderWidth(1);
+            celluleLogoEntreprise.setBorderWidth(0);
             celluleLogoEntreprise.setBorderColor(BaseColor.BLACK);
-            celluleLogoEntreprise.setVerticalAlignment(Element.ALIGN_MIDDLE);
             tableauEnteteFacture.addCell(celluleLogoEntreprise);
                         
             
             //CELLULE DES DETAILS SUR L'ENTREPRISE - TEXTE (Nom, Adresse, Téléphone, Email, etc)
             PdfPCell celluleDetailsEntreprise = new PdfPCell();
             celluleDetailsEntreprise.setPadding(2);
-            celluleDetailsEntreprise.setBorderWidth(1);
+            celluleDetailsEntreprise.setPaddingLeft(5);
+            celluleDetailsEntreprise.setBorderWidth(0);
+            celluleDetailsEntreprise.setBorderWidthLeft(1);
             celluleDetailsEntreprise.setBorderColor(BaseColor.BLACK);
-            celluleDetailsEntreprise.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            celluleDetailsEntreprise.setHorizontalAlignment(Element.ALIGN_TOP);
             
-            celluleDetailsEntreprise.addElement(getParagraphe("COLLEGE CARTESIEN DE KINSHASA", Font_Titre2, false, true, false));
-            celluleDetailsEntreprise.addElement(getParagraphe("ECOLE INTERNATIONALE BILINGUE\n", Font_Titre3, false, true, false));
-            celluleDetailsEntreprise.addElement(getParagraphe("7e RUE LIMETE - Q. INDUSTRIEL\n", Font_TexteSimple_petit, false, true, false));
-            celluleDetailsEntreprise.addElement(getParagraphe("E-mail : ecolebilingue@yahoo.fr\n", Font_TexteSimple_petit, false, true, false));
-            celluleDetailsEntreprise.addElement(getParagraphe("Tél : 081 508 6526 - 081 508 8711 - 099 897 2146 - 099 020 2744 - 099 994 2280 - 099 993 9650", Font_TexteSimple_petit, false, true, false));
+            celluleDetailsEntreprise.addElement(getParagraphe("UAP RDC Sarl, Courtier d'Assurances n°0189", Font_Titre2, Element.ALIGN_LEFT));
+            celluleDetailsEntreprise.addElement(getParagraphe("Avenue de la Gombe, Kinshasa/Gombe", Font_TexteSimple_petit, Element.ALIGN_LEFT));
+            celluleDetailsEntreprise.addElement(getParagraphe("https://www.aib-brokers.com | info@aib-brokers.com | (+243)84 480 35 14 - (+243)82 87 27 706", Font_TexteSimple_petit, Element.ALIGN_LEFT));
+            celluleDetailsEntreprise.addElement(getParagraphe("RCC : CDF/KIN/2015-1245\nID. NAT : 0112487789\nNIF : 012245", Font_TexteSimple_petit, Element.ALIGN_LEFT));
             
             tableauEnteteFacture.addCell(celluleDetailsEntreprise);
 
             
-            int[] dimensionsWidthHeight = {400, 1460};            
+            int[] dimensionsWidthHeight = {320, 1460};            
             tableauEnteteFacture.setWidths(dimensionsWidthHeight);
 
             //On insère le le tableau entete (logo et détails de l'entreprise) dans la page
@@ -235,8 +230,8 @@ public class DocumentPDF {
     }
 
     private void setContenuDeLaPage() throws Exception {
-        setLogoEtDetailsEntreprise();
-        addTitlePage();
+        setLogoEtDetailsEntreprise();//ok
+        setTitreEtDateDocument();
         PdfPTable table = new PdfPTable(2);
         table.setHorizontalAlignment(Element.ALIGN_CENTER);
         table.setLockedWidth(false);
@@ -249,13 +244,13 @@ public class DocumentPDF {
         document.add(table);
         addEmptyLine(1);
         addPiedPage();
-        preface.add(getParagraphe("N.B : Les frais versés ne sont ni remboursables ni transférables.\n\n", Font_TexteSimple_Italique, true, false, false));
+        preface.add(getParagraphe("N.B : Les frais versés ne sont ni remboursables ni transférables.\n\n", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
         document.add(preface);
     }
 
     private void addLigne(PdfPTable table, String titreChamp, String ValeurChamp) throws Exception {
-        table.addCell(getCellule(titreChamp, Font_TexteSimple, false, false, true));
-        PdfPCell cell = getCellule(ValeurChamp, Font_TexteSimple_Gras_Italique, true, false, false);
+        table.addCell(getCellule(titreChamp, Font_TexteSimple, Element.ALIGN_RIGHT));
+        PdfPCell cell = getCellule(ValeurChamp, Font_TexteSimple_Gras_Italique, Element.ALIGN_LEFT);
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         cell.setBorderColor(BaseColor.WHITE);
         cell.setVerticalAlignment(Element.ALIGN_TOP);
@@ -268,15 +263,9 @@ public class DocumentPDF {
         table.setTotalWidth(width);
     }
 
-    private PdfPCell getCellule(String texte, Font font, boolean isLeft, boolean isCenter, boolean isRight) {
-        PdfPCell cellule = new PdfPCell(getParagraphe(texte, font, isLeft, isCenter, isRight));
-        if (isLeft == true) {
-            cellule.setHorizontalAlignment(Element.ALIGN_LEFT);
-        } else if (isCenter == true) {
-            cellule.setHorizontalAlignment(Element.ALIGN_CENTER);
-        } else if (isRight == true) {
-            cellule.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        }
+    private PdfPCell getCellule(String texte, Font font, int alignement) {
+        PdfPCell cellule = new PdfPCell(getParagraphe(texte, font, alignement));
+        cellule.setHorizontalAlignment(alignement);
         cellule.setNoWrap(false);
         cellule.setBorderColor(BaseColor.WHITE);
         cellule.setBorderWidthBottom(1);
