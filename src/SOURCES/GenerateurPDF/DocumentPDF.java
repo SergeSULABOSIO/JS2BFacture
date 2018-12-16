@@ -229,25 +229,67 @@ public class DocumentPDF {
             int[] dimensionsWidthHeight = {320, 1460};
             tableDetailsClient.setWidths(dimensionsWidthHeight);
             tableDetailsClient.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+            //Colonne des titres
+            PdfPCell celluleTitres = new PdfPCell();
+            celluleTitres.setPadding(2);
+            celluleTitres.setBorderWidth(0);
+            celluleTitres.addElement(getParagraphe("Nom du Client :\nContacts :\nAutres détails :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
+
+            //Colonne des valeurs = détails sur le client
+            PdfPCell celluleDonnees = new PdfPCell();
+            celluleDonnees.setPadding(2);
+            celluleDonnees.setBorderWidth(0);
+            celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+
+            tableDetailsClient.addCell(celluleTitres);
+            tableDetailsClient.addCell(celluleDonnees);
+
+            document.add(tableDetailsClient);
+            //addEmptyLine(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setTableauDetailsArticles() {
+        try {
+            Paragraph titreDetails = new Paragraph();
+            titreDetails.add(getParagraphe("Détails", Font_TexteSimple, Element.ALIGN_CENTER));
+            document.add(titreDetails);
+
+            /*
             
             //Colonne des titres
             PdfPCell celluleTitres = new PdfPCell();
             celluleTitres.setPadding(2);
             celluleTitres.setBorderWidth(0);
-            //celluleTitres.setBorderColor(BaseColor.BLACK);
             celluleTitres.addElement(getParagraphe("Nom du Client :\nContacts :\nAutres détails :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
-            
+
             //Colonne des valeurs = détails sur le client
             PdfPCell celluleDonnees = new PdfPCell();
             celluleDonnees.setPadding(2);
             celluleDonnees.setBorderWidth(0);
-            //celluleDonnees.setBorderColor(BaseColor.BLACK);
             celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
-            
+
             tableDetailsClient.addCell(celluleTitres);
             tableDetailsClient.addCell(celluleDonnees);
             
-            document.add(tableDetailsClient);
+            
+             */
+            PdfPTable tableDetailsArticles = new PdfPTable(8);
+            int[] dimensionsWidthHeight = {50, 400, 100, 100, 100, 100, 100, 100};
+            tableDetailsArticles.setWidths(dimensionsWidthHeight);
+            tableDetailsArticles.setHorizontalAlignment(Element.ALIGN_CENTER);
+            
+            //Cellule N°
+            PdfPCell celNo = new PdfPCell();
+            celNo.setPadding(2);
+            celNo.setBorderWidth(0);
+            celNo.addElement(getParagraphe("Nom du Client :\nContacts :\nAutres détails :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
+
+            document.add(tableDetailsArticles);
             addEmptyLine(1);
         } catch (Exception e) {
             e.printStackTrace();
@@ -259,7 +301,7 @@ public class DocumentPDF {
         setLogoEtDetailsEntreprise();//ok
         setTitreEtDateDocument();//ok
         setClientEtSesCoordonnees();
-        
+        setTableauDetailsArticles();
         addPiedPage();
         Paragraph preface = new Paragraph();
         preface.add(getParagraphe("N.B : Les frais versés ne sont ni remboursables ni transférables.\n\n", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
