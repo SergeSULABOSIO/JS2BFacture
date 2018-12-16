@@ -153,7 +153,6 @@ public class DocumentPDF {
     private void setTitreEtDateDocument() throws Exception {
         Paragraph preface = new Paragraph();
         preface.add(getParagraphe("Date: " + this.dateFacturation.toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
-        //addEmptyLine(preface, 1);
         preface.add(getParagraphe(this.titre, Font_Titre1, Element.ALIGN_CENTER));
         addEmptyLine(preface, 1);
         document.add(preface);
@@ -183,7 +182,6 @@ public class DocumentPDF {
             PdfPTable tableauEnteteFacture = new PdfPTable(nbColonnes);
             tableauEnteteFacture.setHorizontalAlignment(Element.ALIGN_LEFT);
 
-            
             //CELLULE DU LOGO DE L'ENTREPRISE
             PdfPCell celluleLogoEntreprise = null;
             File ficLogo = new File(logo);
@@ -200,8 +198,7 @@ public class DocumentPDF {
             celluleLogoEntreprise.setBorderWidth(0);
             celluleLogoEntreprise.setBorderColor(BaseColor.BLACK);
             tableauEnteteFacture.addCell(celluleLogoEntreprise);
-                        
-            
+
             //CELLULE DES DETAILS SUR L'ENTREPRISE - TEXTE (Nom, Adresse, Téléphone, Email, etc)
             PdfPCell celluleDetailsEntreprise = new PdfPCell();
             celluleDetailsEntreprise.setPadding(2);
@@ -210,16 +207,15 @@ public class DocumentPDF {
             celluleDetailsEntreprise.setBorderWidthLeft(1);
             celluleDetailsEntreprise.setBorderColor(BaseColor.BLACK);
             celluleDetailsEntreprise.setHorizontalAlignment(Element.ALIGN_TOP);
-            
+
             celluleDetailsEntreprise.addElement(getParagraphe("UAP RDC Sarl, Courtier d'Assurances n°0189", Font_Titre2, Element.ALIGN_LEFT));
             celluleDetailsEntreprise.addElement(getParagraphe("Avenue de la Gombe, Kinshasa/Gombe", Font_TexteSimple_petit, Element.ALIGN_LEFT));
             celluleDetailsEntreprise.addElement(getParagraphe("https://www.aib-brokers.com | info@aib-brokers.com | (+243)84 480 35 14 - (+243)82 87 27 706", Font_TexteSimple_petit, Element.ALIGN_LEFT));
             celluleDetailsEntreprise.addElement(getParagraphe("RCC : CDF/KIN/2015-1245\nID. NAT : 0112487789\nNIF : 012245", Font_TexteSimple_petit, Element.ALIGN_LEFT));
-            
+
             tableauEnteteFacture.addCell(celluleDetailsEntreprise);
 
-            
-            int[] dimensionsWidthHeight = {320, 1460};            
+            int[] dimensionsWidthHeight = {320, 1460};
             tableauEnteteFacture.setWidths(dimensionsWidthHeight);
 
             //On insère le le tableau entete (logo et détails de l'entreprise) dans la page
@@ -229,21 +225,31 @@ public class DocumentPDF {
         }
     }
 
+    private void setClientEtSesCoordonnees() {
+        try {
+            PdfPTable table = new PdfPTable(2);
+            table.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.setLockedWidth(false);
+            addLigne(table, "MONTANT : ", "USD 100\n");
+            addLigne(table, "RECU DE : ", "SERGE SULA BOSIO\n");
+            addLigne(table, "LA SOMME DE (En lettres) : ", "" + Util.getLettres(100, "Dollars Américains") + "\n");
+            addLigne(table, "POUR LE PAIEMENT DE : ", "MINERVALE ET INSCRIPTION" + "\n");
+            addLigne(table, "SOLDE : ", "USD 15\n");
+            document.add(table);
+            addEmptyLine(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void setContenuDeLaPage() throws Exception {
         setLogoEtDetailsEntreprise();//ok
-        setTitreEtDateDocument();
-        PdfPTable table = new PdfPTable(2);
-        table.setHorizontalAlignment(Element.ALIGN_CENTER);
-        table.setLockedWidth(false);
-        Paragraph preface = new Paragraph();
-        addLigne(table, "MONTANT : ", "USD 100\n");
-        addLigne(table, "RECU DE : ", "SERGE SULA BOSIO\n");
-        addLigne(table, "LA SOMME DE (En lettres) : ", "" + Util.getLettres(100, "Dollars Américains") + "\n");
-        addLigne(table, "POUR LE PAIEMENT DE : ", "MINERVALE ET INSCRIPTION" + "\n");
-        addLigne(table, "SOLDE : ", "USD 15\n");
-        document.add(table);
-        addEmptyLine(1);
+        setTitreEtDateDocument();//ok
+        setClientEtSesCoordonnees();
+        
         addPiedPage();
+        Paragraph preface = new Paragraph();
         preface.add(getParagraphe("N.B : Les frais versés ne sont ni remboursables ni transférables.\n\n", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
         document.add(preface);
     }
