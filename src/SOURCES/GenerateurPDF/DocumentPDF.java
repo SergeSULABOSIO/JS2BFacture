@@ -242,7 +242,7 @@ public class DocumentPDF {
             celluleDonnees.setPadding(2);
             celluleDonnees.setBorderWidth(0);
             //celluleDonnees.setBorderColor(BaseColor.BLACK);
-            celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple, Element.ALIGN_LEFT));
+            celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
             
             tableDetailsClient.addCell(celluleTitres);
             tableDetailsClient.addCell(celluleDonnees);
