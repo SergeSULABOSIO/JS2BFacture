@@ -28,7 +28,6 @@ import SOURCES.EndusTable.RenduTablePaiement;
 import SOURCES.Interface.ClientFacture;
 import SOURCES.Interface.EntrepriseFacture;
 import SOURCES.Utilitaires.Util;
-import com.toedter.calendar.JDateChooser;
 import java.awt.event.MouseEvent;
 import java.util.Date;
 import javax.swing.JOptionPane;

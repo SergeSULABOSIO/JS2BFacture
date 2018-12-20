@@ -42,7 +42,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     private Font Font_TexteSimple_Gras = null;
     private Font Font_TexteSimple_Italique = null;
     private Font Font_TexteSimple_Gras_Italique = null;
-    private Date dateFacturation = null;
+    
 
     public final static int TYPE_FACTURE = 0;
     public final static int TYPE_FACTURE_ET_RELEVE_DE_COMPTE = 1;
@@ -91,7 +91,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             this.document.close();
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Impossible de produire la facture\nAssurez vous qu'aucun fichier du même nom ne soit actuellement ouvert.", "Erreur", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this.gestionnaireFacture, "Impossible de produire la facture\nAssurez vous qu'aucun fichier du même nom ne soit actuellement ouvert.", "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -102,7 +102,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                 Desktop.getDesktop().open(fic);
             } catch (IOException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Impossible d'ouvrir le fichier !", "Erreur", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this.gestionnaireFacture, "Impossible d'ouvrir le fichier !", "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -125,10 +125,9 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setTitreEtDateDocument() throws Exception {
         Paragraph preface = new Paragraph();
-        preface.add(getParagraphe("Date: " + this.dateFacturation.toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
+        preface.add(getParagraphe("Date: " + this.gestionnaireFacture.getDateFacture().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
         preface.add(getParagraphe(this.titre, Font_Titre1, Element.ALIGN_CENTER));
         this.document.add(preface);
-        this.numeroPage++;
     }
 
     private void setSignataire() throws Exception {
