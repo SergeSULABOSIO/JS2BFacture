@@ -28,6 +28,7 @@ import SOURCES.EndusTable.RenduTablePaiement;
 import SOURCES.Interface.ClientFacture;
 import SOURCES.Interface.EntrepriseFacture;
 import SOURCES.Utilitaires.Util;
+import com.toedter.calendar.JDateChooser;
 import java.awt.event.MouseEvent;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -59,26 +60,67 @@ public class Panel extends javax.swing.JPanel {
     private EcouteurUpdateClose callBackSynthese;
     private Parametres parametres;
 
+    
     public Panel(Parametres parametres, EcouteurUpdateClose callBackSynthese) {
         this.initComponents();
         this.parametres = parametres;
         this.callBackSynthese = callBackSynthese;
         this.icones = new Icones();
-
-        setClient();
-        setContactEtBanques();
-        setTypeFacture();
+        
+        this.setClient();
+        this.setContactEtBanques();
+        this.setTypeFacture();
+        
         //Liste d'articles
-        setBoutonsOutilsArticles();
-        setMenuContArticles();
+        this.setBoutonsOutilsArticles();
+        this.setMenuContArticles();
         //Liste des paiements - Rélévé de compte
-        parametrerTableArticles();
-        parametrerTablePaiement();
-        actualiserTotaux();
+        this.parametrerTableArticles();
+        this.parametrerTablePaiement();
+        this.actualiserTotaux();
 
         this.dateFacture.setDate(new Date());
         this.chTva.setText(this.parametres.getTva() + "");
     }
+
+    public Parametres getParametres() {
+        return parametres;
+    }
+
+    public Date getDateFacture() {
+        return dateFacture.getDate();
+    }
+
+    public int getIndexTabSelected() {
+        return indexTabSelected;
+    }
+
+    public boolean isIsAssigetis() {
+        return isAssigetis;
+    }
+
+    public ModeleListeArticles getModeleListeArticles() {
+        return modeleListeArticles;
+    }
+
+    public ModeleListePaiement getModeleListePaiement() {
+        return modeleListePaiement;
+    }
+    
+    public String getNumeroFacture(){
+        return this.parametres.getNumero();
+    }
+    
+    public String getRubriqueNomClient(){
+        return "Nom de l'élève";
+    }
+    
+    public String getNomfichierPreuve(){
+        return "FactureS2B.pdf";
+    }
+    
+    
+    
 
     private void setClient() {
         if (this.parametres.getClient() != null) {
