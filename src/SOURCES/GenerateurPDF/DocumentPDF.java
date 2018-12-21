@@ -50,6 +50,10 @@ public class DocumentPDF extends PdfPageEventHelper {
     private Font Font_TexteSimple_Gras = null;
     private Font Font_TexteSimple_Italique = null;
     private Font Font_TexteSimple_Gras_Italique = null;
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 94814bec7aa351cb2f9f8d5988817f7b4d9f530d
 
     public final static int TYPE_FACTURE = 0;
     public final static int TYPE_FACTURE_ET_RELEVE_DE_COMPTE = 1;
@@ -145,6 +149,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setTitreEtDateDocument() throws Exception {
         Paragraph preface = new Paragraph();
+<<<<<<< HEAD
         if (this.gestionnaireFacture != null) {
             preface.add(getParagraphe("Date: " + this.gestionnaireFacture.getDateFacture().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe(this.gestionnaireFacture.getTitreDocument() + " N°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
@@ -152,6 +157,10 @@ public class DocumentPDF extends PdfPageEventHelper {
             preface.add(getParagraphe("Date: " + new Date().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
         }
+=======
+        preface.add(getParagraphe("Date: " + this.gestionnaireFacture.getDateFacture().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
+        preface.add(getParagraphe(this.titre, Font_Titre1, Element.ALIGN_CENTER));
+>>>>>>> 94814bec7aa351cb2f9f8d5988817f7b4d9f530d
         this.document.add(preface);
     }
 
