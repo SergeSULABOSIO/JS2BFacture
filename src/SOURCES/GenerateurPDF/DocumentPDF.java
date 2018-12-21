@@ -148,7 +148,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
         if (this.gestionnaireFacture != null) {
             preface.add(getParagraphe("Date: " + this.gestionnaireFacture.getDateFacture().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
-            preface.add(getParagraphe(this.gestionnaireFacture.getTitreDocument() + " N°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
+            preface.add(getParagraphe(this.gestionnaireFacture.getTitreDoc() + " N°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
             preface.add(getParagraphe("Date: " + new Date().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
@@ -175,7 +175,7 @@ public class DocumentPDF extends PdfPageEventHelper {
         if (this.gestionnaireFacture != null) {
             EntrepriseFacture entreprise = this.gestionnaireFacture.getEntreprise();
             if (entreprise != null) {
-                this.document.add(getParagraphe(entreprise.getNom() + "\n" + entreprise.getAdresse() + "| " + entreprise.getTelephone() + " | " + entreprise.getEmail() + " | " + entreprise.getSiteWeb(), Font_TexteSimple, Element.ALIGN_CENTER));
+                this.document.add(getParagraphe(entreprise.getNom() + "\n" + entreprise.getAdresse() + " | " + entreprise.getTelephone() + " | " + entreprise.getEmail() + " | " + entreprise.getSiteWeb(), Font_TexteSimple, Element.ALIGN_CENTER));
             } else {
                 addDefaultEntreprise();
             }
@@ -303,34 +303,31 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setTableauDetailsReleveDeCompte() {
         try {
-            if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
-                document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
-                PdfPTable tableReleve = getTableau(
-                        -1,
-                        new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
-                        new int[]{80, 300, 500, 400, 200, 200},
-                        Element.ALIGN_CENTER,
-                        0.2f
-                );
-                if (this.gestionnaireFacture != null) {
-                    ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
-                    Vector<PaiementFacture> listePaiement = modelPaiement.getListeData();
-                    int i = 0;
-                    for (PaiementFacture paiement : listePaiement) {
-                        String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                        setLigneTabReleve(tableReleve, paiement.getDate().toLocaleString(), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
-                        i++;
-                    }
-                    setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
-                } else {
-                    for (int i = 0; i < 10; i++) {
-                        setLigneTabReleve(tableReleve, (new Date().toLocaleString()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
-                    }
-                    setDerniereLigneTabReleve(tableReleve, 1500, 350);
+            document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
+            PdfPTable tableReleve = getTableau(
+                    -1,
+                    new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
+                    new int[]{80, 300, 500, 400, 200, 200},
+                    Element.ALIGN_CENTER,
+                    0.2f
+            );
+            if (this.gestionnaireFacture != null) {
+                ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
+                Vector<PaiementFacture> listePaiement = modelPaiement.getListeData();
+                int i = 0;
+                for (PaiementFacture paiement : listePaiement) {
+                    String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
+                    setLigneTabReleve(tableReleve, paiement.getDate().toLocaleString(), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
+                    i++;
                 }
-                document.add(tableReleve);
+                setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
+            } else {
+                for (int i = 0; i < 10; i++) {
+                    setLigneTabReleve(tableReleve, (new Date().toLocaleString()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+                }
+                setDerniereLigneTabReleve(tableReleve, 1500, 350);
             }
-
+            document.add(tableReleve);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -459,13 +456,15 @@ public class DocumentPDF extends PdfPageEventHelper {
         tableau.addCell(getCelluleTableau("Montant TTC", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableau.addCell(getCelluleTableau(totalTTC + " $", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
 
-        if (totalPaye != 0) {
-            tableau.addCell(getCelluleTableau("Montant payé", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_LEFT, Font_TexteSimple_Italique));
-            tableau.addCell(getCelluleTableau("- " + totalPaye + " $", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_RIGHT, Font_TexteSimple_Italique));
-        }
+        if (this.gestionnaireFacture.getTitreDoc_() == 0) {
+            if (totalPaye != 0) {
+                tableau.addCell(getCelluleTableau("Montant payé", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_LEFT, Font_TexteSimple_Italique));
+                tableau.addCell(getCelluleTableau("- " + totalPaye + " $", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_RIGHT, Font_TexteSimple_Italique));
+            }
 
-        tableau.addCell(getCelluleTableau("Solde", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
-        tableau.addCell(getCelluleTableau(totalSolde + " $", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+            tableau.addCell(getCelluleTableau("Solde", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+            tableau.addCell(getCelluleTableau(totalSolde + " $", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        }
     }
 
     private void setDetailsBanque(PdfPTable tableau, float borderwidth) {
@@ -571,6 +570,15 @@ public class DocumentPDF extends PdfPageEventHelper {
         }
     }
 
+    /*
+    
+    Facture
+    Facture pro forma
+    Bon de Commande
+    Bon d'entrée en Stock
+    Bon de sortie du Stock
+    
+     */
     private void setContenuDeLaPage(String rubriqueNomClient) throws Exception {
         setLogoEtDetailsEntreprise();//ok
         setTitreEtDateDocument();//ok
@@ -578,7 +586,11 @@ public class DocumentPDF extends PdfPageEventHelper {
         setTableauDetailsArticles();//ok
         ajouterLigne(1);//ok
         setTableauSynthese();//ok
-        setTableauDetailsReleveDeCompte();//ok
+        if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerRelever() == true) {
+            if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
+                setTableauDetailsReleveDeCompte();//ok
+            }
+        }
         ajouterLigne(1);//ok
         setSignataire();//ok
         setLigneSeparateur();//ok
