@@ -303,31 +303,34 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setTableauDetailsReleveDeCompte() {
         try {
-            document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
-            PdfPTable tableReleve = getTableau(
-                    -1,
-                    new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
-                    new int[]{80, 300, 500, 400, 200, 200},
-                    Element.ALIGN_CENTER,
-                    0.2f
-            );
-            if (this.gestionnaireFacture != null) {
-                ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
-                Vector<PaiementFacture> listePaiement = modelPaiement.getListeData();
-                int i = 0;
-                for (PaiementFacture paiement : listePaiement) {
-                    String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                    setLigneTabReleve(tableReleve, paiement.getDate().toLocaleString(), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
-                    i++;
+            if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
+                document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
+                PdfPTable tableReleve = getTableau(
+                        -1,
+                        new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
+                        new int[]{80, 300, 500, 400, 200, 200},
+                        Element.ALIGN_CENTER,
+                        0.2f
+                );
+                if (this.gestionnaireFacture != null) {
+                    ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
+                    Vector<PaiementFacture> listePaiement = modelPaiement.getListeData();
+                    int i = 0;
+                    for (PaiementFacture paiement : listePaiement) {
+                        String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
+                        setLigneTabReleve(tableReleve, paiement.getDate().toLocaleString(), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
+                        i++;
+                    }
+                    setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
+                } else {
+                    for (int i = 0; i < 10; i++) {
+                        setLigneTabReleve(tableReleve, (new Date().toLocaleString()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+                    }
+                    setDerniereLigneTabReleve(tableReleve, 1500, 350);
                 }
-                setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
-            } else {
-                for (int i = 0; i < 10; i++) {
-                    setLigneTabReleve(tableReleve, (new Date().toLocaleString()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
-                }
-                setDerniereLigneTabReleve(tableReleve, 1500, 350);
+                document.add(tableReleve);
             }
-            document.add(tableReleve);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -378,7 +381,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                 ModeleListeArticles modelArticle = this.gestionnaireFacture.getModeleListeArticles();
                 Vector<ArticleFacture> listeArticles = modelArticle.getListeData();
                 int i = 0;
-                
+
                 for (ArticleFacture article : listeArticles) {
                     String nomA = "" + (article.getNom().contains("_") ? article.getNom().split("_")[1] : article.getNom());
                     setLigneTabArticle(tableDetailsArticles, nomA, i, article.getQte(), article.getPrixUHT_avant_rabais(), article.getRabais(), article.getPrixUHT_apres_rabais(), article.getTvaMontant(), article.getTotalTTC());
@@ -575,7 +578,6 @@ public class DocumentPDF extends PdfPageEventHelper {
         setTableauDetailsArticles();//ok
         ajouterLigne(1);//ok
         setTableauSynthese();//ok
-        //setLigneSeparateur();//ok
         setTableauDetailsReleveDeCompte();//ok
         ajouterLigne(1);//ok
         setSignataire();//ok
