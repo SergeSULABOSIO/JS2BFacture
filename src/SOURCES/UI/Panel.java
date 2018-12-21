@@ -25,11 +25,12 @@ import SOURCES.Interface.PaiementFacture;
 import SOURCES.Utilitaires.Parametres;
 import SOURCES.EndusTable.RenduTableArticle;
 import SOURCES.EndusTable.RenduTablePaiement;
+import SOURCES.GenerateurPDF.DocumentPDF;
 import SOURCES.Interface.ClientFacture;
 import SOURCES.Interface.EntrepriseFacture;
 import SOURCES.Utilitaires.Util;
-import com.toedter.calendar.JDateChooser;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -119,8 +120,21 @@ public class Panel extends javax.swing.JPanel {
         return "FactureS2B.pdf";
     }
     
+    public String getTitreDocument(){
+        return "" + comboTypeFacture.getSelectedItem();
+    }
     
+    public EntrepriseFacture getEntreprise(){
+        return this.parametres.getEntreprise();
+    }
     
+    public String getNomUtilisateur(){
+        return this.parametres.getNomUtilisateur();
+    }
+    
+    public ClientFacture getClient(){
+        return this.parametres.getClient();
+    }
 
     private void setClient() {
         if (this.parametres.getClient() != null) {
@@ -240,7 +254,13 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void exporterPDF() {
-
+        try{
+            callBackSynthese.onActualiser("Production du fichier PDF...");
+            DocumentPDF docpdf = new DocumentPDF(this);
+            callBackSynthese.onActualiser("Fichier PDF produit avec succèss : " + (new File(getNomfichierPreuve())));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void exporterWORD() {

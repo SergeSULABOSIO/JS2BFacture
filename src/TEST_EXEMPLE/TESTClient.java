@@ -17,12 +17,14 @@ public class TESTClient implements ClientFacture{
     private String nom;
     private String telephone;
     private String adresse;
+    private String autresInfos;
 
-    public TESTClient(int id, String nom, String telephone, String adresse) {
+    public TESTClient(int id, String nom, String telephone, String adresse, String autresInfos) {
         this.id = id;
         this.nom = nom;
         this.telephone = telephone;
         this.adresse = adresse;
+        this.autresInfos = autresInfos;
     }
 
     public int getId() {
@@ -56,15 +58,18 @@ public class TESTClient implements ClientFacture{
     public void setAdresse(String adresse) {
         this.adresse = adresse;
     }
-    
+
+    public String getAutresInfos() {
+        return autresInfos;
+    }
+
+    public void setAutresInfos(String autresInfos) {
+        this.autresInfos = autresInfos;
+    }
     
 
     @Override
     public String toString() {
         return "TESTClient{" + "id=" + id + ", nom=" + nom + ", telephone=" + telephone + ", adresse=" + adresse + '}';
     }
-    
-    
-    
-    
 }

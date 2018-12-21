@@ -115,6 +115,14 @@ public class ModeleListeArticles extends AbstractTableModel {
         }
         return Util.round((mntTTC - mntTva), 2);
     }
+    
+    public double getTotal_Net_AvantRabais() {
+        double mnt = 0;
+        for (ArticleFacture art : listeData) {
+            mnt = mnt + art.getPrixUHT_avant_rabais();
+        }
+        return Util.round((mnt), 2);
+    }
 
     public double getTotal_TVA() {
         double a = 0;

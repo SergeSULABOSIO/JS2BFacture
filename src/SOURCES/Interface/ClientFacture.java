@@ -15,11 +15,13 @@ public interface ClientFacture {
     public abstract String getNom();
     public abstract String getTelephone();
     public abstract String getAdresse();
+    public abstract String getAutresInfos();
     
     public abstract void setId(int id);
     public abstract void setNom(String nom);
     public abstract void setTelephone(String telephone);
     public abstract void setAdresse(String adresse);
+    public abstract void setAutresInfos(String autresinfos);
     
     
 }

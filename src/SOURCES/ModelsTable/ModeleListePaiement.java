@@ -92,9 +92,9 @@ public class ModeleListePaiement extends AbstractTableModel {
         return Util.round(mnt, 2);
     }
 
-    public double getTotalReste() {
-
-        return 0;
+    public double getTotalReste(ModeleListeArticles modelArticle) {
+        double Tsolde = Util.round(modelArticle.getTotal_TTC() - getTotalMontant(), 2);
+        return Tsolde;
     }
 
     public void viderListe() {
