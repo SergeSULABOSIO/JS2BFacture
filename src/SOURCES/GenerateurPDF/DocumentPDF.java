@@ -148,7 +148,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
         if (this.gestionnaireFacture != null) {
             preface.add(getParagraphe("Date: " + this.gestionnaireFacture.getDateFacture().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
-            preface.add(getParagraphe(this.gestionnaireFacture.getTitreDoc() + " N°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
+            preface.add(getParagraphe(this.gestionnaireFacture.getTitreDoc() + " n°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
             preface.add(getParagraphe("Date: " + new Date().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
