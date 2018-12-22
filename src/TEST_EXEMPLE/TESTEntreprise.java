@@ -18,6 +18,10 @@ public class TESTEntreprise implements EntrepriseFacture{
     public String telephone;
     public String email;
     public String siteWeb;
+    private String logo;
+    private String rccm;
+    private String idNat;
+    private String numeroImpot;
     //Details bancaires
     public String banque;
     public String intituleCompte;
@@ -25,7 +29,7 @@ public class TESTEntreprise implements EntrepriseFacture{
     public String IBAN;
     public String codeSwift;
 
-    public TESTEntreprise(int id, String nom, String adresse, String telephone, String email, String siteWeb, String banque, String intituleCompte, String numeroCompte, String IBAN, String codeSwift) {
+    public TESTEntreprise(int id, String nom, String adresse, String telephone, String email, String siteWeb, String banque, String intituleCompte, String numeroCompte, String IBAN, String codeSwift, String logo, String rccm, String idNat, String numeroImpot) {
         this.id = id;
         this.nom = nom;
         this.adresse = adresse;
@@ -37,6 +41,10 @@ public class TESTEntreprise implements EntrepriseFacture{
         this.numeroCompte = numeroCompte;
         this.IBAN = IBAN;
         this.codeSwift = codeSwift;
+        this.logo = logo;
+        this.rccm = rccm;
+        this.idNat = idNat;
+        this.numeroImpot = numeroImpot;
     }
 
     public int getId() {
@@ -127,11 +135,63 @@ public class TESTEntreprise implements EntrepriseFacture{
         this.codeSwift = codeSwift;
     }
 
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getRccm() {
+        return rccm;
+    }
+
+    public void setRccm(String rccm) {
+        this.rccm = rccm;
+    }
+
+    public String getIdNat() {
+        return idNat;
+    }
+
+    public void setIdNat(String idNat) {
+        this.idNat = idNat;
+    }
+
+    public String getNumeroImpot() {
+        return numeroImpot;
+    }
+
+    public void setNumeroImpot(String numeroImpot) {
+        this.numeroImpot = numeroImpot;
+    }
+    
+    
+
     @Override
     public String toString() {
         return "TESTEntreprise{" + "id=" + id + ", nom=" + nom + ", adresse=" + adresse + ", telephone=" + telephone + ", email=" + email + ", siteWeb=" + siteWeb + ", banque=" + banque + ", intituleCompte=" + intituleCompte + ", numeroCompte=" + numeroCompte + ", IBAN=" + IBAN + ", codeSwift=" + codeSwift + '}';
     }
-    
-    
+
+    @Override
+    public String getRCCM() {
+        return this.rccm;
+    }
+
+    @Override
+    public String getIDNAT() {
+        return this.idNat;
+    }
+
+    @Override
+    public void setRCCM(String rccm) {
+        this.rccm = rccm;
+    }
+
+    @Override
+    public void setIDNAT(String idnat) {
+        this.idNat = idnat;
+    }
     
 }

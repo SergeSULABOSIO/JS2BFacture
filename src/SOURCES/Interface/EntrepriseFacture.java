@@ -17,6 +17,10 @@ public interface EntrepriseFacture {
     public abstract String getTelephone();
     public abstract String getEmail();
     public abstract String getSiteWeb();
+    public abstract String getLogo();
+    public abstract String getRCCM();
+    public abstract String getIDNAT();
+    public abstract String getNumeroImpot();
     //Details bancaires
     public abstract String getBanque();
     public abstract String getIntituleCompte();
@@ -30,6 +34,10 @@ public interface EntrepriseFacture {
     public abstract void setTelephone(String telephone);
     public abstract void setEmail(String email);
     public abstract void setSiteWeb(String siteweb);
+    public abstract void setLogo(String logo);
+    public abstract void setRCCM(String rccm);
+    public abstract void setIDNAT(String idnat);
+    public abstract void setNumeroImpot(String numeroimpot);
     //Details
     public abstract void setBanque(String banque);
     public abstract void setIntituleCompte(String inititule);

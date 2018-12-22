@@ -25,10 +25,12 @@ import SOURCES.Interface.PaiementFacture;
 import SOURCES.Utilitaires.Parametres;
 import SOURCES.EndusTable.RenduTableArticle;
 import SOURCES.EndusTable.RenduTablePaiement;
+import SOURCES.GenerateurPDF.DocumentPDF;
 import SOURCES.Interface.ClientFacture;
 import SOURCES.Interface.EntrepriseFacture;
 import SOURCES.Utilitaires.Util;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -59,25 +61,87 @@ public class Panel extends javax.swing.JPanel {
     private EcouteurUpdateClose callBackSynthese;
     private Parametres parametres;
 
+    
     public Panel(Parametres parametres, EcouteurUpdateClose callBackSynthese) {
         this.initComponents();
         this.parametres = parametres;
         this.callBackSynthese = callBackSynthese;
         this.icones = new Icones();
-
-        setClient();
-        setContactEtBanques();
-        setTypeFacture();
+        
+        this.setClient();
+        this.setContactEtBanques();
+        this.setTypeFacture();
+        
         //Liste d'articles
-        setBoutonsOutilsArticles();
-        setMenuContArticles();
+        this.setBoutonsOutilsArticles();
+        this.setMenuContArticles();
         //Liste des paiements - Rélévé de compte
-        parametrerTableArticles();
-        parametrerTablePaiement();
-        actualiserTotaux();
+        this.parametrerTableArticles();
+        this.parametrerTablePaiement();
+        this.actualiserTotaux();
 
         this.dateFacture.setDate(new Date());
         this.chTva.setText(this.parametres.getTva() + "");
+    }
+
+    public Parametres getParametres() {
+        return parametres;
+    }
+
+    public Date getDateFacture() {
+        return dateFacture.getDate();
+    }
+
+    public int getIndexTabSelected() {
+        return indexTabSelected;
+    }
+
+    public boolean isIsAssigetis() {
+        return isAssigetis;
+    }
+
+    public ModeleListeArticles getModeleListeArticles() {
+        return modeleListeArticles;
+    }
+
+    public ModeleListePaiement getModeleListePaiement() {
+        return modeleListePaiement;
+    }
+    
+    public String getNumeroFacture(){
+        return this.parametres.getNumero();
+    }
+    
+    public String getRubriqueNomClient(){
+        return "Nom de l'élève";
+    }
+    
+    public String getNomfichierPreuve(){
+        return "FactureS2B.pdf";
+    }
+    
+    public String getTitreDoc(){
+        return "" + comboTypeFacture.getSelectedItem();
+    }
+    
+    public int getTitreDoc_(){
+        return comboTypeFacture.getSelectedIndex();
+    }
+    
+    public boolean isImprimerRelever(){
+        return isReleverCompte.isSelected();
+    }
+    
+    public EntrepriseFacture getEntreprise(){
+        return this.parametres.getEntreprise();
+    }
+    
+    public String getNomUtilisateur(){
+        return this.parametres.getNomUtilisateur();
+    }
+    
+    public ClientFacture getClient(){
+        return this.parametres.getClient();
     }
 
     private void setClient() {
@@ -198,7 +262,13 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void exporterPDF() {
-
+        try{
+            callBackSynthese.onActualiser("Production du fichier PDF...");
+            DocumentPDF docpdf = new DocumentPDF(this);
+            callBackSynthese.onActualiser("Fichier PDF produit avec succèss : " + (new File(getNomfichierPreuve())));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void exporterWORD() {
@@ -521,7 +591,7 @@ public class Panel extends javax.swing.JPanel {
         labTotalPaye = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         labRemise = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        isReleverCompte = new javax.swing.JCheckBox();
         barreOutilsArticles = new javax.swing.JToolBar();
         jButton5 = new javax.swing.JButton();
         panDetailsBancaires = new javax.swing.JPanel();
@@ -842,10 +912,10 @@ public class Panel extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        jCheckBox1.setBackground(new java.awt.Color(255, 255, 255));
-        jCheckBox1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Imprimer également le relevé de compte");
+        isReleverCompte.setBackground(new java.awt.Color(255, 255, 255));
+        isReleverCompte.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        isReleverCompte.setSelected(true);
+        isReleverCompte.setText("Imprimer également le relevé de compte");
 
         barreOutilsArticles.setBackground(new java.awt.Color(255, 255, 255));
         barreOutilsArticles.setFloatable(false);
@@ -1098,27 +1168,23 @@ public class Panel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(panDetailsBancaires, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(5, 5, 5)
+                .addComponent(panContacts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(isReleverCompte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(panDetailsBancaires, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(5, 5, 5)
-                        .addComponent(panContacts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(labLogo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tabPrincipal, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(barreOutilsArticles, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, 0))
+                .addComponent(labLogo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(tabPrincipal)
+            .addComponent(barreOutilsArticles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSeparator4)
         );
         layout.setVerticalGroup(
@@ -1137,7 +1203,7 @@ public class Panel extends javax.swing.JPanel {
                 .addComponent(tabPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox1)
+                    .addComponent(isReleverCompte)
                     .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1197,8 +1263,8 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> combVatRule;
     private javax.swing.JComboBox<String> comboTypeFacture;
     private com.toedter.calendar.JDateChooser dateFacture;
+    private javax.swing.JCheckBox isReleverCompte;
     private javax.swing.JButton jButton5;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;

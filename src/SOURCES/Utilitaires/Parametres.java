@@ -29,8 +29,10 @@ public class Parametres {
     private EcouteurAjout ecouteurAjout;
     private EcouteurFacture ecouteurFacture = null;
     private Donnees donnees = null;
+    private String nomUtilisateur;
 
-    public Parametres(String numero, Vector<ArticleFacture> listArticles, ClientFacture client, EntrepriseFacture entreprise, String monnaie, double tva, double remise, EcouteurAjout ecouteurAjout) {
+    public Parametres(String nomUtilisateur, String numero, Vector<ArticleFacture> listArticles, ClientFacture client, EntrepriseFacture entreprise, String monnaie, double tva, double remise, EcouteurAjout ecouteurAjout) {
+        this.nomUtilisateur = nomUtilisateur;
         this.numero = numero;
         this.listArticles = listArticles;
         this.client = client;
@@ -46,12 +48,19 @@ public class Parametres {
         return entreprise;
     }
 
+    public String getNomUtilisateur() {
+        return nomUtilisateur;
+    }
+
+    public void setNomUtilisateur(String nomUtilisateur) {
+        this.nomUtilisateur = nomUtilisateur;
+    }
+    
+
     public void setEntreprise(EntrepriseFacture entreprise) {
         this.entreprise = entreprise;
     }
     
-    
-
     public Icones getIcones() {
         return icones;
     }

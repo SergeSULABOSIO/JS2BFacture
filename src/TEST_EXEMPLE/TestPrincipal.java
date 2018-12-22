@@ -43,15 +43,15 @@ public class TestPrincipal extends javax.swing.JFrame {
         listArticles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0));
         listArticles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0));
         
-        TESTClient client = new TESTClient(12, "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com");
+        TESTClient client = new TESTClient(12, "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
         
-        TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012");
+        TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
         
         String monnaie = "USD";
         double tva = 0;
         double remise = 0;
         
-        this.parametres = new Parametres(numeroFacture, listArticles, client, entreprise, monnaie, tva, remise, new EcouteurAjout() {
+        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, listArticles, client, entreprise, monnaie, tva, remise, new EcouteurAjout() {
             @Override
             public void setAjoutArticle(ModeleListeArticles modeleListeArticles) {
                 modeleListeArticles.AjouterArticle(new TESTProduit(-1, "", 1, "Année", 0, 0, 0));
