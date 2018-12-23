@@ -50,28 +50,28 @@ public class DocumentPDF extends PdfPageEventHelper {
     private Font Font_TexteSimple_Gras = null;
     private Font Font_TexteSimple_Italique = null;
     private Font Font_TexteSimple_Gras_Italique = null;
-
-    public final static int TYPE_FACTURE = 0;
-    public final static int TYPE_FACTURE_ET_RELEVE_DE_COMPTE = 1;
-    public final static int TYPE_RELEVE_DE_COMPTE = 2;
-    public final static int TYPE_FACTURE_PROFORMA = 3;
-
-    private int type_doc = TYPE_FACTURE_ET_RELEVE_DE_COMPTE;
+    public static final int ACTION_IMPRIMER = 0;
+    public static final int ACTION_OUVRIR = 1;
+   
     private Panel gestionnaireFacture;
 
-    public DocumentPDF(Panel panel) {
+    public DocumentPDF(Panel panel, int action) {
         try {
-            this.init(panel);
+            this.init(panel, action);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void init(Panel panel) {
+    private void init(Panel panel, int action) {
         this.gestionnaireFacture = panel;
         parametre_initialisation_fichier();
         parametre_construire_fichier();
-        parametres_ouvrir_fichier();
+        if(action == ACTION_OUVRIR){
+            parametres_ouvrir_fichier();
+        }else if(action == ACTION_IMPRIMER){
+            parametres_imprimer_fichier();
+        }
     }
 
     private void parametre_initialisation_fichier() {
@@ -120,6 +120,22 @@ public class DocumentPDF extends PdfPageEventHelper {
         if (fic.exists() == true) {
             try {
                 Desktop.getDesktop().open(fic);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this.gestionnaireFacture, "Impossible d'ouvrir le fichier !", "Erreur", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    private void parametres_imprimer_fichier() {
+        String nomFichier = "Facture_S2B.pdf";
+        if (this.gestionnaireFacture != null) {
+            nomFichier = this.gestionnaireFacture.getNomfichierPreuve();
+        }
+        File fic = new File(nomFichier);
+        if (fic.exists() == true) {
+            try {
+                Desktop.getDesktop().print(fic);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(this.gestionnaireFacture, "Impossible d'ouvrir le fichier !", "Erreur", JOptionPane.ERROR_MESSAGE);
@@ -610,7 +626,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     public static void main(String[] a) {
         //Exemple
-        DocumentPDF docpdf = new DocumentPDF(null);
+        DocumentPDF docpdf = new DocumentPDF(null, ACTION_OUVRIR);
     }
 
 }

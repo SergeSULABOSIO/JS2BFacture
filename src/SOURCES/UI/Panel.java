@@ -51,9 +51,9 @@ public class Panel extends javax.swing.JPanel {
     private Icones icones = null;
     private BarreOutils barreOutilsA = null;
     private MenuContextuel menuContextuel = null;
-    private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubWRD, rubEnregistrer = null;
+    private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubEnregistrer = null;
 
-    private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btWORD, btEnregistrer;
+    private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btEnregistrer;
 
     public ModeleListeArticles modeleListeArticles = null;
     public ModeleListePaiement modeleListePaiement = null;
@@ -61,17 +61,16 @@ public class Panel extends javax.swing.JPanel {
     private EcouteurUpdateClose callBackSynthese;
     private Parametres parametres;
 
-    
     public Panel(Parametres parametres, EcouteurUpdateClose callBackSynthese) {
         this.initComponents();
         this.parametres = parametres;
         this.callBackSynthese = callBackSynthese;
         this.icones = new Icones();
-        
+
         this.setClient();
         this.setContactEtBanques();
         this.setTypeFacture();
-        
+
         //Liste d'articles
         this.setBoutonsOutilsArticles();
         this.setMenuContArticles();
@@ -107,46 +106,46 @@ public class Panel extends javax.swing.JPanel {
     public ModeleListePaiement getModeleListePaiement() {
         return modeleListePaiement;
     }
-    
-    public String getNumeroFacture(){
+
+    public String getNumeroFacture() {
         return this.parametres.getNumero();
     }
-    
-    public String getRubriqueNomClient(){
+
+    public String getRubriqueNomClient() {
         return "Nom de l'élève";
     }
-    
-    public String getNomfichierPreuve(){
+
+    public String getNomfichierPreuve() {
         return "FactureS2B.pdf";
     }
-    
-    public String getTitreDoc(){
+
+    public String getTitreDoc() {
         return "" + comboTypeFacture.getSelectedItem();
     }
-    
-    public int getTitreDoc_(){
+
+    public int getTitreDoc_() {
         return comboTypeFacture.getSelectedIndex();
     }
-    
-    public boolean isImprimerRelever(){
+
+    public boolean isImprimerRelever() {
         return isReleverCompte.isSelected();
     }
-    
-    public EntrepriseFacture getEntreprise(){
+
+    public EntrepriseFacture getEntreprise() {
         return this.parametres.getEntreprise();
     }
-    
-    public String getNomUtilisateur(){
+
+    public String getNomUtilisateur() {
         return this.parametres.getNomUtilisateur();
     }
-    
-    public ClientFacture getClient(){
+
+    public ClientFacture getClient() {
         return this.parametres.getClient();
     }
 
     private void setClient() {
         if (this.parametres.getClient() != null) {
-            ClientFacture  client = this.parametres.getClient();
+            ClientFacture client = this.parametres.getClient();
             labNomClient.setIcon(icones.getClient_01());
             labNomClient.setText(client.getNom());
 
@@ -166,7 +165,7 @@ public class Panel extends javax.swing.JPanel {
             labContactEmails.setText(entreprise.getEmail());
             labContactSiteWeb.setText(entreprise.getSiteWeb());
             labContactTelephone.setText(entreprise.getTelephone());
-            
+
             labDetailBanque.setText(entreprise.getBanque());
             labDetailIntitule.setText(entreprise.getIntituleCompte());
             labDetailsIBAN.setText(entreprise.getIBAN());
@@ -262,11 +261,11 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void exporterPDF() {
-        try{
+        try {
             callBackSynthese.onActualiser("Production du fichier PDF...");
-            DocumentPDF docpdf = new DocumentPDF(this);
+            DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR);
             callBackSynthese.onActualiser("Fichier PDF produit avec succèss : " + (new File(getNomfichierPreuve())));
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -283,6 +282,16 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void imprimer() {
+        int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir imprimer ce document?", "Avertissement", JOptionPane.YES_NO_OPTION);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            try {
+                callBackSynthese.onActualiser("Impression du fichier PDF...");
+                DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_IMPRIMER);
+                callBackSynthese.onActualiser("Fichier PDF imprimé avec succèss : " + (new File(getNomfichierPreuve())));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -392,13 +401,6 @@ public class Panel extends javax.swing.JPanel {
             }
         });
 
-        rubWRD = new RubriqueSimple("Exp. Word", icones.getMS_Word_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                exporterWORD();
-            }
-        });
-
         rubEnregistrer = new RubriqueSimple("Enreg & Fermer", icones.getEnregistrer_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
@@ -414,7 +416,6 @@ public class Panel extends javax.swing.JPanel {
         menuContextuel.Ajouter(new JPopupMenu.Separator());
         menuContextuel.Ajouter(rubImprimer);
         menuContextuel.Ajouter(rubPDF);
-        menuContextuel.Ajouter(rubWRD);
         menuContextuel.Ajouter(new JPopupMenu.Separator());
         menuContextuel.Ajouter(rubEnregistrer);
         menuContextuel.Ajouter(rubFermer);
@@ -468,14 +469,6 @@ public class Panel extends javax.swing.JPanel {
             }
         });
 
-        //Export. MS WORD
-        btWORD = new Bouton(12, "Exp. Word", icones.getMS_Word_02(), new BoutonListener() {
-            @Override
-            public void OnEcouteLeClick() {
-                exporterWORD();
-            }
-        });
-
         //Fermer
         btFermer = new Bouton(12, "Fermer", icones.getFermer_02(), new BoutonListener() {
             @Override
@@ -500,7 +493,6 @@ public class Panel extends javax.swing.JPanel {
         barreOutilsA.AjouterSeparateur();
         barreOutilsA.AjouterBouton(btImprimer);
         barreOutilsA.AjouterBouton(btPDF);
-        barreOutilsA.AjouterBouton(btWORD);
         barreOutilsA.AjouterSeparateur();
         barreOutilsA.AjouterBouton(btEnregistrer);
         barreOutilsA.AjouterBouton(btFermer);
