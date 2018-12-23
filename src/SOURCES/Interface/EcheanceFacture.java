@@ -18,8 +18,8 @@ public interface EcheanceFacture {
     public abstract int getId();
     public abstract String getNom();
     public abstract int getIdFacture();
-    public abstract String getDateInitiale();
-    public abstract String getDateFinale();
+    public abstract Date getDateInitiale();
+    public abstract Date getDateFinale();
     public abstract String getNumeroFacture();
     public abstract int getNbJoursRestant();
     public abstract double getMontantPaye();

@@ -21,11 +21,24 @@ public class TESTEcheance implements EcheanceFacture {
     public String dateInitiale;
     public String dateFinale;
     public String numeroFacture;
-    public int nbJoursRestant;
     public double montantPaye;
     public double montantDu;
     public int idMonnaie;
     public String monnaie;
+
+    public TESTEcheance(int id, String nom, int idFacture, String dateInitiale, String dateFinale, String numeroFacture, double montantPaye, double montantDu, int idMonnaie, String monnaie) {
+        this.id = id;
+        this.nom = nom;
+        this.idFacture = idFacture;
+        this.dateInitiale = dateInitiale;
+        this.dateFinale = dateFinale;
+        this.numeroFacture = numeroFacture;
+        this.montantPaye = montantPaye;
+        this.montantDu = montantDu;
+        this.idMonnaie = idMonnaie;
+        this.monnaie = monnaie;
+    }
+    
 
     public int getId() {
         return id;
@@ -56,11 +69,9 @@ public class TESTEcheance implements EcheanceFacture {
     }
 
     public int getNbJoursRestant() {
-        return nbJoursRestant;
-    }
-
-    public void setNbJoursRestant(int nbJoursRestant) {
-        this.nbJoursRestant = nbJoursRestant;
+        Date finale = new Date(getDateFinale());
+        Date today = new Date();
+        return today.compareTo(finale);
     }
 
     public double getMontantPaye() {
@@ -78,7 +89,6 @@ public class TESTEcheance implements EcheanceFacture {
     public void setMontantDu(double montantDu) {
         this.montantDu = montantDu;
     }
-    
 
     public int getIdMonnaie() {
         return idMonnaie;
@@ -137,9 +147,14 @@ public class TESTEcheance implements EcheanceFacture {
 
     @Override
     public String toString() {
-        return "TESTEcheance{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", nbJoursRestant=" + nbJoursRestant + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
+        return "TESTEcheance{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
     }
 
+    
 
+    public static void main(String[] a){
+        TESTEcheance echean = new TESTEcheance(-1, "PREMIERE TRANCHE", 12, "30-06-2016 23:12:00", "31-12-2018 23:12:00", "0012236547", 10, 100, 1, "USD");
+        System.out.println("nb Jour : " + echean.getNbJoursRestant());
+    }
     
 }
