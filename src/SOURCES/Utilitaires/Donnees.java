@@ -5,55 +5,55 @@
  */
 package SOURCES.Utilitaires;
 
-import SOURCES.Interface.ArticleFacture;
-import SOURCES.Interface.EcheanceFacture;
-import SOURCES.Interface.PaiementFacture;
 import java.util.Vector;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfaceEcheance;
 
 /**
  *
  * @author HP Pavilion
  */
 public class Donnees {
-    private Vector<ArticleFacture> articles;
-    private Vector<PaiementFacture> paiements;
-    private Vector<EcheanceFacture> echeance;
+    private Vector<InterfaceArticle> articles;
+    private Vector<InterfacePaiement> paiements;
+    private Vector<InterfaceEcheance> echeance;
 
-    public Donnees(Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements, Vector<EcheanceFacture> echeance) {
+    public Donnees(Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeance) {
         this.articles = articles;
         this.paiements = paiements;
         this.echeance = echeance;
     }
 
-    public Donnees(Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements) {
+    public Donnees(Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements) {
         this.articles = articles;
         this.paiements = paiements;
         this.echeance = new Vector<>();
     }
 
-    public Vector<EcheanceFacture> getEcheance() {
+    public Vector<InterfaceEcheance> getEcheance() {
         return echeance;
     }
 
-    public void setEcheance(Vector<EcheanceFacture> echeance) {
+    public void setEcheance(Vector<InterfaceEcheance> echeance) {
         this.echeance = echeance;
     }
 
     
 
-    public Vector<ArticleFacture> getArticles() {
+    public Vector<InterfaceArticle> getArticles() {
         return articles;
     }
 
-    public void setArticles(Vector<ArticleFacture> articles) {
+    public void setArticles(Vector<InterfaceArticle> articles) {
         this.articles = articles;
     }
 
-    public Vector<PaiementFacture> getPaiements() {
+    public Vector<InterfacePaiement> getPaiements() {
         return paiements;
     }
 
-    public void setPaiements(Vector<PaiementFacture> paiements) {
+    public void setPaiements(Vector<InterfacePaiement> paiements) {
         this.paiements = paiements;
     }
 

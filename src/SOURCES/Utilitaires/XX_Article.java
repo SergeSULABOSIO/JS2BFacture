@@ -3,16 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TEST_EXEMPLE;
+package SOURCES.Utilitaires;
 
-import SOURCES.Utilitaires.Util;
 import SOURCES.Interface.InterfaceArticle;
 
 /**
  *
  * @author HP Pavilion
  */
-public class TESTProduit implements InterfaceArticle{
+public class XX_Article implements InterfaceArticle{
     
     public int id;
     public String nom;
@@ -23,7 +22,7 @@ public class TESTProduit implements InterfaceArticle{
     public double rabais;
     public int tranches;
 
-    public TESTProduit(int id, String nom, double qte, String unite, double tvaprc, double prixUht, double rabais, int tranches) {
+    public XX_Article(int id, String nom, double qte, String unite, double tvaprc, double prixUht, double rabais, int tranches) {
         this.id = id;
         this.nom = nom;
         this.qte = qte;

@@ -5,10 +5,6 @@
  */
 package SOURCES.GenerateurPDF;
 
-import SOURCES.Interface.ArticleFacture;
-import SOURCES.Interface.ClientFacture;
-import SOURCES.Interface.EntrepriseFacture;
-import SOURCES.Interface.PaiementFacture;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.Panel;
@@ -34,6 +30,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfaceEntreprise;
+import SOURCES.Interface.InterfaceClient;
 
 /**
  *
@@ -189,7 +189,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setBasDePage() throws Exception {
         if (this.gestionnaireFacture != null) {
-            EntrepriseFacture entreprise = this.gestionnaireFacture.getEntreprise();
+            InterfaceEntreprise entreprise = this.gestionnaireFacture.getEntreprise();
             if (entreprise != null) {
                 this.document.add(getParagraphe(entreprise.getNom() + "\n" + entreprise.getAdresse() + " | " + entreprise.getTelephone() + " | " + entreprise.getEmail() + " | " + entreprise.getSiteWeb(), Font_TexteSimple, Element.ALIGN_CENTER));
             } else {
@@ -256,7 +256,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             celluleDetailsEntreprise.setHorizontalAlignment(Element.ALIGN_TOP);
 
             if (this.gestionnaireFacture != null) {
-                EntrepriseFacture entreprise = this.gestionnaireFacture.getEntreprise();
+                InterfaceEntreprise entreprise = this.gestionnaireFacture.getEntreprise();
                 if (entreprise != null) {
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getNom(), Font_Titre2, Element.ALIGN_LEFT));
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getAdresse(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
@@ -296,7 +296,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             celluleDonnees.setPadding(2);
             celluleDonnees.setBorderWidth(0);
             if (this.gestionnaireFacture != null) {
-                ClientFacture client = this.gestionnaireFacture.getClient();
+                InterfaceClient client = this.gestionnaireFacture.getClient();
                 if (client != null) {
                     celluleDonnees.addElement(getParagraphe(client.getNom() + "\n" + client.getTelephone() + "\nAures infos : " + client.getAutresInfos(), Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 } else {
@@ -329,9 +329,9 @@ public class DocumentPDF extends PdfPageEventHelper {
             );
             if (this.gestionnaireFacture != null) {
                 ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
-                Vector<PaiementFacture> listePaiement = modelPaiement.getListeData();
+                Vector<InterfacePaiement> listePaiement = modelPaiement.getListeData();
                 int i = 0;
-                for (PaiementFacture paiement : listePaiement) {
+                for (InterfacePaiement paiement : listePaiement) {
                     String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
                     setLigneTabReleve(tableReleve, paiement.getDate().toLocaleString(), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
                     i++;
@@ -392,10 +392,10 @@ public class DocumentPDF extends PdfPageEventHelper {
 
             if (this.gestionnaireFacture != null) {
                 ModeleListeArticles modelArticle = this.gestionnaireFacture.getModeleListeArticles();
-                Vector<ArticleFacture> listeArticles = modelArticle.getListeData();
+                Vector<InterfaceArticle> listeArticles = modelArticle.getListeData();
                 int i = 0;
 
-                for (ArticleFacture article : listeArticles) {
+                for (InterfaceArticle article : listeArticles) {
                     String nomA = "" + (article.getNom().contains("_") ? article.getNom().split("_")[1] : article.getNom());
                     setLigneTabArticle(tableDetailsArticles, nomA, i, article.getQte(), article.getPrixUHT_avant_rabais(), article.getRabais(), article.getPrixUHT_apres_rabais(), article.getTvaMontant(), article.getTotalTTC());
                     i++;
@@ -485,7 +485,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setDetailsBanque(PdfPTable tableau, float borderwidth) {
         if (this.gestionnaireFacture != null) {
-            EntrepriseFacture entreprise = this.gestionnaireFacture.getEntreprise();
+            InterfaceEntreprise entreprise = this.gestionnaireFacture.getEntreprise();
             if (entreprise != null) {
                 if (entreprise.getBanque().trim().length() != 0) {
                     tableau.addCell(getCelluleTableau("Banque :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));

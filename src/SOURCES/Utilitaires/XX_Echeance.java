@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TEST_EXEMPLE;
+package SOURCES.Utilitaires;
 
 import java.util.Date;
 import SOURCES.Interface.InterfaceEcheance;
@@ -12,8 +12,8 @@ import SOURCES.Interface.InterfaceEcheance;
  *
  * @author HP Pavilion
  */
-public class TESTEcheance implements InterfaceEcheance {
-
+public class XX_Echeance implements InterfaceEcheance{
+    
     public int id;
     public String nom;
     public int idFacture;
@@ -25,7 +25,7 @@ public class TESTEcheance implements InterfaceEcheance {
     public int idMonnaie;
     public String monnaie;
 
-    public TESTEcheance(int id, String nom, int idFacture, Date dateInitiale, Date dateFinale, String numeroFacture, double montantPaye, double montantDu, int idMonnaie, String monnaie) {
+    public XX_Echeance(int id, String nom, int idFacture, Date dateInitiale, Date dateFinale, String numeroFacture, double montantPaye, double montantDu, int idMonnaie, String monnaie) {
         this.id = id;
         this.nom = nom;
         this.idFacture = idFacture;
@@ -37,26 +37,45 @@ public class TESTEcheance implements InterfaceEcheance {
         this.idMonnaie = idMonnaie;
         this.monnaie = monnaie;
     }
-    
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNom() {
         return nom;
     }
 
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
     public int getIdFacture() {
         return idFacture;
+    }
+
+    public void setIdFacture(int idFacture) {
+        this.idFacture = idFacture;
     }
 
     public Date getDateInitiale() {
         return dateInitiale;
     }
 
+    public void setDateInitiale(Date dateInitiale) {
+        this.dateInitiale = dateInitiale;
+    }
+
     public Date getDateFinale() {
         return dateFinale;
+    }
+
+    public void setDateFinale(Date dateFinale) {
+        this.dateFinale = dateFinale;
     }
 
     public String getNumeroFacture() {
@@ -71,8 +90,8 @@ public class TESTEcheance implements InterfaceEcheance {
         return montantPaye;
     }
 
-    public void setMontantPaye(double montant) {
-        this.montantPaye = montant;
+    public void setMontantPaye(double montantPaye) {
+        this.montantPaye = montantPaye;
     }
 
     public double getMontantDu() {
@@ -98,33 +117,12 @@ public class TESTEcheance implements InterfaceEcheance {
     public void setMonnaie(String monnaie) {
         this.monnaie = monnaie;
     }
-    
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public void setIdFacture(int idFacture) {
-        this.idFacture = idFacture;
-    }
-
-    public void setDateInitiale(Date dateInitiale) {
-        this.dateInitiale = dateInitiale;
-    }
-
-    public void setDateFinale(Date dateFinale) {
-        this.dateFinale = dateFinale;
-    }
 
     @Override
     public String toString() {
-        return "TESTEcheance{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
+        return "Tranches{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
     }
+
     
-    public static void main(String[] a){
-        //System.out.println("nb Jour : " + echean.getNbJoursRestant());
-    }
+    
 }

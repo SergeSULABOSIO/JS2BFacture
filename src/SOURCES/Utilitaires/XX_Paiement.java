@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package TEST_EXEMPLE;
+package SOURCES.Utilitaires;
 
 import java.util.Date;
 import SOURCES.Interface.InterfacePaiement;
@@ -12,7 +12,7 @@ import SOURCES.Interface.InterfacePaiement;
  *
  * @author HP Pavilion
  */
-public class TESTPaiement implements InterfacePaiement{
+public class XX_Paiement implements InterfacePaiement{
     public int id;
     public int idClient;
     public int idArticle;
@@ -22,10 +22,10 @@ public class TESTPaiement implements InterfacePaiement{
     public double montant;
     public Date date;
 
-    public TESTPaiement() {
+    public XX_Paiement() {
     }
 
-    public TESTPaiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date) {
+    public XX_Paiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date) {
         this.id = id;
         this.idClient = idClient;
         this.idArticle = idArticle;

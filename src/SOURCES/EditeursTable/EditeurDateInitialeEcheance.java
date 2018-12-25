@@ -6,10 +6,7 @@
 package SOURCES.EditeursTable;
 
 
-import SOURCES.Interface.ArticleFacture;
-import SOURCES.Interface.EcheanceFacture;
 import SOURCES.ModelsTable.ModeleListePaiement;
-import SOURCES.Interface.PaiementFacture;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
@@ -18,6 +15,9 @@ import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfaceEcheance;
 
 /**
  *
@@ -30,7 +30,7 @@ public class EditeurDateInitialeEcheance extends AbstractCellEditor implements T
     private ModeleListeEcheance modeleListeEcheance;
     private int updatedRow;
     
-    public EditeurDateInitialeEcheance(Vector<ArticleFacture> listeArticle, ModeleListeEcheance modeleListeEcheance) {
+    public EditeurDateInitialeEcheance(Vector<InterfaceArticle> listeArticle, ModeleListeEcheance modeleListeEcheance) {
         this.modeleListeEcheance = modeleListeEcheance;
     }
 
@@ -38,7 +38,7 @@ public class EditeurDateInitialeEcheance extends AbstractCellEditor implements T
     @Override
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
-        EcheanceFacture updatedEcheanceInTable = modeleListeEcheance.getEcheance_row(updatedRow);
+        InterfaceEcheance updatedEcheanceInTable = modeleListeEcheance.getEcheance_row(updatedRow);
         updatedEcheanceInTable.setDateInitiale(dateChooser.getDate());
         return dateChooser.getDate();
     }

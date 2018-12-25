@@ -5,11 +5,11 @@
  */
 package SOURCES.CallBack;
 
-import SOURCES.Interface.ArticleFacture;
-import SOURCES.Interface.ClientFacture;
-import SOURCES.Interface.EcheanceFacture;
-import SOURCES.Interface.PaiementFacture;
 import java.util.Vector;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Interface.InterfaceClient;
 
 /**
  *
@@ -17,6 +17,6 @@ import java.util.Vector;
  */
 public abstract class EcouteurFacture {
     
-    public abstract void onEnregistre(ClientFacture client, Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements, Vector<EcheanceFacture> echeances);
+    public abstract void onEnregistre(InterfaceClient client, Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeances);
     
 }

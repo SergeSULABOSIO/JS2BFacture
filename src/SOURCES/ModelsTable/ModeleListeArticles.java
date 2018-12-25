@@ -5,13 +5,13 @@
  */
 package SOURCES.ModelsTable;
 
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.CallBack.EcouteurValeursChangees;
 import SOURCES.Utilitaires.Util;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
+import SOURCES.Interface.InterfaceArticle;
 
 /**
  *
@@ -20,7 +20,7 @@ import javax.swing.table.AbstractTableModel;
 public class ModeleListeArticles extends AbstractTableModel {
 
     private String[] titreColonnes = {"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
-    private Vector<ArticleFacture> listeData = new Vector<>();
+    private Vector<InterfaceArticle> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
     //private boolean canPayVAT;
@@ -34,15 +34,15 @@ public class ModeleListeArticles extends AbstractTableModel {
         appliquerAssigetissementTVA();
     }
 
-    public void setListeArticles(Vector<ArticleFacture> listeData) {
+    public void setListeArticles(Vector<InterfaceArticle> listeData) {
         this.listeData = listeData;
         appliquerAssigetissementTVA();
         redessinerTable();
     }
 
-    public ArticleFacture getArticle(int row) {
+    public InterfaceArticle getArticle(int row) {
         if (row < listeData.size() && row != -1) {
-            ArticleFacture art = listeData.elementAt(row);
+            InterfaceArticle art = listeData.elementAt(row);
             if (art != null) {
                 return art;
             } else {
@@ -53,9 +53,9 @@ public class ModeleListeArticles extends AbstractTableModel {
         }
     }
 
-    public ArticleFacture getArticle_id(int id) {
+    public InterfaceArticle getArticle_id(int id) {
         if (id != -1) {
-            for (ArticleFacture art : listeData) {
+            for (InterfaceArticle art : listeData) {
                 //System.out.println(" - id="+art.getId());
                 if (id == art.getId()) {
                     return art;
@@ -65,7 +65,7 @@ public class ModeleListeArticles extends AbstractTableModel {
         return null;
     }
 
-    public Vector<ArticleFacture> getListeData() {
+    public Vector<InterfaceArticle> getListeData() {
         return listeData;
     }
 
@@ -85,7 +85,7 @@ public class ModeleListeArticles extends AbstractTableModel {
         });
     }
 
-    public void AjouterArticle(ArticleFacture art) {
+    public void AjouterArticle(InterfaceArticle art) {
         this.listeData.add(art);
         appliquerAssigetissementTVA();
         redessinerTable();
@@ -93,7 +93,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     public void SupprimerArticle(int row) {
         if (row < listeData.size() && row != -1) {
-            ArticleFacture articl = listeData.elementAt(row);
+            InterfaceArticle articl = listeData.elementAt(row);
             if (articl != null) {
                 int dialogResult = JOptionPane.showConfirmDialog(parent, "Etes-vous sûr de vouloir supprimer cette liste?", "Avertissement", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
@@ -109,7 +109,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     public double getTotal_Net() {
         double mntTva = 0;
         double mntTTC = 0;
-        for (ArticleFacture art : listeData) {
+        for (InterfaceArticle art : listeData) {
             mntTva = mntTva + art.getTvaMontant();
             mntTTC = mntTTC + art.getTotalTTC();
         }
@@ -118,7 +118,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     
     public double getTotal_Net_AvantRabais() {
         double mnt = 0;
-        for (ArticleFacture art : listeData) {
+        for (InterfaceArticle art : listeData) {
             mnt = mnt + art.getPrixUHT_avant_rabais();
         }
         return Util.round((mnt), 2);
@@ -126,7 +126,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     public double getTotal_TVA() {
         double a = 0;
-        for (ArticleFacture art : listeData) {
+        for (InterfaceArticle art : listeData) {
             a = a + art.getTvaMontant();
         }
         return Util.round(a, 2);
@@ -134,7 +134,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     public double getTotal_Rabais() {
         double a = 0;
-        for (ArticleFacture art : listeData) {
+        for (InterfaceArticle art : listeData) {
             a = a + art.getRabais();
         }
         return Util.round(a, 2);
@@ -142,7 +142,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     public double getTotal_TTC() {
         double a = 0;
-        for (ArticleFacture art : listeData) {
+        for (InterfaceArticle art : listeData) {
             a = a + art.getTotalTTC();
         }
         return Util.round(a, 2);
@@ -235,7 +235,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        ArticleFacture article = listeData.get(rowIndex);
+        InterfaceArticle article = listeData.get(rowIndex);
         switch (columnIndex) {
             case 0:
                 String nom = aValue + "";

@@ -12,7 +12,7 @@ import javax.swing.JProgressBar;
  *
  * @author HP Pavilion
  */
-public interface EcheanceFacture {
+public interface InterfaceEcheance {
     
     //les getters
     public abstract int getId();

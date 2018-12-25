@@ -15,21 +15,16 @@ import BEAN_MenuContextuel.RubriqueListener;
 import BEAN_MenuContextuel.RubriqueSimple;
 import ICONES.Icones;
 import SOURCES.CallBack.EcouteurFacture;
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.EditeursTable.EditeurArticleFacture;
 import SOURCES.EditeursTable.EditeurArticlePaiement;
 import SOURCES.EditeursTable.EditeurDatePaiement;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
-import SOURCES.Interface.PaiementFacture;
 import SOURCES.Utilitaires.Parametres;
 import SOURCES.EndusTable.RenduTableArticle;
 import SOURCES.EndusTable.RenduTableEcheance;
 import SOURCES.EndusTable.RenduTablePaiement;
 import SOURCES.GenerateurPDF.DocumentPDF;
-import SOURCES.Interface.ClientFacture;
-import SOURCES.Interface.EcheanceFacture;
-import SOURCES.Interface.EntrepriseFacture;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.Utilitaires.Util;
 import java.awt.event.MouseEvent;
@@ -39,6 +34,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.table.TableColumn;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfaceEntreprise;
+import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Interface.InterfaceClient;
 
 /**
  *
@@ -55,7 +55,6 @@ public class Panel extends javax.swing.JPanel {
     private BarreOutils barreOutilsA = null;
     private MenuContextuel menuContextuel = null;
     private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubEnregistrer = null;
-
     private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btEnregistrer;
 
     public ModeleListeArticles modeleListeArticles = null;
@@ -140,7 +139,7 @@ public class Panel extends javax.swing.JPanel {
         return isReleverCompte.isSelected();
     }
 
-    public EntrepriseFacture getEntreprise() {
+    public InterfaceEntreprise getEntreprise() {
         return this.parametres.getEntreprise();
     }
 
@@ -148,13 +147,13 @@ public class Panel extends javax.swing.JPanel {
         return this.parametres.getNomUtilisateur();
     }
 
-    public ClientFacture getClient() {
+    public InterfaceClient getClient() {
         return this.parametres.getClient();
     }
 
     private void setClient() {
         if (this.parametres.getClient() != null) {
-            ClientFacture client = this.parametres.getClient();
+            InterfaceClient client = this.parametres.getClient();
             labNomClient.setIcon(icones.getClient_01());
             labNomClient.setText(client.getNom());
 
@@ -168,7 +167,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void setContactEtBanques() {
         if (this.parametres.getEntreprise() != null) {
-            EntrepriseFacture entreprise = this.parametres.getEntreprise();
+            InterfaceEntreprise entreprise = this.parametres.getEntreprise();
             labContactNom.setText(entreprise.getNom());
             labContactAdresse.setText(entreprise.getAdresse());
             labContactEmails.setText(entreprise.getEmail());
@@ -267,7 +266,7 @@ public class Panel extends javax.swing.JPanel {
             public void onValeurChangee() {
                 actualiserTotaux();
             }
-        });
+        }, parametres.getMonnaie(), parametres.getIdMonnaie(), parametres.getNumero(), parametres.getIdFacture());
 
         //On charge les données s'il y en a
         if (this.parametres.getDonnees() != null) {
@@ -569,17 +568,17 @@ public class Panel extends javax.swing.JPanel {
         }
         switch (tab) {
             case 0:
-                ArticleFacture artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
+                InterfaceArticle artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
                 if (artcl != null) {
                     this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + artcl.getTotalTTC() + " " + this.parametres.getMonnaie());
                 }   break;
             case 1:
-                PaiementFacture paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
+                InterfacePaiement paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
                 if (paiment != null) {
                     this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", " + paiment.getNomDepositaire() + " a payé " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
                 }   break;
             default:
-                EcheanceFacture echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
+                InterfaceEcheance echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
                 if (echeance != null) {
                     this.callBackSynthese.onActualiser("Entre " + echeance.getDateInitiale().toLocaleString() + " et " + echeance.getDateFinale().toLocaleString() + ", il faut payer " + echeance.getMontantDu() + " " + this.parametres.getMonnaie());
                 }   break;
