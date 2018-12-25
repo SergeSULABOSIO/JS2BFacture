@@ -18,15 +18,15 @@ public class TESTEcheance implements EcheanceFacture {
     public int id;
     public String nom;
     public int idFacture;
-    public String dateInitiale;
-    public String dateFinale;
+    public Date dateInitiale;
+    public Date dateFinale;
     public String numeroFacture;
     public double montantPaye;
     public double montantDu;
     public int idMonnaie;
     public String monnaie;
 
-    public TESTEcheance(int id, String nom, int idFacture, String dateInitiale, String dateFinale, String numeroFacture, double montantPaye, double montantDu, int idMonnaie, String monnaie) {
+    public TESTEcheance(int id, String nom, int idFacture, Date dateInitiale, Date dateFinale, String numeroFacture, double montantPaye, double montantDu, int idMonnaie, String monnaie) {
         this.id = id;
         this.nom = nom;
         this.idFacture = idFacture;
@@ -52,11 +52,11 @@ public class TESTEcheance implements EcheanceFacture {
         return idFacture;
     }
 
-    public String getDateInitiale() {
+    public Date getDateInitiale() {
         return dateInitiale;
     }
 
-    public String getDateFinale() {
+    public Date getDateFinale() {
         return dateFinale;
     }
 
@@ -66,12 +66,6 @@ public class TESTEcheance implements EcheanceFacture {
 
     public void setNumeroFacture(String numeroFacture) {
         this.numeroFacture = numeroFacture;
-    }
-
-    public int getNbJoursRestant() {
-        Date finale = new Date(getDateFinale());
-        Date today = new Date();
-        return today.compareTo(finale);
     }
 
     public double getMontantPaye() {
@@ -118,43 +112,20 @@ public class TESTEcheance implements EcheanceFacture {
         this.idFacture = idFacture;
     }
 
-    public void setDateInitiale(String dateInitiale) {
+    public void setDateInitiale(Date dateInitiale) {
         this.dateInitiale = dateInitiale;
     }
 
-    public void setDateFinale(String dateFinale) {
+    public void setDateFinale(Date dateFinale) {
         this.dateFinale = dateFinale;
-    }
-    
-    @Override
-    public JProgressBar getEtatProgression() {
-        JProgressBar prog = new JProgressBar();
-        prog.setStringPainted(true);
-        prog.setMinimum((int)getMontantDu());
-        prog.setString(getMontantPaye()+ " " + getMonnaie());
-        return new JProgressBar();
-    }
-
-    @Override
-    public void setDateInitiale(Date date) {
-        this.dateFinale = date.toLocaleString();
-    }
-
-    @Override
-    public void setDateFinale(Date date) {
-        this.dateFinale = date.toLocaleString();
     }
 
     @Override
     public String toString() {
         return "TESTEcheance{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
     }
-
     
-
     public static void main(String[] a){
-        TESTEcheance echean = new TESTEcheance(-1, "PREMIERE TRANCHE", 12, "30-06-2016 23:12:00", "31-12-2018 23:12:00", "0012236547", 10, 100, 1, "USD");
-        System.out.println("nb Jour : " + echean.getNbJoursRestant());
+        //System.out.println("nb Jour : " + echean.getNbJoursRestant());
     }
-    
 }

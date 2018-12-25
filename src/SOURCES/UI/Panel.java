@@ -24,10 +24,13 @@ import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.Interface.PaiementFacture;
 import SOURCES.Utilitaires.Parametres;
 import SOURCES.EndusTable.RenduTableArticle;
+import SOURCES.EndusTable.RenduTableEcheance;
 import SOURCES.EndusTable.RenduTablePaiement;
 import SOURCES.GenerateurPDF.DocumentPDF;
 import SOURCES.Interface.ClientFacture;
+import SOURCES.Interface.EcheanceFacture;
 import SOURCES.Interface.EntrepriseFacture;
+import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.Utilitaires.Util;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -57,6 +60,7 @@ public class Panel extends javax.swing.JPanel {
 
     public ModeleListeArticles modeleListeArticles = null;
     public ModeleListePaiement modeleListePaiement = null;
+    public ModeleListeEcheance modeleListeEcheance = null;
     //public EcouteurFacture ecouteurFacture = null;
     private EcouteurUpdateClose callBackSynthese;
     private Parametres parametres;
@@ -77,6 +81,7 @@ public class Panel extends javax.swing.JPanel {
         //Liste des paiements - Rélévé de compte
         this.parametrerTableArticles();
         this.parametrerTablePaiement();
+        this.parametrerTableEcheance();
         this.actualiserTotaux();
 
         this.dateFacture.setDate(new Date());
@@ -107,6 +112,10 @@ public class Panel extends javax.swing.JPanel {
         return modeleListePaiement;
     }
 
+    public ModeleListeEcheance getModeleListeEcheance() {
+        return modeleListeEcheance;
+    }
+    
     public String getNumeroFacture() {
         return this.parametres.getNumero();
     }
@@ -251,6 +260,45 @@ public class Panel extends javax.swing.JPanel {
         col_Montant.setPreferredWidth(100);
         col_Reste.setPreferredWidth(100);
     }
+    
+    private void parametrerTableEcheance() {
+        this.modeleListeEcheance = new ModeleListeEcheance(scrollListeEcheances, modeleListePaiement, modeleListeArticles, new EcouteurValeursChangees() {
+            @Override
+            public void onValeurChangee() {
+                actualiserTotaux();
+            }
+        });
+
+        //On charge les données s'il y en a
+        if (this.parametres.getDonnees() != null) {
+            this.modeleListeEcheance.setListeEcheance(this.parametres.getDonnees().getEcheance());
+        }
+
+        //Parametrage du modele contenant les données de la table
+        this.tableListeEcheance.setModel(this.modeleListeEcheance);
+
+        //Parametrage du rendu de la table
+        //this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaie(), icones.getModifier_01(), icones.getSablier_01()));
+        //this.tableListeEcheance.setRowHeight(25);
+
+        /*
+        TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(0);
+        col_Date.setCellEditor(new EditeurDatePaiement(this.parametres.getListArticles(), this.modeleListePaiement));
+
+        TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(1);
+        col_Article.setCellEditor(new EditeurArticlePaiement(this.parametres.getListArticles(), this.modeleListeArticles, this.modeleListePaiement));
+
+        TableColumn col_Depositaire = this.tableListePaiement.getColumnModel().getColumn(2);
+        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(3);
+        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(4);
+
+        col_Date.setPreferredWidth(200);
+        col_Article.setPreferredWidth(200);
+        col_Depositaire.setPreferredWidth(200);
+        col_Montant.setPreferredWidth(100);
+        col_Reste.setPreferredWidth(100);
+        */
+    }
 
     private void appliquerTva() {
         if (this.parametres.getTva() == 0) {
@@ -270,10 +318,7 @@ public class Panel extends javax.swing.JPanel {
         }
     }
 
-    private void exporterWORD() {
-
-    }
-
+    
     private void fermer() {
         int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir fermer cette fenêtre?", "Avertissement", JOptionPane.YES_NO_OPTION);
         if (dialogResult == JOptionPane.YES_OPTION) {
@@ -298,7 +343,7 @@ public class Panel extends javax.swing.JPanel {
     private void enregistrer() {
         EcouteurFacture ef = this.parametres.getEcouteurFacture();
         if (ef != null) {
-            ef.onEnregistre(this.parametres.getClient(), this.modeleListeArticles.getListeData(), this.modeleListePaiement.getListeData());
+            ef.onEnregistre(this.parametres.getClient(), this.modeleListeArticles.getListeData(), this.modeleListePaiement.getListeData(), this.modeleListeEcheance.getListeData());
             fermer();
         }
     }
@@ -327,25 +372,35 @@ public class Panel extends javax.swing.JPanel {
     private void supprimer() {
         if (indexTabSelected == 0) {
             modeleListeArticles.SupprimerArticle(tableListeArticle.getSelectedRow());
-        } else {
+        } else if (indexTabSelected == 1){
             modeleListePaiement.SupprimerPaiement(tableListePaiement.getSelectedRow(), true);
+        } else {
+            modeleListeEcheance.SupprimerEcheance(tableListeEcheance.getSelectedRow(), true);
         }
     }
 
     private void vider() {
         if (indexTabSelected == 0) {
             modeleListeArticles.viderListe();
-        } else {
+        } else if (indexTabSelected == 1){
             modeleListePaiement.viderListe();
+        } else {
+            modeleListeEcheance.viderListe();
         }
     }
 
     private void ajouter() {
         if (indexTabSelected == 0) {
             this.parametres.getEcouteurAjout().setAjoutArticle(modeleListeArticles);
-        } else {
+        } else if (indexTabSelected == 1){
             if (modeleListeArticles.getRowCount() != 0) {
                 this.parametres.getEcouteurAjout().setAjoutPaiement(modeleListePaiement);
+            } else {
+                JOptionPane.showMessageDialog(tabPrincipal, "Aucun article n'a été séléctionné !");
+            }
+        } else {
+            if (modeleListeArticles.getRowCount() != 0) {
+                this.parametres.getEcouteurAjout().setAjoutEcheance(modeleListeEcheance);
             } else {
                 JOptionPane.showMessageDialog(tabPrincipal, "Aucun article n'a été séléctionné !");
             }
@@ -498,25 +553,36 @@ public class Panel extends javax.swing.JPanel {
         barreOutilsA.AjouterBouton(btFermer);
     }
 
-    private void ecouterMenContA(java.awt.event.MouseEvent evt, boolean isArticle) {
+    private void ecouterMenContA(java.awt.event.MouseEvent evt, int tab) {
         if (evt.getButton() == MouseEvent.BUTTON3) {
-            if (isArticle == true) {
-                menuContextuel.afficher(scrollListeArticles, evt.getX(), evt.getY());
-            } else {
-                menuContextuel.afficher(scrollListeReleveCompte, evt.getX(), evt.getY());
+            switch (tab) {
+                case 0:
+                    menuContextuel.afficher(scrollListeArticles, evt.getX(), evt.getY());
+                    break;
+                case 1:
+                    menuContextuel.afficher(scrollListeReleveCompte, evt.getX(), evt.getY());
+                    break;
+                default:
+                    menuContextuel.afficher(scrollListeEcheances, evt.getX(), evt.getY());
+                    break;
             }
         }
-
-        if (isArticle == true) {
-            ArticleFacture artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
-            if (artcl != null) {
-                this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + artcl.getTotalTTC() + " " + this.parametres.getMonnaie());
-            }
-        } else {
-            PaiementFacture paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
-            if (paiment != null) {
-                this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", " + paiment.getNomDepositaire() + " a payé " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
-            }
+        switch (tab) {
+            case 0:
+                ArticleFacture artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
+                if (artcl != null) {
+                    this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + artcl.getTotalTTC() + " " + this.parametres.getMonnaie());
+                }   break;
+            case 1:
+                PaiementFacture paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
+                if (paiment != null) {
+                    this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", " + paiment.getNomDepositaire() + " a payé " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
+                }   break;
+            default:
+                EcheanceFacture echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
+                if (echeance != null) {
+                    this.callBackSynthese.onActualiser("Entre " + echeance.getDateInitiale().toLocaleString() + " et " + echeance.getDateFinale().toLocaleString() + ", il faut payer " + echeance.getMontantDu() + " " + this.parametres.getMonnaie());
+                }   break;
         }
 
     }
@@ -611,6 +677,8 @@ public class Panel extends javax.swing.JPanel {
         tableListeArticle = new javax.swing.JTable();
         scrollListeReleveCompte = new javax.swing.JScrollPane();
         tableListePaiement = new javax.swing.JTable();
+        scrollListeEcheances = new javax.swing.JScrollPane();
+        tableListeEcheance = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1147,14 +1215,46 @@ public class Panel extends javax.swing.JPanel {
         });
         scrollListeReleveCompte.setViewportView(tableListePaiement);
         if (tableListePaiement.getColumnModel().getColumnCount() > 0) {
-            tableListePaiement.getColumnModel().getColumn(0).setResizable(false);
             tableListePaiement.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tableListePaiement.getColumnModel().getColumn(0).setHeaderValue("Facture");
             tableListePaiement.getColumnModel().getColumn(1).setResizable(false);
             tableListePaiement.getColumnModel().getColumn(2).setResizable(false);
             tableListePaiement.getColumnModel().getColumn(2).setPreferredWidth(50);
         }
 
         tabPrincipal.addTab("Relevé de compte", scrollListeReleveCompte);
+
+        scrollListeEcheances.setBackground(new java.awt.Color(255, 255, 255));
+        scrollListeEcheances.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                scrollListeEcheancesMouseClicked(evt);
+            }
+        });
+
+        tableListeEcheance.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "D. initiale", "Echéance", "Jours restant", "Montant du", "Montant payé", "Progression"
+            }
+        ));
+        tableListeEcheance.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableListeEcheanceMouseClicked(evt);
+            }
+        });
+        scrollListeEcheances.setViewportView(tableListeEcheance);
+        if (tableListeEcheance.getColumnModel().getColumnCount() > 0) {
+            tableListeEcheance.getColumnModel().getColumn(0).setResizable(false);
+            tableListeEcheance.getColumnModel().getColumn(1).setResizable(false);
+            tableListeEcheance.getColumnModel().getColumn(1).setPreferredWidth(50);
+            tableListeEcheance.getColumnModel().getColumn(2).setResizable(false);
+            tableListeEcheance.getColumnModel().getColumn(3).setResizable(false);
+            tableListeEcheance.getColumnModel().getColumn(5).setResizable(false);
+        }
+
+        tabPrincipal.addTab("Plan de paiement", scrollListeEcheances);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -1213,12 +1313,12 @@ public class Panel extends javax.swing.JPanel {
 
     private void scrollListeArticlesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeArticlesMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, true);
+        ecouterMenContA(evt, 0);
     }//GEN-LAST:event_scrollListeArticlesMouseClicked
 
     private void tableListeArticleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListeArticleMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, true);
+        ecouterMenContA(evt, 0);
     }//GEN-LAST:event_tableListeArticleMouseClicked
 
     private void combVatRuleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combVatRuleItemStateChanged
@@ -1240,13 +1340,23 @@ public class Panel extends javax.swing.JPanel {
 
     private void tableListePaiementMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, false);
+        ecouterMenContA(evt, 1);
     }//GEN-LAST:event_tableListePaiementMouseClicked
 
     private void scrollListeReleveCompteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, false);
+        ecouterMenContA(evt, 1);
     }//GEN-LAST:event_scrollListeReleveCompteMouseClicked
+
+    private void tableListeEcheanceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListeEcheanceMouseClicked
+        // TODO add your handling code here:
+        ecouterMenContA(evt, 2);
+    }//GEN-LAST:event_tableListeEcheanceMouseClicked
+
+    private void scrollListeEcheancesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeEcheancesMouseClicked
+        // TODO add your handling code here:
+        ecouterMenContA(evt, 2);
+    }//GEN-LAST:event_scrollListeEcheancesMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1308,9 +1418,11 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JPanel panDetailsBancaires;
     private javax.swing.JPanel panSynthese;
     private javax.swing.JScrollPane scrollListeArticles;
+    private javax.swing.JScrollPane scrollListeEcheances;
     private javax.swing.JScrollPane scrollListeReleveCompte;
     private javax.swing.JTabbedPane tabPrincipal;
     private javax.swing.JTable tableListeArticle;
+    private javax.swing.JTable tableListeEcheance;
     private javax.swing.JTable tableListePaiement;
     // End of variables declaration//GEN-END:variables
 }

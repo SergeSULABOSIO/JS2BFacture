@@ -7,8 +7,10 @@ package SOURCES.EditeursTable;
 
 
 import SOURCES.Interface.ArticleFacture;
+import SOURCES.Interface.EcheanceFacture;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.Interface.PaiementFacture;
+import SOURCES.ModelsTable.ModeleListeEcheance;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
 import java.util.Date;
@@ -22,23 +24,22 @@ import javax.swing.table.TableCellEditor;
  * @author user
  */
 
-public class EditeurDatePaiement extends AbstractCellEditor implements TableCellEditor {
+public class EditeurDateFinaleEcheance extends AbstractCellEditor implements TableCellEditor {
 
     private JDateChooser dateChooser = new JDateChooser();
-    private ModeleListePaiement modeleListePaiement;
+    private ModeleListeEcheance modeleListeEcheance;
     private int updatedRow;
     
-    public EditeurDatePaiement(Vector<ArticleFacture> listeArticle, ModeleListePaiement modeleListePaiement) {
-        this.modeleListePaiement = modeleListePaiement;
+    public EditeurDateFinaleEcheance(Vector<ArticleFacture> listeArticle, ModeleListeEcheance modeleListeEcheance) {
+        this.modeleListeEcheance = modeleListeEcheance;
     }
 
-    
 
     @Override
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
-        PaiementFacture updatedPaiementInTable = modeleListePaiement.getPaiement(updatedRow);
-        updatedPaiementInTable.setDate(dateChooser.getDate());
+        EcheanceFacture updatedEcheanceInTable = modeleListeEcheance.getEcheance_row(updatedRow);
+        updatedEcheanceInTable.setDateFinale(dateChooser.getDate());
         return dateChooser.getDate();
     }
 

@@ -21,11 +21,9 @@ public interface EcheanceFacture {
     public abstract Date getDateInitiale();
     public abstract Date getDateFinale();
     public abstract String getNumeroFacture();
-    public abstract int getNbJoursRestant();
     public abstract double getMontantPaye();
     public abstract double getMontantDu();
     public abstract String getMonnaie();
-    public abstract JProgressBar getEtatProgression();
     //les setters
     public abstract void setId(int id);
     public abstract void setNom(String nom);

@@ -10,8 +10,10 @@ import SOURCES.UI.DialogueFacture;
 import SOURCES.CallBack.EcouteurAjout;
 import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.Interface.ClientFacture;
+import SOURCES.Interface.EcheanceFacture;
 import SOURCES.Interface.PaiementFacture;
 import SOURCES.ModelsTable.ModeleListeArticles;
+import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.PanelFacture;
 import SOURCES.Utilitaires.Donnees;
@@ -35,7 +37,6 @@ public class TestPrincipal extends javax.swing.JFrame {
     
     
     private void initData(){
-        
         String numeroFacture = ""+(new Date().getTime());
         
         Vector<ArticleFacture> listArticles = new Vector<>();
@@ -61,11 +62,16 @@ public class TestPrincipal extends javax.swing.JFrame {
             public void setAjoutPaiement(ModeleListePaiement modeleListePaiement) {
                 modeleListePaiement.AjouterPaiement(new TESTPaiement(1, 1, 1, "Serge SULA", "", "", 0, new Date()));
             }
+
+            @Override
+            public void setAjoutEcheance(ModeleListeEcheance modeleListeEcheance) {
+                modeleListeEcheance.AjouterEcheance(new TESTEcheance(-1, "PREMIER VERSEMENT", -1, new Date(), new Date(), numeroFacture, 0, 500, 1, monnaie));
+            }
         });
         
         this.parametres.setEcouteurFacture(new EcouteurFacture() {
             @Override
-            public void onEnregistre(ClientFacture client, Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements) {
+            public void onEnregistre(ClientFacture client, Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements, Vector<EcheanceFacture> echeances) {
                 
                 System.out.println("CLIENT : " + client.getNom());
                 System.out.println("ARTICLES : ");
@@ -83,7 +89,10 @@ public class TestPrincipal extends javax.swing.JFrame {
                 }
                 System.out.println("Total : "+paie+" "+parametres.getMonnaie());
                 System.out.println("Total Solde : "+(tot - paie)+" "+parametres.getMonnaie());
-                
+                System.out.println("PLAN DE PAIEMENT:");
+                for(EcheanceFacture echeance : echeances){
+                    System.out.println(" * Echéance : "+echeance.toString());
+                }
             }
         });
         
@@ -95,7 +104,10 @@ public class TestPrincipal extends javax.swing.JFrame {
         Vector<PaiementFacture> paiements = new Vector<>();
         paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 35, new Date()));
         
-        this.parametres.setDonnees(new Donnees(articles, paiements));
+        Vector<EcheanceFacture> echeances = new Vector<>();
+        echeances.add(new TESTEcheance(-1, "PREMIER VERSEMENT", -1, new Date(), new Date(), numeroFacture, 0, 600, 1, monnaie));
+        
+        this.parametres.setDonnees(new Donnees(articles, paiements, echeances));
     }
     
     

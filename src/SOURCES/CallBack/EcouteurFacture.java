@@ -7,6 +7,7 @@ package SOURCES.CallBack;
 
 import SOURCES.Interface.ArticleFacture;
 import SOURCES.Interface.ClientFacture;
+import SOURCES.Interface.EcheanceFacture;
 import SOURCES.Interface.PaiementFacture;
 import java.util.Vector;
 
@@ -16,6 +17,6 @@ import java.util.Vector;
  */
 public abstract class EcouteurFacture {
     
-    public abstract void onEnregistre(ClientFacture client, Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements);
+    public abstract void onEnregistre(ClientFacture client, Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements, Vector<EcheanceFacture> echeances);
     
 }
