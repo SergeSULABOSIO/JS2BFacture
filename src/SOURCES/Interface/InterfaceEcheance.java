@@ -6,7 +6,6 @@
 package SOURCES.Interface;
 
 import java.util.Date;
-import javax.swing.JProgressBar;
 
 /**
  *

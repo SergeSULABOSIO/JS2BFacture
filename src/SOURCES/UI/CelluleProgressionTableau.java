@@ -5,7 +5,6 @@
  */
 package SOURCES.UI;
 
-import ICONES.Icones;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.ImageIcon;
@@ -19,7 +18,7 @@ public class CelluleProgressionTableau extends javax.swing.JPanel {
     /**
      * Creates new form PanValeurTable
      */
-    public CelluleProgressionTableau(String monnaie, int value, int totalDu, ImageIcon iconeProgression) {
+    public CelluleProgressionTableau(String monnaie, double value, double totalDu, ImageIcon iconeProgression) {
         initComponents();
         labicone.setIcon(iconeProgression);
         setValeur(monnaie, value, totalDu);
@@ -47,11 +46,11 @@ public class CelluleProgressionTableau extends javax.swing.JPanel {
     }
     
     
-    public void setValeur(String monnaie, int val, int totalDu){
+    public void setValeur(String monnaie, double val, double totalDu){
         this.progress.setStringPainted(true);
-        this.progress.setMaximum(totalDu);
+        this.progress.setMaximum((int)totalDu);
         this.progress.setString(val + " " + monnaie);
-        this.progress.setValue(val);
+        this.progress.setValue((int)val);
     }
 
     /**

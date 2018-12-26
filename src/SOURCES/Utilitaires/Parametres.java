@@ -11,8 +11,6 @@ import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.ModelsTable.ModeleListePaiement;
-import TEST_EXEMPLE.TESTPaiement;
-import TEST_EXEMPLE.TESTProduit;
 import java.util.Date;
 import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;

@@ -21,9 +21,8 @@ import SOURCES.EditeursTable.EditeurDatePaiement;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.Utilitaires.Parametres;
-import SOURCES.EndusTable.RenduTableArticle;
-import SOURCES.EndusTable.RenduTableEcheance;
-import SOURCES.EndusTable.RenduTablePaiement;
+import SOURCES.RendusTable.RenduTableArticle;
+import SOURCES.RendusTable.RenduTablePaiement;
 import SOURCES.GenerateurPDF.DocumentPDF;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.Utilitaires.Util;
@@ -39,6 +38,7 @@ import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.RendusTable.RenduTableEcheance;
 import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
@@ -282,9 +282,7 @@ public class Panel extends javax.swing.JPanel {
         //Parametrage du modele contenant les données de la table
         this.tableListeEcheance.setModel(this.modeleListeEcheance);
 
-        //Parametrage du rendu de la table
-        //this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaie(), icones.getModifier_01(), icones.getSablier_01()));
-        //this.tableListeEcheance.setRowHeight(25);
+        
 
         /*
         TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(0);
@@ -296,13 +294,25 @@ public class Panel extends javax.swing.JPanel {
         TableColumn col_Depositaire = this.tableListePaiement.getColumnModel().getColumn(2);
         TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(3);
         TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(4);
-
-        col_Date.setPreferredWidth(200);
-        col_Article.setPreferredWidth(200);
-        col_Depositaire.setPreferredWidth(200);
-        col_Montant.setPreferredWidth(100);
-        col_Reste.setPreferredWidth(100);
         */
+        
+        //Parametrage du rendu de la table
+        this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaie(), icones.getModifier_01(), icones.getSablier_01(), modeleListeEcheance));
+        this.tableListeEcheance.setRowHeight(25);
+        
+        TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(0);
+        TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(1);
+        TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(2);
+        TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(3);
+        TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(4);
+        TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(5);
+        
+        col_Nom.setPreferredWidth(100);
+        col_Date_initiale.setPreferredWidth(100);
+        col_Date_finale.setPreferredWidth(100);
+        col_status.setPreferredWidth(180);
+        col_montant_du.setPreferredWidth(80);
+        col_progression.setPreferredWidth(80);
     }
 
     private void appliquerTva() {
@@ -375,40 +385,50 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void supprimer() {
-        if (indexTabSelected == 0) {
-            modeleListeArticles.SupprimerArticle(tableListeArticle.getSelectedRow());
-        } else if (indexTabSelected == 1){
-            modeleListePaiement.SupprimerPaiement(tableListePaiement.getSelectedRow(), true);
-        } else {
-            modeleListeEcheance.SupprimerEcheance(tableListeEcheance.getSelectedRow(), true);
+        switch (indexTabSelected) {
+            case 0:
+                modeleListeArticles.SupprimerArticle(tableListeArticle.getSelectedRow());
+                break;
+            case 1:
+                modeleListePaiement.SupprimerPaiement(tableListePaiement.getSelectedRow(), true);
+                break;
+            default:
+                modeleListeEcheance.SupprimerEcheance(tableListeEcheance.getSelectedRow(), true);
+                break;
         }
     }
 
     private void vider() {
-        if (indexTabSelected == 0) {
-            modeleListeArticles.viderListe();
-        } else if (indexTabSelected == 1){
-            modeleListePaiement.viderListe();
-        } else {
-            modeleListeEcheance.viderListe();
+        switch (indexTabSelected) {
+            case 0:
+                modeleListeArticles.viderListe();
+                break;
+            case 1:
+                modeleListePaiement.viderListe();
+                break;
+            default:
+                modeleListeEcheance.viderListe();
+                break;
         }
     }
 
     private void ajouter() {
-        if (indexTabSelected == 0) {
-            this.parametres.getEcouteurAjout().setAjoutArticle(modeleListeArticles);
-        } else if (indexTabSelected == 1){
-            if (modeleListeArticles.getRowCount() != 0) {
-                this.parametres.getEcouteurAjout().setAjoutPaiement(modeleListePaiement);
-            } else {
-                JOptionPane.showMessageDialog(tabPrincipal, "Aucun article n'a été séléctionné !");
-            }
-        } else {
-            if (modeleListeArticles.getRowCount() != 0) {
-                this.parametres.getEcouteurAjout().setAjoutEcheance(modeleListeEcheance);
-            } else {
-                JOptionPane.showMessageDialog(tabPrincipal, "Aucun article n'a été séléctionné !");
-            }
+        switch (indexTabSelected) {
+            case 0:
+                this.parametres.getEcouteurAjout().setAjoutArticle(modeleListeArticles);
+                break;
+            case 1:
+                if (modeleListeArticles.getRowCount() != 0) {
+                    this.parametres.getEcouteurAjout().setAjoutPaiement(modeleListePaiement);
+                } else {
+                    JOptionPane.showMessageDialog(tabPrincipal, "Aucun article n'a été séléctionné !");
+                }   break;
+            default:
+                if (modeleListeArticles.getRowCount() != 0) {
+                    this.parametres.getEcouteurAjout().setAjoutEcheance(modeleListeEcheance);
+                } else {
+                    JOptionPane.showMessageDialog(tabPrincipal, "Aucun article n'a été séléctionné !");
+                }   break;
         }
     }
 
@@ -1340,7 +1360,7 @@ public class Panel extends javax.swing.JPanel {
         // TODO add your handling code here:
         JTabbedPane tab = (JTabbedPane) evt.getSource();
         this.indexTabSelected = tab.getSelectedIndex();
-        System.out.println("Tab changed to : " + tab.getTitleAt(indexTabSelected));
+        //System.out.println("Tab changed to : " + tab.getTitleAt(indexTabSelected));
     }//GEN-LAST:event_tabPrincipalStateChanged
 
     private void tableListePaiementMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseClicked

@@ -60,7 +60,7 @@ public class Util {
     public static String getDateFrancais(Date date) {
         String dateS = "";
         try {
-            String pattern = "dd-MM-yyyy";
+            String pattern = "dd MMM yyyy";
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
             dateS = simpleDateFormat.format(date);
         } catch (Exception e) {

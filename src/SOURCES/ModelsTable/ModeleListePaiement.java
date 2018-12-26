@@ -139,9 +139,9 @@ public class ModeleListePaiement extends AbstractTableModel {
     public double getReste(int idArticle) {
         double reste = getMontantTotalPayable(idArticle) - getMontantTotalPaye(idArticle);
         reste = Util.round(reste, 2);
-        if(reste < 0){
+        if (reste < 0) {
             return 0;
-        }else{
+        } else {
             return reste;
         }
     }
@@ -172,9 +172,9 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 0:
                 return listeData.elementAt(rowIndex).getDate();
             case 1:
-                if(listeData.elementAt(rowIndex).getNomArticle().trim().length() != 0){
-                    return listeData.elementAt(rowIndex).getIdArticle()+ "_" + listeData.elementAt(rowIndex).getNomArticle();
-                }else{
+                if (listeData.elementAt(rowIndex).getNomArticle().trim().length() != 0) {
+                    return listeData.elementAt(rowIndex).getIdArticle() + "_" + listeData.elementAt(rowIndex).getNomArticle();
+                } else {
                     return listeData.elementAt(rowIndex).getNomArticle();
                 }
             case 2:
@@ -225,7 +225,7 @@ public class ModeleListePaiement extends AbstractTableModel {
                 break;
             case 1:
                 String nom = aValue + "";
-                if(nom.contains("_")){
+                if (nom.contains("_")) {
                     nom = nom.split("_")[1];
                 }
                 article.setNomArticle(nom);
@@ -245,5 +245,4 @@ public class ModeleListePaiement extends AbstractTableModel {
         ecouteurModele.onValeurChangee();
         fireTableDataChanged();
     }
-
 }

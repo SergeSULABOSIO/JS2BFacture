@@ -84,11 +84,18 @@ public class TestPrincipal extends javax.swing.JFrame {
         
         Vector<InterfaceArticle> articles = new Vector<>();
         articles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
-        articles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 4));
+        articles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
         articles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
         
         Vector<InterfacePaiement> paiements = new Vector<>();
-        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 35, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        
+        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
         
         Vector<InterfaceEcheance> echeances = new Vector<>();
         echeances.add(new TESTEcheance(-1, "PREMIER VERSEMENT", -1, new Date(), new Date(), numeroFacture, 0, 600, 1, monnaie));
