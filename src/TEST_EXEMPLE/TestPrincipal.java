@@ -6,11 +6,7 @@
 package TEST_EXEMPLE;
 
 import SOURCES.UI.DialogueFacture;
-import SOURCES.CallBack.EcouteurAjout;
 import SOURCES.CallBack.EcouteurFacture;
-import SOURCES.ModelsTable.ModeleListeArticles;
-import SOURCES.ModelsTable.ModeleListeEcheance;
-import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.PanelFacture;
 import SOURCES.Utilitaires.Donnees;
 import SOURCES.Utilitaires.Parametres;
@@ -20,6 +16,7 @@ import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
  *
@@ -39,7 +36,9 @@ public class TestPrincipal extends javax.swing.JFrame {
     private void initData(){
         String numeroFacture = ""+(new Date().getTime());
         int idFacture = 20;
-        Date dateDebutAnneeScolaire = new Date();
+        Date dateDebut = new Date(118, 0, 1);
+        Date dateFin = new Date(118, 11, 31);
+        ExerciceFiscale anneeScolaire = new ExerciceFiscale(dateDebut, dateFin, "Année Scolaire 2018-2019");
         Vector<InterfaceArticle> listArticles = new Vector<>();
         listArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
         listArticles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
@@ -54,7 +53,7 @@ public class TestPrincipal extends javax.swing.JFrame {
         double tva = 0;
         double remise = 0;
         
-        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, idFacture, listArticles, client, entreprise, monnaie, idMonnaie, tva, remise, dateDebutAnneeScolaire);
+        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, idFacture, listArticles, client, entreprise, monnaie, idMonnaie, tva, remise, anneeScolaire);
         
         this.parametres.setEcouteurFacture(new EcouteurFacture() {
             @Override
@@ -85,7 +84,7 @@ public class TestPrincipal extends javax.swing.JFrame {
         
         Vector<InterfaceArticle> articles = new Vector<>();
         articles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
-        articles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
+        articles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 4));
         articles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
         
         Vector<InterfacePaiement> paiements = new Vector<>();

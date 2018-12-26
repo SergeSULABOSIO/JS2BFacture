@@ -298,7 +298,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             if (this.gestionnaireFacture != null) {
                 InterfaceClient client = this.gestionnaireFacture.getClient();
                 if (client != null) {
-                    celluleDonnees.addElement(getParagraphe(client.getNom() + "\n" + client.getTelephone() + "\nAures infos : " + client.getAutresInfos(), Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+                    celluleDonnees.addElement(getParagraphe(client.getNom() + "\n" + client.getTelephone() + "\n" + this.gestionnaireFacture.getParametres().getExerciceFiscale().getNom() + ", " + client.getAutresInfos(), Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 } else {
                     celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 }

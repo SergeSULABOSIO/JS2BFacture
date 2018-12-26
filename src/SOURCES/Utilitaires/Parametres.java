@@ -38,9 +38,9 @@ public class Parametres {
     private EcouteurFacture ecouteurFacture = null;
     private Donnees donnees = null;
     private String nomUtilisateur;
-    private Date dateRepere;
+    private ExerciceFiscale exerciceFiscale;
 
-    public Parametres(String nomUtilisateur, String numero, int idFacture, Vector<InterfaceArticle> listArticles, InterfaceClient client, InterfaceEntreprise entreprise, String monnaie, int idMonnaie, double tva, double remise, Date dateRepere) {
+    public Parametres(String nomUtilisateur, String numero, int idFacture, Vector<InterfaceArticle> listArticles, InterfaceClient client, InterfaceEntreprise entreprise, String monnaie, int idMonnaie, double tva, double remise, ExerciceFiscale exerciceFiscale) {
         this.nomUtilisateur = nomUtilisateur;
         this.numero = numero;
         this.listArticles = listArticles;
@@ -52,7 +52,7 @@ public class Parametres {
         this.idMonnaie = idMonnaie;
         this.idFacture = idFacture;
         this.icones = new Icones();
-        this.dateRepere = dateRepere;
+        this.exerciceFiscale = exerciceFiscale;
         this.ecouteurAjout = new EcouteurAjout() {
             @Override
             public void setAjoutArticle(ModeleListeArticles modeleListeArticles) {
@@ -72,21 +72,23 @@ public class Parametres {
             @Override
             public void setAjoutEcheance(ModeleListeEcheance modeleListeEcheance) {
                 int nbEcheancesExistant = modeleListeEcheance.getRowCount();
-                Date dateNewEch = dateRepere;
-                dateNewEch.setDate(dateRepere.getDate()+5);
-                modeleListeEcheance.AjouterEcheance(new XX_Echeance(-1, "TRANCHE N°" + (nbEcheancesExistant+1), idFacture, dateRepere, dateNewEch, numero, 0, 0, idMonnaie, monnaie));
+                String nomTransche = "1ère Tranche";
+                if(nbEcheancesExistant > 1){
+                    nomTransche = (nbEcheancesExistant + 1) + "ème Tranche";
+                }
+                modeleListeEcheance.AjouterEcheanceAutomatique(new XX_Echeance(-1, nomTransche, idFacture, exerciceFiscale.getDebut(), exerciceFiscale.getFin(), numero, 0, 0, idMonnaie, monnaie));
             }
         };
     }
 
-    public Date getDateRepere() {
-        return dateRepere;
+    public ExerciceFiscale getExerciceFiscale() {
+        return exerciceFiscale;
     }
 
-    public void setDateRepere(Date dateRepere) {
-        this.dateRepere = dateRepere;
+    public void setExerciceFiscale(ExerciceFiscale exerciceFiscale) {
+        this.exerciceFiscale = exerciceFiscale;
     }
-    
+
     
 
     public InterfaceEntreprise getEntreprise() {

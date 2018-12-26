@@ -39,6 +39,7 @@ import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
  *
@@ -155,7 +156,12 @@ public class Panel extends javax.swing.JPanel {
         if (this.parametres.getClient() != null) {
             InterfaceClient client = this.parametres.getClient();
             labNomClient.setIcon(icones.getClient_01());
-            labNomClient.setText(client.getNom());
+            ExerciceFiscale ef = this.parametres.getExerciceFiscale();
+            String exercice = "";
+            if(ef != null){
+                exercice = ", " + ef.getNom()+" ["+ Util.getDateFrancais(ef.getDebut()) +" - " + Util.getDateFrancais(ef.getFin()) +"].";
+            }
+            labNomClient.setText(client.getNom() + exercice);
 
             labTelephone.setIcon(icones.getTéléphone_01());
             labTelephone.setText(client.getTelephone());
@@ -266,7 +272,7 @@ public class Panel extends javax.swing.JPanel {
             public void onValeurChangee() {
                 actualiserTotaux();
             }
-        }, parametres.getMonnaie(), parametres.getIdMonnaie(), parametres.getNumero(), parametres.getIdFacture());
+        }, parametres.getMonnaie(), parametres.getIdMonnaie(), parametres.getNumero(), parametres.getIdFacture(), parametres.getExerciceFiscale());
 
         //On charge les données s'il y en a
         if (this.parametres.getDonnees() != null) {

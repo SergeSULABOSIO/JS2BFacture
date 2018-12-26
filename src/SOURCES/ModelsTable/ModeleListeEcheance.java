@@ -16,6 +16,7 @@ import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
  *
@@ -23,7 +24,7 @@ import SOURCES.Interface.InterfaceEcheance;
  */
 public class ModeleListeEcheance extends AbstractTableModel {
 
-    private String[] titreColonnes = {"Nom", "Date initiale", "Echéance", "Jrs restant", "Tranches", "Progression"};
+    private String[] titreColonnes = {"Nom", "Date initiale", "Echéance", "Jours restant", "Tranches", "Progression"};
     private Vector<InterfaceEcheance> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -33,13 +34,15 @@ public class ModeleListeEcheance extends AbstractTableModel {
     private int idMonnaie;
     private String numeroFacture;
     private int idFacture;
-    
+
     private double totalDue = 0;
     private double totalDue_by_installment = 0;
     private double totalPaid = 0;
     private double x = 0;
+    private ExerciceFiscale exerciceFiscale;
+    public int nombreTranches = 1;
 
-    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele, String monnaie, int idMonnaie, String numeroFacture, int idFacture) {
+    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele, String monnaie, int idMonnaie, String numeroFacture, int idFacture, ExerciceFiscale exerciceFiscale) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.modeleListePaiement = modeleListePaiement;
@@ -48,8 +51,9 @@ public class ModeleListeEcheance extends AbstractTableModel {
         this.idMonnaie = idMonnaie;
         this.numeroFacture = numeroFacture;
         this.idFacture = idFacture;
-        
-        this.calculerTranches();
+        this.exerciceFiscale = exerciceFiscale;
+
+        this.setDefaultTranches();
     }
 
     public void setListeEcheance(Vector<InterfaceEcheance> listeData) {
@@ -76,8 +80,19 @@ public class ModeleListeEcheance extends AbstractTableModel {
     }
 
     public void AjouterEcheance(InterfaceEcheance echeance) {
-        ajouterJours(echeance, 5);
+        //ajouterJours(echeance, 5);
         this.listeData.add(echeance);
+        setDefaultTranches();
+        redessinerTable();
+    }
+
+    public void AjouterEcheanceAutomatique(InterfaceEcheance echeance) {
+        this.listeData.add(echeance);
+        redessinerTable();
+    }
+
+    public void AjouterEcheancesAutomatique(Vector<InterfaceEcheance> echeances) {
+        this.listeData.addAll(echeances);
         redessinerTable();
     }
 
@@ -179,13 +194,20 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     public String getNBJoursRestant(int rowIndex) {
         InterfaceEcheance eche = this.listeData.elementAt(rowIndex);
-        Date today = new Date();
-        int nbjour = eche.getDateFinale().getDate() - today.getDate();
-        if (nbjour > 0) {
-            return nbjour + " jours";
-        } else {
-            return nbjour + " jour";
+        int nbjour = (int) Util.getNombre_jours_from_today(eche.getDateFinale());
+        String jourS = " jour";
+        if(nbjour > 0 || nbjour < -1){
+            jourS = " jours";
+        }else if(nbjour == 0){
+            jourS = "";
         }
+        String commentaire = "Expire dans "+ nbjour + jourS;
+        if(nbjour < 0){
+           commentaire = "Expirée depuis " + (nbjour * -1) + jourS;
+        }else if(nbjour == 0){
+            commentaire = "Expire aujourd'hui";
+        }
+        return commentaire;
     }
 
     private double getEtatProgression(int rowIndex) {
@@ -193,23 +215,54 @@ public class ModeleListeEcheance extends AbstractTableModel {
         return Util.round(totalDue_by_installment * (rowIndex + 1), 2);
     }
 
-    private void calculerTranches() {
-        //Comptage du nombre maximale des tranches à considérer
-        int nbTotalTranche = 0;
-        for (InterfaceArticle art : modeleListeArticles.getListeData()) {
-            if (art.getTranches() > nbTotalTranche) {
-                nbTotalTranche = art.getTranches();
+    private int getNbTranches() {
+        this.nombreTranches = 0;
+        for (InterfaceArticle art : this.modeleListeArticles.getListeData()) {
+            if (art.getTranches() > this.nombreTranches) {
+                this.nombreTranches = art.getTranches();
             }
         }
-        System.out.println("nbTotalTranche = " + nbTotalTranche);
-        
-        
-        //Création des tranches en fonction du nombre connu déjà
-        for (int i = 0; i < nbTotalTranche; i++) {
-            XX_Echeance trancheTempo = new XX_Echeance(-1, "Tranche n°" + (i + 1), idFacture, new Date(), new Date(), "", 0, 0, idMonnaie, monnaie);
-            System.out.println(" * " + trancheTempo.toString());
-            this.AjouterEcheance(trancheTempo);
+        System.out.println("nbTotalTranche = " + this.nombreTranches);
+        return this.nombreTranches;
+    }
+
+    private void creerTranches() {
+        int nombre = getNbTranches();
+        for (int i = 0; i < nombre; i++) {
+            String nomTranche = "1ère Tranche";
+            if ((i + 1) > 1) {
+                nomTranche = (i + 1) + "ème Tranche";
+            }
+            XX_Echeance trancheTempo = new XX_Echeance(-1, nomTranche, idFacture, this.exerciceFiscale.getDebut(), exerciceFiscale.getFin(), numeroFacture, 0, 0, idMonnaie, monnaie);
+
+            this.AjouterEcheanceAutomatique(trancheTempo);
         }
+    }
+
+    private void calculerPeriodesTranches() {
+        double daysExercice = Util.getNombre_jours(exerciceFiscale.getFin(), exerciceFiscale.getDebut());
+        double nbDaysParTranche = daysExercice / nombreTranches;
+        long nbDaysParTrancheLong = (long) ((nbDaysParTranche) * 1000 * 60 * 60 * 24);
+        long cumulDays = 0;
+        //System.out.println("Exercice Fiscale : " + exerciceFiscale.toString());
+        if (!this.listeData.isEmpty()) {
+            for (int i = 0; i < nombreTranches; i++) {
+                InterfaceEcheance echeEncours = (XX_Echeance) listeData.elementAt(i);
+                long dA = exerciceFiscale.getDebut().getTime() + cumulDays;
+                long dB = dA + nbDaysParTrancheLong;
+
+                echeEncours.setDateInitiale(new Date(dA));
+                echeEncours.setDateFinale(new Date(dB));
+                cumulDays = cumulDays + nbDaysParTrancheLong;
+                //System.out.println(" * " + echeEncours.getNom() + " : " + nbDaysParTranche + " Jours (" + Util.getDateFrancais(echeEncours.getDateInitiale()) + " - " + Util.getDateFrancais(echeEncours.getDateFinale()) + ").");
+            }
+        }
+        //System.out.println("Nombre total des jours : " + daysExercice + ", exercice : " + this.exerciceFiscale.getNom());
+    }
+
+    private void setDefaultTranches() {
+        creerTranches();
+        calculerPeriodesTranches();
 
         for (InterfaceArticle art : modeleListeArticles.getListeData()) {
             //Récupération du nb de tranche et de leur montant y relatifs
