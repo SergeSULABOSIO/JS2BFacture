@@ -17,16 +17,20 @@ import javax.swing.ImageIcon;
 public class CelluleSimpleTableau extends javax.swing.JPanel {
     
     private ImageIcon iconeEdition;
-    
+    public static int ALIGNE_GAUCHE = 0;
+    public static int ALIGNE_CENTRE = 1;
+    public static int ALIGNE_DROITE = 2;
     /**
      * Creates new form PanValeurTable
      */
-    public CelluleSimpleTableau(String val, boolean alignerDroite, ImageIcon iconeEdition) {
+    public CelluleSimpleTableau(String val, int alignement, ImageIcon iconeEdition) {
         initComponents();
         this.iconeEdition = iconeEdition;
         setValeur(val);
-        if(alignerDroite == true){
-            labvaleur.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        if(alignement == ALIGNE_DROITE){
+            labvaleur.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        }else if(alignement == ALIGNE_CENTRE){
+            labvaleur.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         }else{
             labvaleur.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         }

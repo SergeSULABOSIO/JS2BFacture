@@ -32,7 +32,6 @@ public class TestPrincipal extends javax.swing.JFrame {
         initComponents();
     }
     
-    
     private void initData(){
         String numeroFacture = ""+(new Date().getTime());
         int idFacture = 20;

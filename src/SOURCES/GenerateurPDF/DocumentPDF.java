@@ -163,10 +163,10 @@ public class DocumentPDF extends PdfPageEventHelper {
         Paragraph preface = new Paragraph();
 
         if (this.gestionnaireFacture != null) {
-            preface.add(getParagraphe("Date: " + this.gestionnaireFacture.getDateFacture().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
+            preface.add(getParagraphe("Date: " + Util.getDateFrancais(this.gestionnaireFacture.getDateFacture()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe(this.gestionnaireFacture.getTitreDoc() + " n°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
-            preface.add(getParagraphe("Date: " + new Date().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
+            preface.add(getParagraphe("Date: " + Util.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
         }
         this.document.add(preface);
@@ -289,7 +289,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             PdfPCell celluleTitres = new PdfPCell();
             celluleTitres.setPadding(2);
             celluleTitres.setBorderWidth(0);
-            celluleTitres.addElement(getParagraphe(rubriqueNomClient + " :\nContacts :\nAutres détails :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
+            celluleTitres.addElement(getParagraphe(rubriqueNomClient + " :\nContacts :\nAutres :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
 
             //Colonne des valeurs = détails sur le client
             PdfPCell celluleDonnees = new PdfPCell();
@@ -333,13 +333,46 @@ public class DocumentPDF extends PdfPageEventHelper {
                 int i = 0;
                 for (InterfacePaiement paiement : listePaiement) {
                     String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                    setLigneTabReleve(tableReleve, paiement.getDate().toLocaleString(), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
                     i++;
                 }
                 setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
             } else {
                 for (int i = 0; i < 10; i++) {
-                    setLigneTabReleve(tableReleve, (new Date().toLocaleString()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+                }
+                setDerniereLigneTabReleve(tableReleve, 1500, 350);
+            }
+            document.add(tableReleve);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    / Je suis ici !!!!
+    private void setTableauDetailsPlanPaiementEchelonne() {
+        try {
+            document.add(getParagraphe("Détails - Plan de paiement échelonné", Font_TexteSimple, Element.ALIGN_CENTER));
+            PdfPTable tableReleve = getTableau(
+                    -1,
+                    new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
+                    new int[]{80, 300, 500, 400, 200, 200},
+                    Element.ALIGN_CENTER,
+                    0.2f
+            );
+            if (this.gestionnaireFacture != null) {
+                ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
+                Vector<InterfacePaiement> listePaiement = modelPaiement.getListeData();
+                int i = 0;
+                for (InterfacePaiement paiement : listePaiement) {
+                    String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
+                    i++;
+                }
+                setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
+            } else {
+                for (int i = 0; i < 10; i++) {
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
                 }
                 setDerniereLigneTabReleve(tableReleve, 1500, 350);
             }
@@ -602,6 +635,11 @@ public class DocumentPDF extends PdfPageEventHelper {
         setTableauDetailsArticles();//ok
         ajouterLigne(1);//ok
         setTableauSynthese();//ok
+        if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerPlanPaiement() == true) {
+            if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
+                setTableauDetailsPlanPaiementEchelonne();//ok
+            }
+        }
         if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerRelever() == true) {
             if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
                 setTableauDetailsReleveDeCompte();//ok

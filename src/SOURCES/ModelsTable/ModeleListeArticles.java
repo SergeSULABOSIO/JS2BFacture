@@ -19,7 +19,7 @@ import SOURCES.Interface.InterfaceArticle;
  */
 public class ModeleListeArticles extends AbstractTableModel {
 
-    private String[] titreColonnes = {"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
+    private String[] titreColonnes = {"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
     private Vector<InterfaceArticle> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -179,6 +179,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        //{"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         switch (columnIndex) {
             case 0:
                 if(listeData.elementAt(rowIndex).getNom().trim().length() != 0){
@@ -196,13 +197,16 @@ public class ModeleListeArticles extends AbstractTableModel {
                 return listeData.elementAt(rowIndex).getPrixUHT_apres_rabais();
             case 5:
                 return listeData.elementAt(rowIndex).getTvaMontant();
-            default:
+            case 6:
                 return listeData.elementAt(rowIndex).getTotalTTC();
+            default:
+                return listeData.elementAt(rowIndex).getTranches();
         }
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
+        //{"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         switch (columnIndex) {
             case 0:
                 return String.class;//Nom
@@ -218,6 +222,8 @@ public class ModeleListeArticles extends AbstractTableModel {
                 return Double.class;//Mnt Tva
             case 6:
                 return Double.class;//Mnt TTC
+            case 7:
+                return Integer.class;//Tranches
             default:
                 return Object.class;
         }
@@ -226,7 +232,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 0 || columnIndex == 1 || columnIndex == 3) {
+        if (columnIndex == 0 || columnIndex == 1 || columnIndex == 3 || columnIndex == 7) {
             return true;
         } else {
             return false;
@@ -235,6 +241,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        //{"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         InterfaceArticle article = listeData.get(rowIndex);
         switch (columnIndex) {
             case 0:
@@ -249,6 +256,9 @@ public class ModeleListeArticles extends AbstractTableModel {
                 break;
             case 3:
                 article.setRabais(Double.parseDouble(aValue + ""));
+                break;
+            case 7:
+                article.setTranches(Integer.parseInt(aValue + ""));
                 break;
             default:
                 break;

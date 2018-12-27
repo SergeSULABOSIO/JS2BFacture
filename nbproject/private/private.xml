@@ -3,14 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/SOURCES/RendusTable/RenduTableEcheance.java</file>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/SOURCES/ModelsTable/ModeleListePaiement.java</file>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/SOURCES/UI/CelluleProgressionTableau.java</file>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/SOURCES/UI/Panel.java</file>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/SOURCES/ModelsTable/ModeleListeEcheance.java</file>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/SOURCES/UI/CelluleSimpleTableau.java</file>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/SOURCES/Interface/InterfaceEcheance.java</file>
-            <file>file:/F:/BOMBA%20ELEMENTS/SEP/SEP%20CONGO/JS2BFacture/src/TEST_EXEMPLE/TestPrincipal.java</file>
+            <file>file:/F:/UAP%20DATA/Serge/SEP%20CONGO/JS2BFacture/src/SOURCES/ModelsTable/ModeleListeEcheance.java</file>
+            <file>file:/F:/UAP%20DATA/Serge/SEP%20CONGO/JS2BFacture/src/SOURCES/UI/Panel.java</file>
+            <file>file:/F:/UAP%20DATA/Serge/SEP%20CONGO/JS2BFacture/src/SOURCES/GenerateurPDF/DocumentPDF.java</file>
+            <file>file:/F:/UAP%20DATA/Serge/SEP%20CONGO/JS2BFacture/src/TEST_EXEMPLE/TestPrincipal.java</file>
         </group>
     </open-files>
 </project-private>
