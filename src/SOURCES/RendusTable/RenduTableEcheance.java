@@ -37,17 +37,21 @@ public class RenduTableEcheance implements TableCellRenderer {
         //{"Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
         CelluleSimpleTableau celluleNum = null;
         switch (column) {
-            case 3:
-                celluleNum = new CelluleSimpleTableau(" " + value + " ", false, null);
+            case 0:
+                celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 1:
             case 2:
-                celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date) value)) + " ", false, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                celluleNum.ecouterSelection(isSelected, row);
+                return celluleNum;
+            case 3:
+                celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 4:
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", true, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 5:
@@ -57,9 +61,7 @@ public class RenduTableEcheance implements TableCellRenderer {
                 celluleProgress.ecouterSelection(isSelected, row);
                 return celluleProgress;
             default:
-                celluleNum = new CelluleSimpleTableau(" " + value + " ", false, null);
-                celluleNum.ecouterSelection(isSelected, row);
-                return celluleNum;
+                return null;
         }
     }
 }

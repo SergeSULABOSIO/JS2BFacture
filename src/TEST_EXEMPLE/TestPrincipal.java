@@ -32,7 +32,6 @@ public class TestPrincipal extends javax.swing.JFrame {
         initComponents();
     }
     
-    
     private void initData(){
         String numeroFacture = ""+(new Date().getTime());
         int idFacture = 20;
@@ -48,7 +47,7 @@ public class TestPrincipal extends javax.swing.JFrame {
         
         TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
         
-        String monnaie = "USD";
+        String monnaie = "$";
         int idMonnaie = 10;
         double tva = 0;
         double remise = 0;

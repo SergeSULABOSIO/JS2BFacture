@@ -57,7 +57,7 @@ public class Parametres {
                 double tvaPrc = 16;
                 double punit = 0;
                 double rabais = 0;
-                int nbTranches = 3;
+                int nbTranches = 1;
                 modeleListeArticles.AjouterArticle(new XX_Article(-1, "", 1, "Pièce", tvaPrc, punit, rabais, nbTranches));
             }
 

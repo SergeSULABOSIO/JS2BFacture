@@ -56,6 +56,8 @@ public class EditeurArticlePaiement extends AbstractCellEditor implements TableC
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
         String nomSelArt = champEditionCombo.getSelectedItem() + "";
+
+        //A partir de l'article que le user a séléctionné, on va trouver vite ce qu'il est sensé payer et le lui montrer
         InterfaceArticle artFromBase = getArticle(nomSelArt);
         if (artFromBase != null) {
             InterfaceArticle artFromFacture = modeleListeArticles.getArticle_id(artFromBase.getId());
@@ -63,17 +65,23 @@ public class EditeurArticlePaiement extends AbstractCellEditor implements TableC
             if (artFromFacture != null) {
                 if (updatedPaiementInTable != null) {
                     //On charge infos de base sur l'article qui vient d'être séléctionné par le client
-                    double reste = modeleListePaiement.getReste(artFromFacture.getId());
+                    //double reste = modeleListePaiement.getReste(artFromFacture.getId());
                     updatedPaiementInTable.setIdArticle(artFromFacture.getId());
+                    //updatedPaiementInTable.setMontant(0);
+                    /*
                     if (reste != 0) {
                         updatedPaiementInTable.setMontant(reste);
                     }
+                     */
                 }
             } else {
                 updatedPaiementInTable.setIdArticle(-1);
                 updatedPaiementInTable.setMontant(0);
             }
         }
+        /*
+        
+         */
         return nomSelArt;
     }
 

@@ -34,6 +34,8 @@ import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.ModelsTable.ModeleListeEcheance;
 
 /**
  *
@@ -52,7 +54,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     private Font Font_TexteSimple_Gras_Italique = null;
     public static final int ACTION_IMPRIMER = 0;
     public static final int ACTION_OUVRIR = 1;
-   
+
     private Panel gestionnaireFacture;
 
     public DocumentPDF(Panel panel, int action) {
@@ -67,9 +69,9 @@ public class DocumentPDF extends PdfPageEventHelper {
         this.gestionnaireFacture = panel;
         parametre_initialisation_fichier();
         parametre_construire_fichier();
-        if(action == ACTION_OUVRIR){
+        if (action == ACTION_OUVRIR) {
             parametres_ouvrir_fichier();
-        }else if(action == ACTION_IMPRIMER){
+        } else if (action == ACTION_IMPRIMER) {
             parametres_imprimer_fichier();
         }
     }
@@ -126,7 +128,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             }
         }
     }
-    
+
     private void parametres_imprimer_fichier() {
         String nomFichier = "Facture_S2B.pdf";
         if (this.gestionnaireFacture != null) {
@@ -163,10 +165,10 @@ public class DocumentPDF extends PdfPageEventHelper {
         Paragraph preface = new Paragraph();
 
         if (this.gestionnaireFacture != null) {
-            preface.add(getParagraphe("Date: " + this.gestionnaireFacture.getDateFacture().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
+            preface.add(getParagraphe("Date: " + Util.getDateFrancais(this.gestionnaireFacture.getDateFacture()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe(this.gestionnaireFacture.getTitreDoc() + " n°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
-            preface.add(getParagraphe("Date: " + new Date().toLocaleString(), Font_Titre3, Element.ALIGN_RIGHT));
+            preface.add(getParagraphe("Date: " + Util.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
         }
         this.document.add(preface);
@@ -289,7 +291,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             PdfPCell celluleTitres = new PdfPCell();
             celluleTitres.setPadding(2);
             celluleTitres.setBorderWidth(0);
-            celluleTitres.addElement(getParagraphe(rubriqueNomClient + " :\nContacts :\nAutres détails :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
+            celluleTitres.addElement(getParagraphe(rubriqueNomClient + " :\nContacts :\nAutres :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
 
             //Colonne des valeurs = détails sur le client
             PdfPCell celluleDonnees = new PdfPCell();
@@ -333,17 +335,52 @@ public class DocumentPDF extends PdfPageEventHelper {
                 int i = 0;
                 for (InterfacePaiement paiement : listePaiement) {
                     String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                    setLigneTabReleve(tableReleve, paiement.getDate().toLocaleString(), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
                     i++;
                 }
                 setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
             } else {
                 for (int i = 0; i < 10; i++) {
-                    setLigneTabReleve(tableReleve, (new Date().toLocaleString()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
                 }
                 setDerniereLigneTabReleve(tableReleve, 1500, 350);
             }
             document.add(tableReleve);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setTableauDetailsPlanPaiementEchelonne() {
+        try {
+            document.add(getParagraphe("Détails - Plan de paiement", Font_TexteSimple, Element.ALIGN_CENTER));
+            PdfPTable tableEchances = getTableau(
+                    -1,
+                    new String[]{"N°", "Tranche", "Début", "Echéance", "Progession", "Montant dû", "Montant reçu"},
+                    new int[]{80, 350, 300, 300, 350, 200, 200},
+                    Element.ALIGN_CENTER,
+                    0.2f
+            );
+            if (this.gestionnaireFacture != null) {
+                ModeleListeEcheance modeEcheance = this.gestionnaireFacture.getModeleListeEcheance();
+                Vector<InterfaceEcheance> listeEcheances = modeEcheance.getListeData();
+                int i = 0;
+                double totDu = 0;
+                double totPaye = 0;
+                for (InterfaceEcheance echeance : listeEcheances) {
+                    setLigneTabEcheance(tableEchances, echeance.getNom(), Util.getDateFrancais(echeance.getDateInitiale()), Util.getDateFrancais(echeance.getDateFinale()), modeEcheance.getStatus(i), i, echeance.getMontantDu(), echeance.getMontantPaye());
+                    totDu += echeance.getMontantDu();
+                    totPaye += echeance.getMontantPaye();
+                    i++;
+                }
+                setDerniereLigneTabEcheance(tableEchances, Util.round(totDu, 2), Util.round(totPaye, 2));
+            } else {
+                for (int i = 0; i < 10; i++) {
+                    setLigneTabEcheance(tableEchances, "Tranche n°" + (i + 1), Util.getDateFrancais(new Date()), Util.getDateFrancais(new Date()), "Expirée depuis " + (i + 1) + " jour", i, 100, 50);
+                }
+                setDerniereLigneTabEcheance(tableEchances, 1000, 500);
+            }
+            document.add(tableEchances);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -439,23 +476,49 @@ public class DocumentPDF extends PdfPageEventHelper {
     }
 
     private void setLigneTabArticle(PdfPTable tableDetailsArticles, String NomArticle, int i, double qt, double punit1, double rabais, double punit2, double mntTva, double totalTTC) {
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
         tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(qt + "", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(punit1 + " $", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(rabais + " $", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(punit2 + " $", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(mntTva + " $", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(totalTTC + " $", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(punit1 + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(rabais + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(punit2 + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(mntTva + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(totalTTC + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
     }
 
     private void setLigneTabReleve(PdfPTable tableDetailsArticles, String date, String NomArticle, String depositaire, int i, double montant, double reste) {
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
         tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(date, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(depositaire, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(montant + " $", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(reste + " $", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(reste + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+    }
+
+    private void setLigneTabEcheance(PdfPTable tableEchances, String nomEcheance, String dateDebut, String dateFin, String progression, int i, double montantDu, double montantPaye) {
+        //new String[]{"N°", "Tranche", "Début", "Echéance", "Progession", "Montant dû", "Montant payé"},
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
+        tableEchances.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableEchances.addCell(getCelluleTableau(nomEcheance, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+        tableEchances.addCell(getCelluleTableau(dateDebut, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+        tableEchances.addCell(getCelluleTableau(dateFin, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+        tableEchances.addCell(getCelluleTableau(progression, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+        tableEchances.addCell(getCelluleTableau(montantDu + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableEchances.addCell(getCelluleTableau(montantPaye + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+    }
+
+    private void setDerniereLigneTabEcheance(PdfPTable tableEchances, double totalDu, double totalPaye) {
+        //new String[]{"N°", "Tranche", "Début", "Echéance", "Progession", "Montant dû", "Montant payé"},
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
+        tableEchances.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+        tableEchances.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+        tableEchances.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+        tableEchances.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+        tableEchances.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+        tableEchances.addCell(getCelluleTableau(totalDu + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableEchances.addCell(getCelluleTableau(totalPaye + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
     }
 
     private void setLignesTabSynthese(PdfPTable tableau, float borderwidth, String monnaie, double totaRabais, double totalHt, double totalTva, double totalTTC, double totalPaye, double totalSolde) {
@@ -467,19 +530,19 @@ public class DocumentPDF extends PdfPageEventHelper {
         tableau.addCell(getCelluleTableau(totalHt + " " + monnaie, borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
 
         tableau.addCell(getCelluleTableau("Tva (16%)", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        tableau.addCell(getCelluleTableau(totalTva + " $", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableau.addCell(getCelluleTableau(totalTva + " " + monnaie, borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
 
         tableau.addCell(getCelluleTableau("Montant TTC", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
-        tableau.addCell(getCelluleTableau(totalTTC + " $", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableau.addCell(getCelluleTableau(totalTTC + " " + monnaie, borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
 
         if (this.gestionnaireFacture.getTitreDoc_() == 0) {
             if (totalPaye != 0) {
                 tableau.addCell(getCelluleTableau("Montant payé", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_LEFT, Font_TexteSimple_Italique));
-                tableau.addCell(getCelluleTableau("- " + totalPaye + " $", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_RIGHT, Font_TexteSimple_Italique));
+                tableau.addCell(getCelluleTableau("- " + totalPaye + " " + monnaie, borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_RIGHT, Font_TexteSimple_Italique));
             }
 
             tableau.addCell(getCelluleTableau("Solde", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
-            tableau.addCell(getCelluleTableau(totalSolde + " $", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+            tableau.addCell(getCelluleTableau(totalSolde + " " + monnaie, borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
         }
     }
 
@@ -531,23 +594,25 @@ public class DocumentPDF extends PdfPageEventHelper {
     }
 
     private void setDerniereLigneTabArticle(PdfPTable tableDetailsArticles, double punit1, double rabais, double punit2, double mntTva, double totalTTC) {
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(punit1 + " $", 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(rabais + " $", 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(punit2 + " $", 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(mntTva + " $", 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(totalTTC + " $", 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(punit1 + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(rabais + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(punit2 + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(mntTva + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(totalTTC + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
     }
 
     private void setDerniereLigneTabReleve(PdfPTable tableDetailsArticles, double montant, double reste) {
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(montant + " $", 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(reste + " $", 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(reste + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
     }
 
     private PdfPCell getCelluleTableau(String texte, float BorderWidth, BaseColor background, BaseColor textColor, int alignement, Font font) {
@@ -602,6 +667,11 @@ public class DocumentPDF extends PdfPageEventHelper {
         setTableauDetailsArticles();//ok
         ajouterLigne(1);//ok
         setTableauSynthese();//ok
+        if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerPlanPaiement() == true) {
+            if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
+                setTableauDetailsPlanPaiementEchelonne();//ok
+            }
+        }
         if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerRelever() == true) {
             if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
                 setTableauDetailsReleveDeCompte();//ok

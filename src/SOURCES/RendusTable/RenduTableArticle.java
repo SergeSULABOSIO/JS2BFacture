@@ -29,22 +29,29 @@ public class RenduTableArticle implements TableCellRenderer {
     
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        CelluleSimpleTableau celluleNum = null;
-        if (column == 0) {
-            celluleNum = new CelluleSimpleTableau(" " + value + " ", false, iconeEdition);
-        }else{
-            if(column == 1){
-                celluleNum = new CelluleSimpleTableau(" " + value + " ", true, iconeEdition);
-            }else{
-                if(column == 3){
-                    celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", true, iconeEdition);
-                }else{
-                    celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", true, null);
-                }
-            }
+         //{"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        CelluleSimpleTableau cellule = null;
+        switch (column) {
+            case 0:
+                cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                break;
+            case 1:
+                cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, iconeEdition);
+                break;
+            case 2:
+            case 4:
+            case 5:
+            case 6:
+                cellule = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                break;
+            case 3:
+                cellule = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                break;
+            case 7:
+                cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, iconeEdition);
+                break;
         }
-        celluleNum.ecouterSelection(isSelected, row);
-        
-        return celluleNum;
+        cellule.ecouterSelection(isSelected, row);
+        return cellule;
     }
 }

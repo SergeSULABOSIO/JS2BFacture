@@ -28,7 +28,7 @@ public class EditeurDatePaiement extends AbstractCellEditor implements TableCell
     private ModeleListePaiement modeleListePaiement;
     private int updatedRow;
     
-    public EditeurDatePaiement(Vector<InterfaceArticle> listeArticle, ModeleListePaiement modeleListePaiement) {
+    public EditeurDatePaiement(ModeleListePaiement modeleListePaiement) {
         this.modeleListePaiement = modeleListePaiement;
     }
 
@@ -46,7 +46,7 @@ public class EditeurDatePaiement extends AbstractCellEditor implements TableCell
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         //Pendant édition de l'utilisateur
         this.updatedRow = row;
-        dateChooser.setDate(new Date());
+        dateChooser.setDate((Date)value);
         return dateChooser;
     }
 

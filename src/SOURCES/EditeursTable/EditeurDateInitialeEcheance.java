@@ -6,17 +6,13 @@
 package SOURCES.EditeursTable;
 
 
-import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
 import java.util.Date;
-import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
-import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
 
 /**
@@ -30,7 +26,7 @@ public class EditeurDateInitialeEcheance extends AbstractCellEditor implements T
     private ModeleListeEcheance modeleListeEcheance;
     private int updatedRow;
     
-    public EditeurDateInitialeEcheance(Vector<InterfaceArticle> listeArticle, ModeleListeEcheance modeleListeEcheance) {
+    public EditeurDateInitialeEcheance(ModeleListeEcheance modeleListeEcheance) {
         this.modeleListeEcheance = modeleListeEcheance;
     }
 
@@ -40,6 +36,7 @@ public class EditeurDateInitialeEcheance extends AbstractCellEditor implements T
         //Après édition de l'utilisateur
         InterfaceEcheance updatedEcheanceInTable = modeleListeEcheance.getEcheance_row(updatedRow);
         updatedEcheanceInTable.setDateInitiale(dateChooser.getDate());
+        this.modeleListeEcheance.redessinerTable();
         return dateChooser.getDate();
     }
 
@@ -47,7 +44,7 @@ public class EditeurDateInitialeEcheance extends AbstractCellEditor implements T
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         //Pendant édition de l'utilisateur
         this.updatedRow = row;
-        dateChooser.setDate(new Date());
+        dateChooser.setDate((Date)value);
         return dateChooser;
     }
 

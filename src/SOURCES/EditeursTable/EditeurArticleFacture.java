@@ -60,6 +60,7 @@ public class EditeurArticleFacture extends AbstractCellEditor implements TableCe
                 updatedArticleInTable.setPrixUHT_avant_rabais(artFromBase.getPrixUHT_avant_rabais());
                 updatedArticleInTable.setUnite(artFromBase.getUnite());
                 updatedArticleInTable.setId(artFromBase.getId());
+                updatedArticleInTable.setTranches(artFromBase.getTranches());
                 //System.out.println("id="+artFromBase.getId());
             }
         }
