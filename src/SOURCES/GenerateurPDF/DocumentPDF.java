@@ -342,6 +342,42 @@ public class DocumentPDF extends PdfPageEventHelper {
             } else {
                 for (int i = 0; i < 10; i++) {
                     setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+<<<<<<< HEAD
+=======
+                }
+                setDerniereLigneTabReleve(tableReleve, 1500, 350);
+            }
+            document.add(tableReleve);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    / Je suis ici !!!!
+    private void setTableauDetailsPlanPaiementEchelonne() {
+        try {
+            document.add(getParagraphe("Détails - Plan de paiement échelonné", Font_TexteSimple, Element.ALIGN_CENTER));
+            PdfPTable tableReleve = getTableau(
+                    -1,
+                    new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
+                    new int[]{80, 300, 500, 400, 200, 200},
+                    Element.ALIGN_CENTER,
+                    0.2f
+            );
+            if (this.gestionnaireFacture != null) {
+                ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
+                Vector<InterfacePaiement> listePaiement = modelPaiement.getListeData();
+                int i = 0;
+                for (InterfacePaiement paiement : listePaiement) {
+                    String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
+                    i++;
+                }
+                setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
+            } else {
+                for (int i = 0; i < 10; i++) {
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+>>>>>>> f958ebc42af45d700e27860775b53c15e7a87b5a
                 }
                 setDerniereLigneTabReleve(tableReleve, 1500, 350);
             }

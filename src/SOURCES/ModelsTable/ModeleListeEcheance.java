@@ -61,6 +61,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
         this.param_tranche_init_montant_du();
         this.param_tranche_init_montant_paye();
         redessinerTable();
+<<<<<<< HEAD
     }
 
     public void actualiser_dates_montantDu_montantPaye() {
@@ -69,6 +70,8 @@ public class ModeleListeEcheance extends AbstractTableModel {
         this.param_tranche_init_montant_du();
         this.param_tranche_init_montant_paye();
         redessinerTable();
+=======
+>>>>>>> f958ebc42af45d700e27860775b53c15e7a87b5a
     }
 
     public void setListeEcheance(Vector<InterfaceEcheance> listeData) {
@@ -235,7 +238,17 @@ public class ModeleListeEcheance extends AbstractTableModel {
                 this.nombreTranches = 0;
             }
         }
+<<<<<<< HEAD
         //System.out.println("nbTotalTranche = " + this.nombreTranches);
+=======
+
+        /*
+        this.modeleListeArticles.getListeData().stream().filter((art) -> (art.getTranches() > this.nombreTranches)).forEachOrdered((art) -> {
+            this.nombreTranches = art.getTranches();
+        });
+         */
+        System.out.println("nbTotalTranche = " + this.nombreTranches);
+>>>>>>> f958ebc42af45d700e27860775b53c15e7a87b5a
         return this.nombreTranches;
     }
 
