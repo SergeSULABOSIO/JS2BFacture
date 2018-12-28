@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SOURCES.EndusTable;
+package SOURCES.RendusTable;
 
 import SOURCES.UI.CelluleSimpleTableau;
 import java.awt.Component;
@@ -31,15 +31,15 @@ public class RenduTablePaiement implements TableCellRenderer {
         CelluleSimpleTableau celluleNum = null;
         if (column == 0 || column == 1 || column == 2) {
             if(column == 0){
-                celluleNum = new CelluleSimpleTableau(" " + ((Date)value).toLocaleString() + " ", false, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + ((Date)value).toLocaleString() + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
             }else{
-                celluleNum = new CelluleSimpleTableau(" " + value + " ", false, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
             }
         } else {
             if (column == 3) {
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", true, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
             } else {
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", true, null);
+                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
             }
         }
         celluleNum.ecouterSelection(isSelected, row);

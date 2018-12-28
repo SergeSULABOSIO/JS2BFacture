@@ -5,14 +5,14 @@
  */
 package TEST_EXEMPLE;
 
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.Utilitaires.Util;
+import SOURCES.Interface.InterfaceArticle;
 
 /**
  *
  * @author HP Pavilion
  */
-public class TESTProduit implements ArticleFacture{
+public class TESTProduit implements InterfaceArticle{
     
     public int id;
     public String nom;
@@ -21,8 +21,9 @@ public class TESTProduit implements ArticleFacture{
     public double tvaprc;
     public double prixUht;
     public double rabais;
+    public int tranches;
 
-    public TESTProduit(int id, String nom, double qte, String unite, double tvaprc, double prixUht, double rabais) {
+    public TESTProduit(int id, String nom, double qte, String unite, double tvaprc, double prixUht, double rabais, int tranches) {
         this.id = id;
         this.nom = nom;
         this.qte = qte;
@@ -30,6 +31,7 @@ public class TESTProduit implements ArticleFacture{
         this.tvaprc = tvaprc;
         this.prixUht = prixUht;
         this.rabais = rabais;
+        this.tranches = tranches;
     }
 
     @Override
@@ -121,10 +123,20 @@ public class TESTProduit implements ArticleFacture{
         this.tvaprc = tvapourc;
     }
 
+    public int getTranches() {
+        return tranches;
+    }
+
+    public void setTranches(int tranches) {
+        this.tranches = tranches;
+    }
+
     @Override
     public String toString() {
-        return "TESTProduit{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + '}';
+        return "TESTProduit{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + ", tranches=" + tranches + '}';
     }
+    
+    
 
     
 }

@@ -5,13 +5,13 @@
  */
 package TEST_EXEMPLE;
 
-import SOURCES.Interface.EntrepriseFacture;
+import SOURCES.Interface.InterfaceEntreprise;
 
 /**
  *
  * @author HP Pavilion
  */
-public class TESTEntreprise implements EntrepriseFacture{
+public class TESTEntreprise implements InterfaceEntreprise{
     public int id;
     public String nom;
     public String adresse;

@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author HP Pavilion
  */
-public interface PaiementFacture {
+public interface InterfacePaiement {
     
     public abstract int getId();
     public abstract int getIdClient();

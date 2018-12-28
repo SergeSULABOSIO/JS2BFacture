@@ -6,6 +6,7 @@
 package SOURCES.CallBack;
 
 import SOURCES.ModelsTable.ModeleListeArticles;
+import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.ModelsTable.ModeleListePaiement;
 
 /**
@@ -16,5 +17,5 @@ public abstract class EcouteurAjout {
     
     public abstract void setAjoutArticle(ModeleListeArticles modeleListeArticles);
     public abstract void setAjoutPaiement(ModeleListePaiement modeleListePaiement);
-    
+    public abstract void setAjoutEcheance(ModeleListeEcheance modeleListeEcheance);
 }

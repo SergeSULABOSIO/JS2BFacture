@@ -5,14 +5,14 @@
  */
 package TEST_EXEMPLE;
 
-import SOURCES.Interface.PaiementFacture;
 import java.util.Date;
+import SOURCES.Interface.InterfacePaiement;
 
 /**
  *
  * @author HP Pavilion
  */
-public class TESTPaiement implements PaiementFacture{
+public class TESTPaiement implements InterfacePaiement{
     public int id;
     public int idClient;
     public int idArticle;

@@ -5,15 +5,15 @@
  */
 package SOURCES.ModelsTable;
 
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.CallBack.EcouteurValeursChangees;
-import SOURCES.Interface.PaiementFacture;
 import SOURCES.Utilitaires.Util;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
 
 /**
  *
@@ -22,7 +22,7 @@ import javax.swing.table.AbstractTableModel;
 public class ModeleListePaiement extends AbstractTableModel {
 
     private String[] titreColonnes = {"Date", "Article", "Dépositaire", "Montant", "Reste"};
-    private Vector<PaiementFacture> listeData = new Vector<>();
+    private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
     private ModeleListeArticles modeleListeArticles;
@@ -33,14 +33,14 @@ public class ModeleListePaiement extends AbstractTableModel {
         this.modeleListeArticles = modeleListeArticles;
     }
 
-    public void setListePaiements(Vector<PaiementFacture> listeData) {
+    public void setListePaiements(Vector<InterfacePaiement> listeData) {
         this.listeData = listeData;
         redessinerTable();
     }
 
-    public PaiementFacture getPaiement(int row) {
+    public InterfacePaiement getPaiement(int row) {
         if (row < listeData.size() && row != -1) {
-            PaiementFacture art = listeData.elementAt(row);
+            InterfacePaiement art = listeData.elementAt(row);
             if (art != null) {
                 return art;
             } else {
@@ -51,11 +51,11 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
     }
 
-    public Vector<PaiementFacture> getListeData() {
+    public Vector<InterfacePaiement> getListeData() {
         return listeData;
     }
 
-    public void AjouterPaiement(PaiementFacture art) {
+    public void AjouterPaiement(InterfacePaiement art) {
         this.listeData.add(art);
         //System.out.println("Ajout!!!!"+art.toString());
         redessinerTable();
@@ -70,7 +70,7 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     public void SupprimerPaiement(int row, boolean mustConfirm) {
         if (row < listeData.size() && row != -1) {
-            PaiementFacture articl = listeData.elementAt(row);
+            InterfacePaiement articl = listeData.elementAt(row);
             if (mustConfirm == true) {
                 if (articl != null) {
                     int dialogResult = JOptionPane.showConfirmDialog(parent, "Etes-vous sûr de vouloir supprimer cette ligne?", "Avertissement", JOptionPane.YES_NO_OPTION);
@@ -86,7 +86,7 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     public double getTotalMontant() {
         double mnt = 0;
-        for (PaiementFacture art : listeData) {
+        for (InterfacePaiement art : listeData) {
             mnt = mnt + art.getMontant();
         }
         return Util.round(mnt, 2);
@@ -105,8 +105,8 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
     }
 
-    public PaiementFacture getPaiement_idArticle(int id) {
-        for (PaiementFacture paiem : listeData) {
+    public InterfacePaiement getPaiement_idArticle(int id) {
+        for (InterfacePaiement paiem : listeData) {
             if (paiem.getIdArticle() == id) {
                 return paiem;
             }
@@ -117,7 +117,7 @@ public class ModeleListePaiement extends AbstractTableModel {
     private double getMontantTotalPayable(int idArticle) {
         double tot = 0;
         if (modeleListeArticles != null) {
-            for (ArticleFacture articleApayer : modeleListeArticles.getListeData()) {
+            for (InterfaceArticle articleApayer : modeleListeArticles.getListeData()) {
                 if (idArticle == articleApayer.getId()) {
                     tot = tot + articleApayer.getTotalTTC();
                 }
@@ -128,7 +128,7 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     private double getMontantTotalPaye(int idArticle) {
         double tot = 0;
-        for (PaiementFacture paiement : listeData) {
+        for (InterfacePaiement paiement : listeData) {
             if (paiement.getIdArticle() == idArticle) {
                 tot = tot + paiement.getMontant();
             }
@@ -139,9 +139,9 @@ public class ModeleListePaiement extends AbstractTableModel {
     public double getReste(int idArticle) {
         double reste = getMontantTotalPayable(idArticle) - getMontantTotalPaye(idArticle);
         reste = Util.round(reste, 2);
-        if(reste < 0){
+        if (reste < 0) {
             return 0;
-        }else{
+        } else {
             return reste;
         }
     }
@@ -172,9 +172,9 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 0:
                 return listeData.elementAt(rowIndex).getDate();
             case 1:
-                if(listeData.elementAt(rowIndex).getNomArticle().trim().length() != 0){
-                    return listeData.elementAt(rowIndex).getIdArticle()+ "_" + listeData.elementAt(rowIndex).getNomArticle();
-                }else{
+                if (listeData.elementAt(rowIndex).getNomArticle().trim().length() != 0) {
+                    return listeData.elementAt(rowIndex).getIdArticle() + "_" + listeData.elementAt(rowIndex).getNomArticle();
+                } else {
                     return listeData.elementAt(rowIndex).getNomArticle();
                 }
             case 2:
@@ -218,14 +218,14 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        PaiementFacture article = listeData.get(rowIndex);
+        InterfacePaiement article = listeData.get(rowIndex);
         switch (columnIndex) {
             case 0:
                 article.setDate((Date) aValue);
                 break;
             case 1:
                 String nom = aValue + "";
-                if(nom.contains("_")){
+                if (nom.contains("_")) {
                     nom = nom.split("_")[1];
                 }
                 article.setNomArticle(nom);
@@ -245,5 +245,4 @@ public class ModeleListePaiement extends AbstractTableModel {
         ecouteurModele.onValeurChangee();
         fireTableDataChanged();
     }
-
 }

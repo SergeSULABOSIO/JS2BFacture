@@ -5,7 +5,6 @@
  */
 package SOURCES.EditeursTable;
 
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import java.awt.Component;
 import java.util.Vector;
@@ -13,6 +12,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import SOURCES.Interface.InterfaceArticle;
 
 /**
  *
@@ -21,11 +21,11 @@ import javax.swing.table.TableCellEditor;
 public class EditeurArticleFacture extends AbstractCellEditor implements TableCellEditor {
 
     private JComboBox<String> champEditionCombo = new JComboBox();
-    private Vector<ArticleFacture> listeArticle;
+    private Vector<InterfaceArticle> listeArticle;
     private ModeleListeArticles modeleListeArticles;
     private int updatedRow;
 
-    public EditeurArticleFacture(Vector<ArticleFacture> listeArticle, ModeleListeArticles modeleListeArticles) {
+    public EditeurArticleFacture(Vector<InterfaceArticle> listeArticle, ModeleListeArticles modeleListeArticles) {
         this.listeArticle = listeArticle;
         this.modeleListeArticles = modeleListeArticles;
         initCombo();
@@ -33,13 +33,13 @@ public class EditeurArticleFacture extends AbstractCellEditor implements TableCe
 
     private void initCombo() {
         this.champEditionCombo.removeAllItems();
-        for (ArticleFacture article : listeArticle) {
+        for (InterfaceArticle article : listeArticle) {
             this.champEditionCombo.addItem(article.getId() + "_" + article.getNom());
         }
     }
 
-    private ArticleFacture getArticle(String nom) {
-        for (ArticleFacture articleRech : listeArticle) {
+    private InterfaceArticle getArticle(String nom) {
+        for (InterfaceArticle articleRech : listeArticle) {
             String id_nom = articleRech.getId() + "_" + articleRech.getNom();
             if (id_nom.equals(nom)) {
                 return articleRech;
@@ -52,14 +52,15 @@ public class EditeurArticleFacture extends AbstractCellEditor implements TableCe
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
         String nomSelArt = champEditionCombo.getSelectedItem() + "";
-        ArticleFacture artFromBase = getArticle(nomSelArt);
+        InterfaceArticle artFromBase = getArticle(nomSelArt);
         if (artFromBase != null) {
-            ArticleFacture updatedArticleInTable = modeleListeArticles.getArticle(updatedRow);
+            InterfaceArticle updatedArticleInTable = modeleListeArticles.getArticle(updatedRow);
             if (updatedArticleInTable != null) {
                 //On charge infos de base sur l'article qui vient d'être séléctionné par le client
                 updatedArticleInTable.setPrixUHT_avant_rabais(artFromBase.getPrixUHT_avant_rabais());
                 updatedArticleInTable.setUnite(artFromBase.getUnite());
                 updatedArticleInTable.setId(artFromBase.getId());
+                updatedArticleInTable.setTranches(artFromBase.getTranches());
                 //System.out.println("id="+artFromBase.getId());
             }
         }

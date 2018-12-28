@@ -5,13 +5,13 @@
  */
 package TEST_EXEMPLE;
 
-import SOURCES.Interface.ClientFacture;
+import SOURCES.Interface.InterfaceClient;
 
 /**
  *
  * @author HP Pavilion
  */
-public class TESTClient implements ClientFacture{
+public class TESTClient implements InterfaceClient{
     
     private int id;
     private String nom;

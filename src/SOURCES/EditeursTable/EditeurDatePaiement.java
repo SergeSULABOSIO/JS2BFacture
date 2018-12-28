@@ -6,9 +6,7 @@
 package SOURCES.EditeursTable;
 
 
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.ModelsTable.ModeleListePaiement;
-import SOURCES.Interface.PaiementFacture;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
 import java.util.Date;
@@ -16,6 +14,8 @@ import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
 
 /**
  *
@@ -28,7 +28,7 @@ public class EditeurDatePaiement extends AbstractCellEditor implements TableCell
     private ModeleListePaiement modeleListePaiement;
     private int updatedRow;
     
-    public EditeurDatePaiement(Vector<ArticleFacture> listeArticle, ModeleListePaiement modeleListePaiement) {
+    public EditeurDatePaiement(ModeleListePaiement modeleListePaiement) {
         this.modeleListePaiement = modeleListePaiement;
     }
 
@@ -37,7 +37,8 @@ public class EditeurDatePaiement extends AbstractCellEditor implements TableCell
     @Override
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
-        PaiementFacture updatedPaiementInTable = modeleListePaiement.getPaiement(updatedRow);
+        InterfacePaiement updatedPaiementInTable = modeleListePaiement.getPaiement(updatedRow);
+        updatedPaiementInTable.setDate(dateChooser.getDate());
         return dateChooser.getDate();
     }
 
@@ -45,7 +46,7 @@ public class EditeurDatePaiement extends AbstractCellEditor implements TableCell
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         //Pendant édition de l'utilisateur
         this.updatedRow = row;
-        dateChooser.setDate(new Date());
+        dateChooser.setDate((Date)value);
         return dateChooser;
     }
 

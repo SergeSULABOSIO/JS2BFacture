@@ -5,16 +5,16 @@
  */
 package SOURCES.EditeursTable;
 
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
-import SOURCES.Interface.PaiementFacture;
 import java.awt.Component;
 import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
 
 /**
  *
@@ -23,12 +23,12 @@ import javax.swing.table.TableCellEditor;
 public class EditeurArticlePaiement extends AbstractCellEditor implements TableCellEditor {
 
     private JComboBox<String> champEditionCombo = new JComboBox();
-    private Vector<ArticleFacture> listeArticle;
+    private Vector<InterfaceArticle> listeArticle;
     private ModeleListePaiement modeleListePaiement;
     private ModeleListeArticles modeleListeArticles;
     private int updatedRow;
 
-    public EditeurArticlePaiement(Vector<ArticleFacture> listeArticle, ModeleListeArticles modeleListeArticles, ModeleListePaiement modeleListePaiement) {
+    public EditeurArticlePaiement(Vector<InterfaceArticle> listeArticle, ModeleListeArticles modeleListeArticles, ModeleListePaiement modeleListePaiement) {
         this.listeArticle = listeArticle;
         this.modeleListePaiement = modeleListePaiement;
         this.modeleListeArticles = modeleListeArticles;
@@ -37,13 +37,13 @@ public class EditeurArticlePaiement extends AbstractCellEditor implements TableC
 
     private void initCombo() {
         this.champEditionCombo.removeAllItems();
-        for (ArticleFacture article : listeArticle) {
+        for (InterfaceArticle article : listeArticle) {
             this.champEditionCombo.addItem(article.getId() + "_" + article.getNom());
         }
     }
 
-    private ArticleFacture getArticle(String nom) {
-        for (ArticleFacture articleRech : listeArticle) {
+    private InterfaceArticle getArticle(String nom) {
+        for (InterfaceArticle articleRech : listeArticle) {
             String id_nom = articleRech.getId() + "_" + articleRech.getNom();
             if (id_nom.equals(nom)) {
                 return articleRech;
@@ -56,24 +56,32 @@ public class EditeurArticlePaiement extends AbstractCellEditor implements TableC
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
         String nomSelArt = champEditionCombo.getSelectedItem() + "";
-        ArticleFacture artFromBase = getArticle(nomSelArt);
+
+        //A partir de l'article que le user a séléctionné, on va trouver vite ce qu'il est sensé payer et le lui montrer
+        InterfaceArticle artFromBase = getArticle(nomSelArt);
         if (artFromBase != null) {
-            ArticleFacture artFromFacture = modeleListeArticles.getArticle_id(artFromBase.getId());
-            PaiementFacture updatedPaiementInTable = modeleListePaiement.getPaiement(updatedRow);
+            InterfaceArticle artFromFacture = modeleListeArticles.getArticle_id(artFromBase.getId());
+            InterfacePaiement updatedPaiementInTable = modeleListePaiement.getPaiement(updatedRow);
             if (artFromFacture != null) {
                 if (updatedPaiementInTable != null) {
                     //On charge infos de base sur l'article qui vient d'être séléctionné par le client
-                    double reste = modeleListePaiement.getReste(artFromFacture.getId());
+                    //double reste = modeleListePaiement.getReste(artFromFacture.getId());
                     updatedPaiementInTable.setIdArticle(artFromFacture.getId());
+                    //updatedPaiementInTable.setMontant(0);
+                    /*
                     if (reste != 0) {
                         updatedPaiementInTable.setMontant(reste);
                     }
+                     */
                 }
             } else {
                 updatedPaiementInTable.setIdArticle(-1);
                 updatedPaiementInTable.setMontant(0);
             }
         }
+        /*
+        
+         */
         return nomSelArt;
     }
 

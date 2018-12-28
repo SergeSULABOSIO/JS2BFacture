@@ -5,19 +5,18 @@
  */
 package TEST_EXEMPLE;
 
-import SOURCES.Interface.ArticleFacture;
 import SOURCES.UI.DialogueFacture;
-import SOURCES.CallBack.EcouteurAjout;
 import SOURCES.CallBack.EcouteurFacture;
-import SOURCES.Interface.ClientFacture;
-import SOURCES.Interface.PaiementFacture;
-import SOURCES.ModelsTable.ModeleListeArticles;
-import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.PanelFacture;
 import SOURCES.Utilitaires.Donnees;
 import SOURCES.Utilitaires.Parametres;
 import java.util.Date;
 import java.util.Vector;
+import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Interface.InterfaceClient;
+import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
  *
@@ -33,67 +32,72 @@ public class TestPrincipal extends javax.swing.JFrame {
         initComponents();
     }
     
-    
     private void initData(){
-        
         String numeroFacture = ""+(new Date().getTime());
-        
-        Vector<ArticleFacture> listArticles = new Vector<>();
-        listArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0));
-        listArticles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0));
-        listArticles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0));
+        int idFacture = 20;
+        Date dateDebut = new Date(118, 0, 1);
+        Date dateFin = new Date(118, 11, 31);
+        ExerciceFiscale anneeScolaire = new ExerciceFiscale(dateDebut, dateFin, "Année Scolaire 2018-2019");
+        Vector<InterfaceArticle> listArticles = new Vector<>();
+        listArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
+        listArticles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
+        listArticles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
         
         TESTClient client = new TESTClient(12, "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
         
         TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
         
-        String monnaie = "USD";
+        String monnaie = "$";
+        int idMonnaie = 10;
         double tva = 0;
         double remise = 0;
         
-        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, listArticles, client, entreprise, monnaie, tva, remise, new EcouteurAjout() {
-            @Override
-            public void setAjoutArticle(ModeleListeArticles modeleListeArticles) {
-                modeleListeArticles.AjouterArticle(new TESTProduit(-1, "", 1, "Année", 0, 0, 0));
-            }
-
-            @Override
-            public void setAjoutPaiement(ModeleListePaiement modeleListePaiement) {
-                modeleListePaiement.AjouterPaiement(new TESTPaiement(1, 1, 1, "Serge SULA", "", "", 0, new Date()));
-            }
-        });
+        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, idFacture, listArticles, client, entreprise, monnaie, idMonnaie, tva, remise, anneeScolaire);
         
         this.parametres.setEcouteurFacture(new EcouteurFacture() {
             @Override
-            public void onEnregistre(ClientFacture client, Vector<ArticleFacture> articles, Vector<PaiementFacture> paiements) {
+            public void onEnregistre(InterfaceClient client, Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeances) {
                 
                 System.out.println("CLIENT : " + client.getNom());
                 System.out.println("ARTICLES : ");
                 double tot = 0;
-                for(ArticleFacture article : articles){
+                for(InterfaceArticle article : articles){
                     System.out.println(" * "+article.getQte()+", " + article.getNom()+", "+ article.getTotalTTC());
                     tot += article.getTotalTTC();
                 }
                 System.out.println("Total : "+tot+" "+parametres.getMonnaie());
                 System.out.println("PAIEMENTS : ");
                 double paie = 0;
-                for(PaiementFacture paiement : paiements){
+                for(InterfacePaiement paiement : paiements){
                     System.out.println(" * "+paiement.getDate().toLocaleString()+", " + paiement.getNomDepositaire()+", "+ paiement.getMontant()+", ");
                     paie += paiement.getMontant();
                 }
                 System.out.println("Total : "+paie+" "+parametres.getMonnaie());
                 System.out.println("Total Solde : "+(tot - paie)+" "+parametres.getMonnaie());
-                
+                System.out.println("PLAN DE PAIEMENT:");
+                for(InterfaceEcheance echeance : echeances){
+                    System.out.println(" * Echéance : "+echeance.toString());
+                }
             }
         });
         
-        Vector<ArticleFacture> articles = new Vector<>();
-        articles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0));
-        articles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0));
-        articles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0));
+        Vector<InterfaceArticle> articles = new Vector<>();
+        articles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
+        articles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
+        articles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
         
-        Vector<PaiementFacture> paiements = new Vector<>();
-        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 35, new Date()));
+        Vector<InterfacePaiement> paiements = new Vector<>();
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        
+        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
+        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
+        
+        Vector<InterfaceEcheance> echeances = new Vector<>();
+        echeances.add(new TESTEcheance(-1, "PREMIER VERSEMENT", -1, new Date(), new Date(), numeroFacture, 0, 600, 1, monnaie));
         
         this.parametres.setDonnees(new Donnees(articles, paiements));
     }

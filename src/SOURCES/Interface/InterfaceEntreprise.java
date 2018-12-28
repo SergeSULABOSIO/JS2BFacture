@@ -9,7 +9,7 @@ package SOURCES.Interface;
  *
  * @author HP Pavilion
  */
-public interface EntrepriseFacture {
+public interface InterfaceEntreprise {
     
     public abstract int getId();
     public abstract String getNom();

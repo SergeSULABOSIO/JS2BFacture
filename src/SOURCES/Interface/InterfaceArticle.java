@@ -9,7 +9,7 @@ package SOURCES.Interface;
  *
  * @author HP Pavilion
  */
-public interface ArticleFacture {
+public interface InterfaceArticle {
     
     public abstract int getId();
     public abstract String getNom();
@@ -17,6 +17,7 @@ public interface ArticleFacture {
     public abstract String getUnite();
     public abstract double getPrixUHT_avant_rabais();
     public abstract double getRabais();
+    public abstract int getTranches();
     public abstract double getPrixUHT_apres_rabais();
     public abstract double getTvaPoucentage();
     public abstract double getTvaMontant();
@@ -26,6 +27,7 @@ public interface ArticleFacture {
     public abstract void setNom(String nom);
     public abstract void setQte(double Qt);
     public abstract void setUnite(String unite);
+    public abstract void setTranches(int tranches);
     public abstract void setPrixUHT_avant_rabais(double prixUht);
     public abstract void setRabais(double rabais);
     public abstract void setTvaPoucentage(double tvapourc);
