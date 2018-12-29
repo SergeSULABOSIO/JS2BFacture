@@ -41,6 +41,7 @@ import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
 import SOURCES.RendusTable.RenduTableEcheance;
+import SOURCES.RendusTable.RenduTitteListesArticles;
 import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
@@ -212,6 +213,9 @@ public class Panel extends javax.swing.JPanel {
 
         //Parametrage du modele contenant les données de la table
         this.tableListeArticle.setModel(this.modeleListeArticles);
+        
+        this.tableListeArticle.getTableHeader().setDefaultRenderer(new RenduTitteListesArticles());
+        
 
         //Parametrage du rendu de la table
         this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), icones.getModifier_01()));
