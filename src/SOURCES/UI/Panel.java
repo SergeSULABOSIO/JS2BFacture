@@ -41,7 +41,6 @@ import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
 import SOURCES.RendusTable.RenduTableEcheance;
-import SOURCES.RendusTable.RenduTitteListesArticles;
 import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
@@ -213,8 +212,6 @@ public class Panel extends javax.swing.JPanel {
 
         //Parametrage du modele contenant les données de la table
         this.tableListeArticle.setModel(this.modeleListeArticles);
-        
-        this.tableListeArticle.getTableHeader().setDefaultRenderer(new RenduTitteListesArticles());
         
 
         //Parametrage du rendu de la table
@@ -419,6 +416,7 @@ public class Panel extends javax.swing.JPanel {
                 modeleListeArticles.viderListe();
                 break;
             case 1:
+                System.out.println("*** SUPPRESSION DES PAIEMENTS");
                 modeleListePaiement.viderListe();
                 break;
             default:
@@ -655,6 +653,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     public void activerBoutons(int selectedTab) {
+        this.indexTabSelected = selectedTab;
         if (selectedTab == 2) {
             active(false);
         } else {
@@ -1416,10 +1415,9 @@ public class Panel extends javax.swing.JPanel {
 
     private void tabPrincipalStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPrincipalStateChanged
         // TODO add your handling code here:
-        JTabbedPane tab = (JTabbedPane) evt.getSource();
-        //this.indexTabSelected = tab.getSelectedIndex();
-        activerBoutons(tab.getSelectedIndex());
-        //System.out.println("Tab changed to : " + tab.getTitleAt(indexTabSelected));
+        
+        activerBoutons(((JTabbedPane) evt.getSource()).getSelectedIndex());
+        
     }//GEN-LAST:event_tabPrincipalStateChanged
 
     private void tableListePaiementMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseClicked
