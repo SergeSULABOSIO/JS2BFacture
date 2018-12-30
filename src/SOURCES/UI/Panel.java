@@ -582,7 +582,7 @@ public class Panel extends javax.swing.JPanel {
                 enregistrer();
             }
         });
-
+        
         barreOutilsA = new BarreOutils(barreOutilsArticles);
         barreOutilsA.AjouterBouton(btAjouter);
         barreOutilsA.AjouterBouton(btSupprimer);
