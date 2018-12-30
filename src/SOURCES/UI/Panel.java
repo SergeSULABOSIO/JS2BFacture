@@ -58,7 +58,7 @@ public class Panel extends javax.swing.JPanel {
     private BarreOutils barreOutilsA = null;
     private MenuContextuel menuContextuel = null;
     private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubEnregistrer = null;
-    private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btEnregistrer;
+    private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btEnregistrer, btRecu;
 
     public ModeleListeArticles modeleListeArticles = null;
     public ModeleListePaiement modeleListePaiement = null;
