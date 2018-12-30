@@ -146,7 +146,7 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
     }
 
-    private void redessinerTable() {
+    public void redessinerTable() {
         ecouteurModele.onValeurChangee();
         fireTableDataChanged();
     }

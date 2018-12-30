@@ -42,6 +42,7 @@ import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
 import SOURCES.RendusTable.RenduTableEcheance;
 import SOURCES.Utilitaires.ExerciceFiscale;
+import java.util.Vector;
 
 /**
  *
@@ -57,7 +58,7 @@ public class Panel extends javax.swing.JPanel {
     private Icones icones = null;
     private BarreOutils barreOutilsA = null;
     private MenuContextuel menuContextuel = null;
-    private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubEnregistrer = null;
+    private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubEnregistrer, rubRecu = null;
     private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btEnregistrer, btRecu;
 
     public ModeleListeArticles modeleListeArticles = null;
@@ -65,6 +66,7 @@ public class Panel extends javax.swing.JPanel {
     public ModeleListeEcheance modeleListeEcheance = null;
     private EcouteurUpdateClose callBackSynthese;
     private Parametres parametres;
+    public Vector<InterfacePaiement> paiementsSelected = new Vector<InterfacePaiement>();
 
     public Panel(Parametres parametres, EcouteurUpdateClose callBackSynthese) {
         this.initComponents();
@@ -87,6 +89,8 @@ public class Panel extends javax.swing.JPanel {
 
         this.dateFacture.setDate(new Date());
         this.chTva.setText(this.parametres.getTva() + "");
+
+        this.activerBoutons(tabPrincipal.getSelectedIndex());
     }
 
     public Parametres getParametres() {
@@ -140,7 +144,7 @@ public class Panel extends javax.swing.JPanel {
     public boolean isImprimerRelever() {
         return isReleverCompte.isSelected();
     }
-    
+
     public boolean isImprimerPlanPaiement() {
         return isPlanPaiement.isSelected();
     }
@@ -212,7 +216,6 @@ public class Panel extends javax.swing.JPanel {
 
         //Parametrage du modele contenant les données de la table
         this.tableListeArticle.setModel(this.modeleListeArticles);
-        
 
         //Parametrage du rendu de la table
         this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), icones.getModifier_01()));
@@ -309,13 +312,13 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeEcheance.setRowHeight(25);
 
         TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(0);
-        
+
         TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(1);
         col_Date_initiale.setCellEditor(new EditeurDateInitialeEcheance(modeleListeEcheance));
-        
+
         TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(2);
         col_Date_finale.setCellEditor(new EditeurDateFinaleEcheance(modeleListeEcheance));
-        
+
         TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(3);
         TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(4);
         TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(5);
@@ -339,7 +342,7 @@ public class Panel extends javax.swing.JPanel {
     private void exporterPDF() {
         try {
             callBackSynthese.onActualiser("Production du fichier PDF...");
-            DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR);
+            DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR, false);
             callBackSynthese.onActualiser("Fichier PDF produit avec succèss : " + (new File(getNomfichierPreuve())));
         } catch (Exception e) {
             e.printStackTrace();
@@ -358,7 +361,7 @@ public class Panel extends javax.swing.JPanel {
         if (dialogResult == JOptionPane.YES_OPTION) {
             try {
                 callBackSynthese.onActualiser("Impression du fichier PDF...");
-                DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_IMPRIMER);
+                DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_IMPRIMER, false);
                 callBackSynthese.onActualiser("Fichier PDF imprimé avec succèss : " + (new File(getNomfichierPreuve())));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -505,6 +508,13 @@ public class Panel extends javax.swing.JPanel {
                 enregistrer();
             }
         });
+        
+        rubRecu = new RubriqueSimple("Reçu", icones.getArgent_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                genererRecu();
+            }
+        });
 
         menuContextuel = new MenuContextuel();
         menuContextuel.Ajouter(rubAjouter);
@@ -514,6 +524,7 @@ public class Panel extends javax.swing.JPanel {
         menuContextuel.Ajouter(new JPopupMenu.Separator());
         menuContextuel.Ajouter(rubImprimer);
         menuContextuel.Ajouter(rubPDF);
+        menuContextuel.Ajouter(rubRecu);
         menuContextuel.Ajouter(new JPopupMenu.Separator());
         menuContextuel.Ajouter(rubEnregistrer);
         menuContextuel.Ajouter(rubFermer);
@@ -582,7 +593,15 @@ public class Panel extends javax.swing.JPanel {
                 enregistrer();
             }
         });
-        
+
+        //Recu
+        btRecu = new Bouton(12, "Reçu", icones.getArgent_02(), new BoutonListener() {
+            @Override
+            public void OnEcouteLeClick() {
+                genererRecu();
+            }
+        });
+
         barreOutilsA = new BarreOutils(barreOutilsArticles);
         barreOutilsA.AjouterBouton(btAjouter);
         barreOutilsA.AjouterBouton(btSupprimer);
@@ -591,9 +610,23 @@ public class Panel extends javax.swing.JPanel {
         barreOutilsA.AjouterSeparateur();
         barreOutilsA.AjouterBouton(btImprimer);
         barreOutilsA.AjouterBouton(btPDF);
+        barreOutilsA.AjouterBouton(btRecu);
         barreOutilsA.AjouterSeparateur();
         barreOutilsA.AjouterBouton(btEnregistrer);
         barreOutilsA.AjouterBouton(btFermer);
+    }
+
+    private void genererRecu() {
+        if (paiementsSelected != null) {
+            System.out.println("Production du reçu...[" + paiementsSelected.size() + "]");
+            for (InterfacePaiement ipaiement : paiementsSelected) {
+                System.out.println(" ** " + ipaiement.toString());
+            }
+            DocumentPDF recuPDF = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR, true);
+            paiementsSelected.removeAllElements();
+            modeleListePaiement.redessinerTable();
+            activerRecu(false);
+        }
     }
 
     private void ecouterMenContA(java.awt.event.MouseEvent evt, int tab) {
@@ -655,13 +688,35 @@ public class Panel extends javax.swing.JPanel {
     public void activerBoutons(int selectedTab) {
         this.indexTabSelected = selectedTab;
         if (selectedTab == 2) {
-            active(false);
+            activeAjoutEtSuppresion(false);
         } else {
-            active(true);
+            activeAjoutEtSuppresion(true);
+        }
+        activerRecu(false);
+    }
+
+    private void activerRecu(boolean rep) {
+        if (btRecu != null && rubRecu != null) {
+            btRecu.appliquerDroitAccessDynamique(rep);
+            rubRecu.appliquerDroitAccessDynamique(rep);
         }
     }
 
-    private void active(boolean rep) {
+    private void ecouterSelectionPaiement() {
+        paiementsSelected.removeAllElements();
+        int[] indexPaiements = tableListePaiement.getSelectedRows();
+        if (indexPaiements != null) {
+            for (int i = 0; i < indexPaiements.length; i++) {
+                paiementsSelected.addElement(modeleListePaiement.getListeData().elementAt(i));
+            }
+            activerRecu(true);
+        } else {
+            paiementsSelected.removeAllElements();
+            activerRecu(false);
+        }
+    }
+
+    private void activeAjoutEtSuppresion(boolean rep) {
         if (btAjouter != null) {
             btAjouter.appliquerDroitAccessDynamique(rep);
         }
@@ -1284,6 +1339,11 @@ public class Panel extends javax.swing.JPanel {
                 tableListePaiementMouseClicked(evt);
             }
         });
+        tableListePaiement.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tableListePaiementKeyReleased(evt);
+            }
+        });
         scrollListeReleveCompte.setViewportView(tableListePaiement);
         if (tableListePaiement.getColumnModel().getColumnCount() > 0) {
             tableListePaiement.getColumnModel().getColumn(0).setPreferredWidth(50);
@@ -1415,14 +1475,15 @@ public class Panel extends javax.swing.JPanel {
 
     private void tabPrincipalStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPrincipalStateChanged
         // TODO add your handling code here:
-        
+
         activerBoutons(((JTabbedPane) evt.getSource()).getSelectedIndex());
-        
+
     }//GEN-LAST:event_tabPrincipalStateChanged
 
     private void tableListePaiementMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseClicked
         // TODO add your handling code here:
         ecouterMenContA(evt, 1);
+        ecouterSelectionPaiement();
     }//GEN-LAST:event_tableListePaiementMouseClicked
 
     private void scrollListeReleveCompteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseClicked
@@ -1439,6 +1500,11 @@ public class Panel extends javax.swing.JPanel {
         // TODO add your handling code here:
         ecouterMenContA(evt, 2);
     }//GEN-LAST:event_scrollListeEcheancesMouseClicked
+
+    private void tableListePaiementKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableListePaiementKeyReleased
+        // TODO add your handling code here:
+        ecouterSelectionPaiement();
+    }//GEN-LAST:event_tableListePaiementKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -54,19 +54,21 @@ public class DocumentPDF extends PdfPageEventHelper {
     private Font Font_TexteSimple_Gras_Italique = null;
     public static final int ACTION_IMPRIMER = 0;
     public static final int ACTION_OUVRIR = 1;
+    public boolean isRecu = false;
 
     private Panel gestionnaireFacture;
 
-    public DocumentPDF(Panel panel, int action) {
+    public DocumentPDF(Panel panel, int action, boolean isRecu) {
         try {
-            this.init(panel, action);
+            this.init(panel, action, isRecu);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void init(Panel panel, int action) {
+    private void init(Panel panel, int action, boolean isRecu) {
         this.gestionnaireFacture = panel;
+        this.isRecu = isRecu;
         parametre_initialisation_fichier();
         parametre_construire_fichier();
         if (action == ACTION_OUVRIR) {
@@ -161,12 +163,16 @@ public class DocumentPDF extends PdfPageEventHelper {
         this.document.add(paragraphe);
     }
 
-    private void setTitreEtDateDocument() throws Exception {
+    private void setTitreEtDateDocument(boolean isRecu) throws Exception {
         Paragraph preface = new Paragraph();
+        String titre = "Reçu";
+        if (isRecu == false) {
+            titre = this.gestionnaireFacture.getTitreDoc() + "";
+        }
 
         if (this.gestionnaireFacture != null) {
             preface.add(getParagraphe("Date: " + Util.getDateFrancais(this.gestionnaireFacture.getDateFacture()), Font_Titre3, Element.ALIGN_RIGHT));
-            preface.add(getParagraphe(this.gestionnaireFacture.getTitreDoc() + " n°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
+            preface.add(getParagraphe(titre + " n°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
             preface.add(getParagraphe("Date: " + Util.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
@@ -662,21 +668,27 @@ public class DocumentPDF extends PdfPageEventHelper {
      */
     private void setContenuDeLaPage(String rubriqueNomClient) throws Exception {
         setLogoEtDetailsEntreprise();//ok
-        setTitreEtDateDocument();//ok
+        setTitreEtDateDocument(isRecu);//ok
         setClientEtSesCoordonnees(rubriqueNomClient);//ok
-        setTableauDetailsArticles();//ok
-        ajouterLigne(1);//ok
-        setTableauSynthese();//ok
-        if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerPlanPaiement() == true) {
-            if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
-                setTableauDetailsPlanPaiementEchelonne();//ok
+        if (isRecu == false) {
+            setTableauDetailsArticles();//ok
+            ajouterLigne(1);//ok
+            setTableauSynthese();//ok
+            if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerPlanPaiement() == true) {
+                if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
+                    setTableauDetailsPlanPaiementEchelonne();//ok
+                }
             }
-        }
-        if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerRelever() == true) {
-            if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
-                setTableauDetailsReleveDeCompte();//ok
+            if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerRelever() == true) {
+                if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
+                    setTableauDetailsReleveDeCompte();//ok
+                }
             }
+        } else {
+            //C'est ici que les détails sur le recu seront affichés
+            
         }
+
         ajouterLigne(1);//ok
         setSignataire();//ok
         setLigneSeparateur();//ok
@@ -696,7 +708,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     public static void main(String[] a) {
         //Exemple
-        DocumentPDF docpdf = new DocumentPDF(null, ACTION_OUVRIR);
+        DocumentPDF docpdf = new DocumentPDF(null, ACTION_OUVRIR, false);
     }
 
 }
