@@ -24,7 +24,7 @@ import SOURCES.Utilitaires.ExerciceFiscale;
  */
 public class ModeleListeEcheance extends AbstractTableModel {
 
-    private String[] titreColonnes = {"Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+    private String[] titreColonnes = {"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
     private Vector<InterfaceEcheance> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -227,8 +227,11 @@ public class ModeleListeEcheance extends AbstractTableModel {
             if (!this.modeleListeArticles.getListeData().isEmpty()) {
                 for (InterfaceArticle article : this.modeleListeArticles.getListeData()) {
                     //System.out.println(" * " + article.toString() + ", tranches = " + article.getTranches());
-                    if (article.getTranches() > nombreTranches) {
-                        nombreTranches = article.getTranches();
+                    //Si et seulement si le rabais reste strictement inférieur au prix unitaire avant remise
+                    if (article.getPrixUHT_avant_rabais()> article.getRabais()) {
+                        if (article.getTranches() > nombreTranches) {
+                            nombreTranches = article.getTranches();
+                        }
                     }
                 }
             } else {
@@ -329,19 +332,21 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        //{"Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+        //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
         switch (columnIndex) {
             case 0:
-                return listeData.elementAt(rowIndex).getNom();
+                return (rowIndex + 1)+"";
             case 1:
-                return listeData.elementAt(rowIndex).getDateInitiale();
+                return listeData.elementAt(rowIndex).getNom();
             case 2:
-                return listeData.elementAt(rowIndex).getDateFinale();
+                return listeData.elementAt(rowIndex).getDateInitiale();
             case 3:
-                return getStatus(rowIndex);
+                return listeData.elementAt(rowIndex).getDateFinale();
             case 4:
-                return getMontantDu(rowIndex);
+                return getStatus(rowIndex);
             case 5:
+                return getMontantDu(rowIndex);
+            case 6:
                 return getMontantPaye(rowIndex);
             default:
                 return null;
@@ -350,19 +355,21 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        //{"Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+        //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
         switch (columnIndex) {
             case 0:
-                return String.class;//Nom
+                return String.class;//N°
             case 1:
-                return Date.class;//Date initiale
+                return String.class;//Nom
             case 2:
-                return Date.class;//Date finale
+                return Date.class;//Date initiale
             case 3:
-                return String.class;//Jrs restant
+                return Date.class;//Date finale
             case 4:
-                return Double.class;//montant paye
+                return String.class;//Jrs restant
             case 5:
+                return Double.class;//montant paye
+            case 6:
                 return Double.class;//Progression
             default:
                 return Object.class;
@@ -371,8 +378,8 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        //{"Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
-        if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2 || columnIndex == 4) {
+        //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+        if (columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 5) {
             return true;
         } else {
             return false;
@@ -381,19 +388,19 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        //{"Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+        //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
         InterfaceEcheance echeance = listeData.get(rowIndex);
         switch (columnIndex) {
-            case 0:
+            case 1:
                 echeance.setNom(aValue + "");
                 break;
-            case 1:
+            case 2:
                 echeance.setDateInitiale((Date) aValue);
                 break;
-            case 2:
+            case 3:
                 echeance.setDateFinale((Date) aValue);
                 break;
-            case 4:
+            case 5:
                 echeance.setMontantDu(Double.parseDouble(aValue + ""));
                 break;
             default:

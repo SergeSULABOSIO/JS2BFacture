@@ -93,6 +93,10 @@ public class Panel extends javax.swing.JPanel {
         this.activerBoutons(tabPrincipal.getSelectedIndex());
     }
 
+    public Vector<InterfacePaiement> getPaiementsSelected() {
+        return paiementsSelected;
+    }
+
     public Parametres getParametres() {
         return parametres;
     }
@@ -221,17 +225,20 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
 
-        TableColumn colNomArt = this.tableListeArticle.getColumnModel().getColumn(0);
+        TableColumn col_No = this.tableListeArticle.getColumnModel().getColumn(0);
+        
+        TableColumn colNomArt = this.tableListeArticle.getColumnModel().getColumn(1);
         colNomArt.setCellEditor(new EditeurArticleFacture(this.parametres.getListArticles(), this.modeleListeArticles));
 
-        TableColumn col_Qt = this.tableListeArticle.getColumnModel().getColumn(1);
-        TableColumn col_PU_avant_Rabais = this.tableListeArticle.getColumnModel().getColumn(2);
-        TableColumn col_Rabais = this.tableListeArticle.getColumnModel().getColumn(3);
-        TableColumn col_PU_aprs_Rabais = this.tableListeArticle.getColumnModel().getColumn(4);
-        TableColumn col_Tva_mnt = this.tableListeArticle.getColumnModel().getColumn(5);
-        TableColumn col_TTC_mnt = this.tableListeArticle.getColumnModel().getColumn(6);
-        TableColumn col_Tranches = this.tableListeArticle.getColumnModel().getColumn(7);
+        TableColumn col_Qt = this.tableListeArticle.getColumnModel().getColumn(2);
+        TableColumn col_PU_avant_Rabais = this.tableListeArticle.getColumnModel().getColumn(3);
+        TableColumn col_Rabais = this.tableListeArticle.getColumnModel().getColumn(4);
+        TableColumn col_PU_aprs_Rabais = this.tableListeArticle.getColumnModel().getColumn(5);
+        TableColumn col_Tva_mnt = this.tableListeArticle.getColumnModel().getColumn(6);
+        TableColumn col_TTC_mnt = this.tableListeArticle.getColumnModel().getColumn(7);
+        TableColumn col_Tranches = this.tableListeArticle.getColumnModel().getColumn(8);
 
+        col_No.setPreferredWidth(50);
         colNomArt.setPreferredWidth(260);
         col_Qt.setPreferredWidth(80);
         col_PU_avant_Rabais.setPreferredWidth(150);
@@ -263,16 +270,19 @@ public class Panel extends javax.swing.JPanel {
         this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaie(), icones.getModifier_01()));
         this.tableListePaiement.setRowHeight(25);
 
-        TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(0);
+        TableColumn col_No = this.tableListePaiement.getColumnModel().getColumn(0);
+        
+        TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(1);
         col_Date.setCellEditor(new EditeurDatePaiement(this.modeleListePaiement));
 
-        TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(1);
+        TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(2);
         col_Article.setCellEditor(new EditeurArticlePaiement(this.parametres.getListArticles(), this.modeleListeArticles, this.modeleListePaiement));
 
-        TableColumn col_Depositaire = this.tableListePaiement.getColumnModel().getColumn(2);
-        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(3);
-        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(4);
+        TableColumn col_Depositaire = this.tableListePaiement.getColumnModel().getColumn(3);
+        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(4);
+        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(5);
 
+        col_No.setPreferredWidth(50);
         col_Date.setPreferredWidth(200);
         col_Article.setPreferredWidth(200);
         col_Depositaire.setPreferredWidth(200);
@@ -311,18 +321,21 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaie(), icones.getModifier_01(), icones.getSablier_01(), modeleListeEcheance));
         this.tableListeEcheance.setRowHeight(25);
 
-        TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(0);
+        TableColumn col_No = this.tableListeEcheance.getColumnModel().getColumn(0);
+        
+        TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(1);
 
-        TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(1);
+        TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(2);
         col_Date_initiale.setCellEditor(new EditeurDateInitialeEcheance(modeleListeEcheance));
 
-        TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(2);
+        TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(3);
         col_Date_finale.setCellEditor(new EditeurDateFinaleEcheance(modeleListeEcheance));
 
-        TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(3);
-        TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(4);
-        TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(5);
+        TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(4);
+        TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(5);
+        TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(6);
 
+        col_No.setPreferredWidth(20);
         col_Nom.setPreferredWidth(80);
         col_Date_initiale.setPreferredWidth(90);
         col_Date_finale.setPreferredWidth(90);
@@ -509,7 +522,7 @@ public class Panel extends javax.swing.JPanel {
             }
         });
         
-        rubRecu = new RubriqueSimple("Reçu", icones.getArgent_01(), new RubriqueListener() {
+        rubRecu = new RubriqueSimple("Prod. Reçu", icones.getPDF_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 genererRecu();
@@ -595,7 +608,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Recu
-        btRecu = new Bouton(12, "Reçu", icones.getArgent_02(), new BoutonListener() {
+        btRecu = new Bouton(12, "Prod. Reçu", icones.getPDF_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 genererRecu();
@@ -659,7 +672,7 @@ public class Panel extends javax.swing.JPanel {
             default:
                 InterfaceEcheance echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
                 if (echeance != null) {
-                    this.callBackSynthese.onActualiser("Entre " + echeance.getDateInitiale().toLocaleString() + " et " + echeance.getDateFinale().toLocaleString() + ", il faut payer " + echeance.getMontantDu() + " " + this.parametres.getMonnaie());
+                    this.callBackSynthese.onActualiser("Entre " + echeance.getDateInitiale().toLocaleString() + " et " + echeance.getDateFinale().toLocaleString() + ", il faut payer " + Util.round(echeance.getMontantDu(), 2) + " " + this.parametres.getMonnaie());
                 }
                 break;
         }
@@ -1320,6 +1333,11 @@ public class Panel extends javax.swing.JPanel {
         tabPrincipal.addTab("Facture", scrollListeArticles);
 
         scrollListeReleveCompte.setBackground(new java.awt.Color(255, 255, 255));
+        scrollListeReleveCompte.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                scrollListeReleveCompteMouseDragged(evt);
+            }
+        });
         scrollListeReleveCompte.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 scrollListeReleveCompteMouseClicked(evt);
@@ -1334,6 +1352,11 @@ public class Panel extends javax.swing.JPanel {
                 "Date", "Dépositaire", "Montant"
             }
         ));
+        tableListePaiement.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                tableListePaiementMouseDragged(evt);
+            }
+        });
         tableListePaiement.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tableListePaiementMouseClicked(evt);
@@ -1505,6 +1528,16 @@ public class Panel extends javax.swing.JPanel {
         // TODO add your handling code here:
         ecouterSelectionPaiement();
     }//GEN-LAST:event_tableListePaiementKeyReleased
+
+    private void scrollListeReleveCompteMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseDragged
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_scrollListeReleveCompteMouseDragged
+
+    private void tableListePaiementMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseDragged
+        // TODO add your handling code here:
+        ecouterSelectionPaiement();
+    }//GEN-LAST:event_tableListePaiementMouseDragged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

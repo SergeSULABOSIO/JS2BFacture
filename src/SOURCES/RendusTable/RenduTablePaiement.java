@@ -29,14 +29,16 @@ public class RenduTablePaiement implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         CelluleSimpleTableau celluleNum = null;
-        if (column == 0 || column == 1 || column == 2) {
+        if (column == 0 || column == 1 || column == 2 || column == 3) {
             if(column == 0){
+                celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
+            }else if(column == 1){
                 celluleNum = new CelluleSimpleTableau(" " + ((Date)value).toLocaleString() + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
             }else{
                 celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
             }
         } else {
-            if (column == 3) {
+            if (column == 4) {
                 celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
             } else {
                 celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);

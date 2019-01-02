@@ -34,27 +34,31 @@ public class RenduTableEcheance implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        //{"Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+        //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
         CelluleSimpleTableau celluleNum = null;
         switch (column) {
             case 0:
-                celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
+                celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 1:
-            case 2:
-                celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
-                celluleNum.ecouterSelection(isSelected, row);
-                return celluleNum;
-            case 3:
                 celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
+            case 2:
+            case 3:
+                celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                celluleNum.ecouterSelection(isSelected, row);
+                return celluleNum;
             case 4:
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 5:
+                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                celluleNum.ecouterSelection(isSelected, row);
+                return celluleNum;
+            case 6:
                 double valeur = Double.parseDouble(value+"");
                 double montDu = modeleListeEcheance.getEcheance_row(row).getMontantDu();
                 CelluleProgressionTableau celluleProgress = new CelluleProgressionTableau(monnaie, valeur, montDu, iconeProgression);

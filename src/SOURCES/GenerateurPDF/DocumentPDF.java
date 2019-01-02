@@ -331,7 +331,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             PdfPTable tableReleve = getTableau(
                     -1,
                     new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
-                    new int[]{80, 300, 500, 400, 200, 200},
+                    new int[]{80, 200, 500, 500, 200, 200},
                     Element.ALIGN_CENTER,
                     0.2f
             );
@@ -341,7 +341,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                 int i = 0;
                 for (InterfacePaiement paiement : listePaiement) {
                     String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getNomDepositaire(), i, paiement.getMontant(), modelPaiement.getReste(paiement.getIdArticle()));
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getNomDepositaire(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
                     i++;
                 }
                 setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
@@ -350,6 +350,41 @@ public class DocumentPDF extends PdfPageEventHelper {
                     setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
                 }
                 setDerniereLigneTabReleve(tableReleve, 1500, 350);
+            }
+            document.add(tableReleve);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setTableauPaiementsRecusSelected() {
+        try {
+            document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
+            PdfPTable tableReleve = getTableau(
+                    -1,
+                    new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu"},
+                    new int[]{80, 200, 500, 500, 200},
+                    Element.ALIGN_CENTER,
+                    0.2f
+            );
+            if (this.gestionnaireFacture != null) {
+                Vector<InterfacePaiement> listePaiementRecusSelected = gestionnaireFacture.getPaiementsSelected();
+                if (!listePaiementRecusSelected.isEmpty()) {
+                    int i = 0;
+                    double totRecu = 0;
+                    for (InterfacePaiement paiement : listePaiementRecusSelected) {
+                        String nomArticle = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
+                        setLigneRecuSelected(tableReleve, Util.getDateFrancais(paiement.getDate()), nomArticle, paiement.getNomDepositaire(), i, paiement.getMontant());
+                        i++;
+                        totRecu += paiement.getMontant();
+                    }
+                    setDerniereLigneRecuSelected(tableReleve, Util.round(totRecu, 2));
+                }
+            } else {
+                for (int i = 0; i < 10; i++) {
+                    setLigneRecuSelected(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35);
+                }
+                setDerniereLigneRecuSelected(tableReleve, 1500);
             }
             document.add(tableReleve);
         } catch (Exception e) {
@@ -374,7 +409,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                 double totDu = 0;
                 double totPaye = 0;
                 for (InterfaceEcheance echeance : listeEcheances) {
-                    setLigneTabEcheance(tableEchances, echeance.getNom(), Util.getDateFrancais(echeance.getDateInitiale()), Util.getDateFrancais(echeance.getDateFinale()), modeEcheance.getStatus(i), i, echeance.getMontantDu(), echeance.getMontantPaye());
+                    setLigneTabEcheance(tableEchances, echeance.getNom(), Util.getDateFrancais(echeance.getDateInitiale()), Util.getDateFrancais(echeance.getDateFinale()), modeEcheance.getStatus(i), i, Util.round(echeance.getMontantDu(), 2), Util.round(echeance.getMontantPaye(), 2));
                     totDu += echeance.getMontantDu();
                     totPaye += echeance.getMontantPaye();
                     i++;
@@ -502,7 +537,17 @@ public class DocumentPDF extends PdfPageEventHelper {
         tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(reste + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
     }
-
+    
+    private void setLigneRecuSelected(PdfPTable tableDetailsArticles, String date, String NomArticle, String depositaire, int i, double montant) {
+        //new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu"},
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
+        tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(date, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(depositaire, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+    }
+    
     private void setLigneTabEcheance(PdfPTable tableEchances, String nomEcheance, String dateDebut, String dateFin, String progression, int i, double montantDu, double montantPaye) {
         //new String[]{"N°", "Tranche", "Début", "Echéance", "Progession", "Montant dû", "Montant payé"},
         String monnaie = gestionnaireFacture.getParametres().getMonnaie();
@@ -620,6 +665,15 @@ public class DocumentPDF extends PdfPageEventHelper {
         tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau(reste + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
     }
+    
+    private void setDerniereLigneRecuSelected(PdfPTable tableDetailsArticles, double montant) {
+        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
+        tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        tableDetailsArticles.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+    }
 
     private PdfPCell getCelluleTableau(String texte, float BorderWidth, BaseColor background, BaseColor textColor, int alignement, Font font) {
         PdfPCell cellule = new PdfPCell();
@@ -686,7 +740,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             }
         } else {
             //C'est ici que les détails sur le recu seront affichés
-            
+            setTableauPaiementsRecusSelected();
         }
 
         ajouterLigne(1);//ok

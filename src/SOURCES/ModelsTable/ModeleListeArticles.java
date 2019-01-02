@@ -19,7 +19,7 @@ import SOURCES.Interface.InterfaceArticle;
  */
 public class ModeleListeArticles extends AbstractTableModel {
 
-    private String[] titreColonnes = {"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+    private String[] titreColonnes = {"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
     private Vector<InterfaceArticle> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -179,25 +179,27 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        //{"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         switch (columnIndex) {
             case 0:
+                return (rowIndex+1)+"";
+            case 1:
                 if(listeData.elementAt(rowIndex).getNom().trim().length() != 0){
                     return listeData.elementAt(rowIndex).getId() + "_" + listeData.elementAt(rowIndex).getNom();
                 }else{
                     return listeData.elementAt(rowIndex).getNom();
                 }
-            case 1:
-                return listeData.elementAt(rowIndex).getQte();
             case 2:
-                return listeData.elementAt(rowIndex).getPrixUHT_avant_rabais();
+                return listeData.elementAt(rowIndex).getQte();
             case 3:
-                return listeData.elementAt(rowIndex).getRabais();
+                return listeData.elementAt(rowIndex).getPrixUHT_avant_rabais();
             case 4:
-                return listeData.elementAt(rowIndex).getPrixUHT_apres_rabais();
+                return listeData.elementAt(rowIndex).getRabais();
             case 5:
-                return listeData.elementAt(rowIndex).getTvaMontant();
+                return listeData.elementAt(rowIndex).getPrixUHT_apres_rabais();
             case 6:
+                return listeData.elementAt(rowIndex).getTvaMontant();
+            case 7:
                 return listeData.elementAt(rowIndex).getTotalTTC();
             default:
                 return listeData.elementAt(rowIndex).getTranches();
@@ -206,23 +208,25 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        //{"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         switch (columnIndex) {
             case 0:
-                return String.class;//Nom
+                return String.class;//N°
             case 1:
-                return Double.class;//Qte
+                return String.class;//Nom
             case 2:
-                return Double.class;//Prix U
+                return Double.class;//Qte
             case 3:
-                return Double.class;//Rabais
-            case 4:
                 return Double.class;//Prix U
+            case 4:
+                return Double.class;//Rabais
             case 5:
-                return Double.class;//Mnt Tva
+                return Double.class;//Prix U
             case 6:
-                return Double.class;//Mnt TTC
+                return Double.class;//Mnt Tva
             case 7:
+                return Double.class;//Mnt TTC
+            case 8:
                 return Integer.class;//Tranches
             default:
                 return Object.class;
@@ -232,7 +236,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 0 || columnIndex == 1 || columnIndex == 3 || columnIndex == 7) {
+        if (columnIndex == 1 || columnIndex == 2 || columnIndex == 4 || columnIndex == 8) {
             return true;
         } else {
             return false;
@@ -241,23 +245,23 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        //{"Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         InterfaceArticle article = listeData.get(rowIndex);
         switch (columnIndex) {
-            case 0:
+            case 1:
                 String nom = aValue + "";
                 if(nom.contains("_")){
                     nom = nom.split("_")[1];
                 }
                 article.setNom(nom);
                 break;
-            case 1:
+            case 2:
                 article.setQte(Double.parseDouble(aValue + ""));
                 break;
-            case 3:
+            case 4:
                 article.setRabais(Double.parseDouble(aValue + ""));
                 break;
-            case 7:
+            case 8:
                 article.setTranches(Integer.parseInt(aValue + ""));
                 break;
             default:

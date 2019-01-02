@@ -35,8 +35,8 @@ public class TestPrincipal extends javax.swing.JFrame {
     private void initData(){
         String numeroFacture = ""+(new Date().getTime());
         int idFacture = 20;
-        Date dateDebut = new Date(118, 0, 1);
-        Date dateFin = new Date(118, 11, 31);
+        Date dateDebut = new Date(119, 0, 1);
+        Date dateFin = new Date(119, 11, 31);
         ExerciceFiscale anneeScolaire = new ExerciceFiscale(dateDebut, dateFin, "Année Scolaire 2018-2019");
         Vector<InterfaceArticle> listArticles = new Vector<>();
         listArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
@@ -47,7 +47,7 @@ public class TestPrincipal extends javax.swing.JFrame {
         
         TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
         
-        String monnaie = "$";
+        String monnaie = "USD";
         int idMonnaie = 10;
         double tva = 0;
         double remise = 0;
@@ -99,7 +99,7 @@ public class TestPrincipal extends javax.swing.JFrame {
         Vector<InterfaceEcheance> echeances = new Vector<>();
         echeances.add(new TESTEcheance(-1, "PREMIER VERSEMENT", -1, new Date(), new Date(), numeroFacture, 0, 600, 1, monnaie));
         
-        this.parametres.setDonnees(new Donnees(articles, paiements));
+        //this.parametres.setDonnees(new Donnees(articles, paiements));
     }
     
     
