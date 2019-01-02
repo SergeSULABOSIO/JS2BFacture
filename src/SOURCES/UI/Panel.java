@@ -436,7 +436,8 @@ public class Panel extends javax.swing.JPanel {
                 modeleListePaiement.viderListe();
                 break;
             default:
-                modeleListeEcheance.viderListe();
+                //modeleListeEcheance.viderListe();
+                
                 break;
         }
     }
@@ -735,12 +736,14 @@ public class Panel extends javax.swing.JPanel {
         }
         if (btSupprimer != null) {
             btSupprimer.appliquerDroitAccessDynamique(rep);
+            btVider.appliquerDroitAccessDynamique(rep);
         }
         if (rubAjouter != null) {
             rubAjouter.appliquerDroitAccessDynamique(rep);
         }
         if (rubSupprimer != null) {
             rubSupprimer.appliquerDroitAccessDynamique(rep);
+            rubVider.appliquerDroitAccessDynamique(rep);
         }
     }
 
@@ -1330,7 +1333,7 @@ public class Panel extends javax.swing.JPanel {
             tableListeArticle.getColumnModel().getColumn(6).setPreferredWidth(50);
         }
 
-        tabPrincipal.addTab("Facture", scrollListeArticles);
+        tabPrincipal.addTab("Articles", scrollListeArticles);
 
         scrollListeReleveCompte.setBackground(new java.awt.Color(255, 255, 255));
         scrollListeReleveCompte.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {

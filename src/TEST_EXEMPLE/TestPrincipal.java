@@ -8,7 +8,6 @@ package TEST_EXEMPLE;
 import SOURCES.UI.DialogueFacture;
 import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.UI.PanelFacture;
-import SOURCES.Utilitaires.Donnees;
 import SOURCES.Utilitaires.Parametres;
 import java.util.Date;
 import java.util.Vector;

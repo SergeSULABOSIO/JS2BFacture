@@ -993,8 +993,8 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Facture">
-                <Property name="tabTitle" type="java.lang.String" value="Facture"/>
+              <JTabbedPaneConstraints tabName="Articles">
+                <Property name="tabTitle" type="java.lang.String" value="Articles"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
