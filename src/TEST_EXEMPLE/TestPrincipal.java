@@ -15,6 +15,7 @@ import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.Utilitaires.Donnees;
 import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
@@ -98,7 +99,7 @@ public class TestPrincipal extends javax.swing.JFrame {
         Vector<InterfaceEcheance> echeances = new Vector<>();
         echeances.add(new TESTEcheance(-1, "PREMIER VERSEMENT", -1, new Date(), new Date(), numeroFacture, 0, 600, 1, monnaie));
         
-        //this.parametres.setDonnees(new Donnees(articles, paiements));
+        this.parametres.setDonnees(new Donnees(articles, paiements));
     }
     
     
