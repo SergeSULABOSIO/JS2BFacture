@@ -21,7 +21,7 @@ import SOURCES.Interface.InterfacePaiement;
  */
 public class ModeleListePaiement extends AbstractTableModel {
 
-    private String[] titreColonnes = {"N°", "Date", "Article", "Référence", "Montant reçu", "Reste"};
+    private String[] titreColonnes = {"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
     private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -168,10 +168,10 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        //{"N°", "Date", "Article", "Dépositaire", "Montant reçu", "Reste"};
+        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
         switch (columnIndex) {
             case 0:
-                return (rowIndex+1)+"";
+                return (rowIndex + 1) + "";
             case 1:
                 return listeData.elementAt(rowIndex).getDate();
             case 2:
@@ -183,8 +183,10 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 3:
                 return listeData.elementAt(rowIndex).getReferenceTransaction();
             case 4:
-                return listeData.elementAt(rowIndex).getMontant();
+                return listeData.elementAt(rowIndex).getMode();
             case 5:
+                return listeData.elementAt(rowIndex).getMontant();
+            case 6:
                 return getReste(listeData.elementAt(rowIndex).getIdArticle());
             default:
                 return null;
@@ -193,7 +195,7 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        //{"N°", "Date", "Article", "Dépositaire", "Montant reçu", "Reste"};
+        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
         switch (columnIndex) {
             case 0:
                 return String.class;//N°
@@ -202,10 +204,12 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 2:
                 return String.class;//NomArticle
             case 3:
-                return String.class;//NomDepositaire
+                return String.class;//Reference
             case 4:
-                return Double.class;//Montant
+                return Integer.class;//Mode
             case 5:
+                return Double.class;//Montant
+            case 6:
                 return Double.class;//Reste
             default:
                 return Object.class;
@@ -215,8 +219,8 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        //{"N°", "Date", "Article", "Dépositaire", "Montant reçu", "Reste"};
-        if (columnIndex == 0 || columnIndex == 5) {
+        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
+        if (columnIndex == 0 || columnIndex == 6) {
             return false;
         } else {
             return true;
@@ -225,7 +229,7 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        //{"N°", "Date", "Article", "Dépositaire", "Montant reçu", "Reste"};
+        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
         InterfacePaiement article = listeData.get(rowIndex);
         switch (columnIndex) {
             case 1:
@@ -242,6 +246,9 @@ public class ModeleListePaiement extends AbstractTableModel {
                 article.setReferenceTransaction(aValue + "");
                 break;
             case 4:
+                article.setMode(Integer.parseInt(aValue + ""));
+                break;
+            case 5:
                 //System.out.println("RESTE - AVANT MODIF : " + getReste(article.getIdArticle()));
                 //System.out.println("MONTANT SAISI : " + Double.parseDouble(aValue + ""));
                 article.setMontant(Double.parseDouble(aValue + ""));

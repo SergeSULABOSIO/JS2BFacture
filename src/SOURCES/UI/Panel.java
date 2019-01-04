@@ -19,6 +19,7 @@ import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.EditeursTable.EditeurArticleFacture;
 import SOURCES.EditeursTable.EditeurArticlePaiement;
 import SOURCES.EditeursTable.EditeurDatePaiement;
+import SOURCES.EditeursTable.EditeurModePaiement;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.Utilitaires.Parametres;
@@ -283,16 +284,19 @@ public class Panel extends javax.swing.JPanel {
         TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(2);
         col_Article.setCellEditor(editeurArticlePaiement);
 
-        TableColumn col_Depositaire = this.tableListePaiement.getColumnModel().getColumn(3);
-        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(4);
-        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(5);
+        TableColumn col_Reference = this.tableListePaiement.getColumnModel().getColumn(3);
+        TableColumn col_Mode = this.tableListePaiement.getColumnModel().getColumn(4);
+        col_Mode.setCellEditor(new EditeurModePaiement());
+        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(5);
+        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(6);
 
         col_No.setPreferredWidth(50);
-        col_Date.setPreferredWidth(200);
+        col_Date.setPreferredWidth(150);
         col_Article.setPreferredWidth(200);
-        col_Depositaire.setPreferredWidth(200);
-        col_Montant.setPreferredWidth(100);
-        col_Reste.setPreferredWidth(100);
+        col_Reference.setPreferredWidth(200);
+        col_Mode.setPreferredWidth(150);
+        col_Montant.setPreferredWidth(120);
+        col_Reste.setPreferredWidth(120);
     }
 
     private void parametrerTableEcheance() {
