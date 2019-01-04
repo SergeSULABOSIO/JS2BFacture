@@ -14,13 +14,15 @@ import SOURCES.Interface.InterfaceClient;
 public class TESTClient implements InterfaceClient{
     
     private int id;
+    private String type;
     private String nom;
     private String telephone;
     private String adresse;
     private String autresInfos;
 
-    public TESTClient(int id, String nom, String telephone, String adresse, String autresInfos) {
+    public TESTClient(int id, String type, String nom, String telephone, String adresse, String autresInfos) {
         this.id = id;
+        this.type = type;
         this.nom = nom;
         this.telephone = telephone;
         this.adresse = adresse;
@@ -71,5 +73,15 @@ public class TESTClient implements InterfaceClient{
     @Override
     public String toString() {
         return "TESTClient{" + "id=" + id + ", nom=" + nom + ", telephone=" + telephone + ", adresse=" + adresse + '}';
+    }
+
+    public String getType() {
+        return type;
+    }
+
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
     }
 }

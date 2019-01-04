@@ -12,6 +12,7 @@ package SOURCES.Interface;
 public interface InterfaceClient {
     
     public abstract int getId();
+    public abstract String getType();
     public abstract String getNom();
     public abstract String getTelephone();
     public abstract String getAdresse();
@@ -19,6 +20,7 @@ public interface InterfaceClient {
     
     public abstract void setId(int id);
     public abstract void setNom(String nom);
+    public abstract void setType(String type);
     public abstract void setTelephone(String telephone);
     public abstract void setAdresse(String adresse);
     public abstract void setAutresInfos(String autresinfos);

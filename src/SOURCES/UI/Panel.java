@@ -14,11 +14,10 @@ import BEAN_MenuContextuel.MenuContextuel;
 import BEAN_MenuContextuel.RubriqueListener;
 import BEAN_MenuContextuel.RubriqueSimple;
 import ICONES.Icones;
+import SOURCES.CallBack.EcouteurEnregistrement;
 import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.EditeursTable.EditeurArticleFacture;
 import SOURCES.EditeursTable.EditeurArticlePaiement;
-import SOURCES.EditeursTable.EditeurDateFinaleEcheance;
-import SOURCES.EditeursTable.EditeurDateInitialeEcheance;
 import SOURCES.EditeursTable.EditeurDatePaiement;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
@@ -42,6 +41,7 @@ import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
 import SOURCES.RendusTable.RenduTableEcheance;
 import SOURCES.Utilitaires.ExerciceFiscale;
+import SOURCES.Utilitaires.SortiesFacture;
 import java.util.Vector;
 
 /**
@@ -64,6 +64,7 @@ public class Panel extends javax.swing.JPanel {
     public ModeleListeArticles modeleListeArticles = null;
     public ModeleListePaiement modeleListePaiement = null;
     public ModeleListeEcheance modeleListeEcheance = null;
+    public EditeurArticlePaiement editeurArticlePaiement = null;
     private EcouteurUpdateClose callBackSynthese;
     private Parametres parametres;
     public Vector<InterfacePaiement> paiementsSelected = new Vector<InterfacePaiement>();
@@ -130,7 +131,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     public String getRubriqueNomClient() {
-        return "Nom de l'élève";
+        return this.parametres.getClient().getType();
     }
 
     public String getNomfichierPreuve() {
@@ -174,6 +175,7 @@ public class Panel extends javax.swing.JPanel {
             if (ef != null) {
                 exercice = ", " + ef.getNom() + " [" + Util.getDateFrancais(ef.getDebut()) + " - " + Util.getDateFrancais(ef.getFin()) + "].";
             }
+            labTypeClient.setText(this.parametres.getClient().getType()+" :");
             labNomClient.setText(client.getNom() + exercice);
 
             labTelephone.setIcon(icones.getTéléphone_01());
@@ -226,7 +228,7 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeArticle.setRowHeight(25);
 
         TableColumn col_No = this.tableListeArticle.getColumnModel().getColumn(0);
-        
+
         TableColumn colNomArt = this.tableListeArticle.getColumnModel().getColumn(1);
         colNomArt.setCellEditor(new EditeurArticleFacture(this.parametres.getListArticles(), this.modeleListeArticles));
 
@@ -251,12 +253,15 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void parametrerTablePaiement() {
+
         this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, this.modeleListeArticles, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
             }
         });
+
+        this.editeurArticlePaiement = new EditeurArticlePaiement(this.parametres.getListArticles(), this.modeleListeArticles, this.modeleListePaiement);
 
         //On charge les données s'il y en a
         if (this.parametres.getDonnees() != null) {
@@ -271,12 +276,12 @@ public class Panel extends javax.swing.JPanel {
         this.tableListePaiement.setRowHeight(25);
 
         TableColumn col_No = this.tableListePaiement.getColumnModel().getColumn(0);
-        
+
         TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(1);
         col_Date.setCellEditor(new EditeurDatePaiement(this.modeleListePaiement));
 
         TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(2);
-        col_Article.setCellEditor(new EditeurArticlePaiement(this.parametres.getListArticles(), this.modeleListeArticles, this.modeleListePaiement));
+        col_Article.setCellEditor(editeurArticlePaiement);
 
         TableColumn col_Depositaire = this.tableListePaiement.getColumnModel().getColumn(3);
         TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(4);
@@ -298,39 +303,17 @@ public class Panel extends javax.swing.JPanel {
             }
         }, parametres.getMonnaie(), parametres.getIdMonnaie(), parametres.getNumero(), parametres.getIdFacture(), parametres.getExerciceFiscale());
 
-        //On charge les données s'il y en a
-        if (this.parametres.getDonnees() != null) {
-            this.modeleListeEcheance.setListeEcheance(this.parametres.getDonnees().getEcheance());
-        }
-
         //Parametrage du modele contenant les données de la table
         this.tableListeEcheance.setModel(this.modeleListeEcheance);
 
-        /*
-        TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(0);
-        col_Date.setCellEditor(new EditeurDatePaiement(this.parametres.getListArticles(), this.modeleListePaiement));
-
-        TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(1);
-        col_Article.setCellEditor(new EditeurArticlePaiement(this.parametres.getListArticles(), this.modeleListeArticles, this.modeleListePaiement));
-
-        TableColumn col_Depositaire = this.tableListePaiement.getColumnModel().getColumn(2);
-        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(3);
-        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(4);
-         */
         //Parametrage du rendu de la table
         this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaie(), icones.getModifier_01(), icones.getSablier_01(), modeleListeEcheance));
         this.tableListeEcheance.setRowHeight(25);
 
         TableColumn col_No = this.tableListeEcheance.getColumnModel().getColumn(0);
-        
         TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(1);
-
         TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(2);
-        col_Date_initiale.setCellEditor(new EditeurDateInitialeEcheance(modeleListeEcheance));
-
         TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(3);
-        col_Date_finale.setCellEditor(new EditeurDateFinaleEcheance(modeleListeEcheance));
-
         TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(4);
         TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(5);
         TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(6);
@@ -384,10 +367,32 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void enregistrer() {
-        EcouteurFacture ef = this.parametres.getEcouteurFacture();
-        if (ef != null) {
-            ef.onEnregistre(this.parametres.getClient(), this.modeleListeArticles.getListeData(), this.modeleListePaiement.getListeData(), this.modeleListeEcheance.getListeData());
-            fermer();
+        EcouteurFacture ecouteurFacture = this.parametres.getEcouteurFacture();
+        SortiesFacture sortiesFacture = null;
+        if (ecouteurFacture != null) {
+            sortiesFacture = new SortiesFacture(
+                    this.parametres.getClient(), 
+                    this.modeleListeArticles.getListeData(), 
+                    this.modeleListePaiement.getListeData(), 
+                    this.modeleListeEcheance.getListeData(), 
+                    new EcouteurEnregistrement() {
+                @Override
+                public void onDone(String message) {
+                    callBackSynthese.onActualiser(message);
+                }
+
+                @Override
+                public void onError(String message) {
+                    callBackSynthese.onActualiser(message);
+                }
+
+                @Override
+                public void onUploading(String message) {
+                    callBackSynthese.onActualiser(message);
+                }
+            });
+            
+            ecouteurFacture.onEnregistre(sortiesFacture);
         }
     }
 
@@ -437,7 +442,7 @@ public class Panel extends javax.swing.JPanel {
                 break;
             default:
                 //modeleListeEcheance.viderListe();
-                
+
                 break;
         }
     }
@@ -449,7 +454,16 @@ public class Panel extends javax.swing.JPanel {
                 break;
             case 1:
                 if (modeleListeArticles.getRowCount() != 0) {
-                    this.parametres.getEcouteurAjout().setAjoutPaiement(modeleListePaiement);
+                    //On reinitialise la liste d'article dans le combo
+                    if (this.editeurArticlePaiement != null) {
+                        this.editeurArticlePaiement.initCombo();
+                        //System.out.println(".initCombo()...");
+                        if (this.editeurArticlePaiement.champEditionCombo.getItemCount() != 0) {
+                            this.parametres.getEcouteurAjout().setAjoutPaiement(modeleListePaiement);
+                        } else {
+                            JOptionPane.showMessageDialog(tabPrincipal, "Désolé " + this.parametres.getNomUtilisateur() + ", il n'y a plus d'autre frais à payer !");
+                        }
+                    }
                 } else {
                     JOptionPane.showMessageDialog(tabPrincipal, "Aucun article n'a été séléctionné !");
                 }
@@ -516,13 +530,13 @@ public class Panel extends javax.swing.JPanel {
             }
         });
 
-        rubEnregistrer = new RubriqueSimple("Enreg & Fermer", icones.getEnregistrer_01(), new RubriqueListener() {
+        rubEnregistrer = new RubriqueSimple("Enregistrer", icones.getEnregistrer_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 enregistrer();
             }
         });
-        
+
         rubRecu = new RubriqueSimple("Prod. Reçu", icones.getPDF_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
@@ -601,7 +615,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Fermer
-        btEnregistrer = new Bouton(12, "Enreg. & Fermer", icones.getEnregistrer_02(), new BoutonListener() {
+        btEnregistrer = new Bouton(12, "Enregistrer", icones.getEnregistrer_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 enregistrer();
@@ -766,7 +780,7 @@ public class Panel extends javax.swing.JPanel {
         comboTypeFacture = new javax.swing.JComboBox<>();
         dateFacture = new com.toedter.calendar.JDateChooser();
         jPanel3 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        labTypeClient = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         labNomClient = new javax.swing.JLabel();
         labTelephone = new javax.swing.JLabel();
@@ -874,7 +888,7 @@ public class Panel extends javax.swing.JPanel {
         labTypeFacture.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         labTypeFacture.setText("Facture No. 123");
 
-        comboTypeFacture.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Facture", "Facture pro forma", "Bon de Commande", "Bon d'entrée en Stock", "Bon de sortie du Stock" }));
+        comboTypeFacture.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Facture", "Facture pro forma" }));
         comboTypeFacture.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboTypeFactureItemStateChanged(evt);
@@ -910,9 +924,9 @@ public class Panel extends javax.swing.JPanel {
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel1.setText("Client :");
+        labTypeClient.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        labTypeClient.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        labTypeClient.setText("Client :");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -960,7 +974,7 @@ public class Panel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(labTypeClient, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labNomClient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -983,7 +997,7 @@ public class Panel extends javax.swing.JPanel {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(8, 8, 8)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(labTypeClient)
                     .addComponent(labNomClient))
                 .addGap(0, 0, 0)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1534,7 +1548,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void scrollListeReleveCompteMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseDragged
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_scrollListeReleveCompteMouseDragged
 
     private void tableListePaiementMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseDragged
@@ -1552,7 +1566,6 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JCheckBox isPlanPaiement;
     private javax.swing.JCheckBox isReleverCompte;
     private javax.swing.JButton jButton5;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1598,6 +1611,7 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JLabel labTotalSolde;
     private javax.swing.JLabel labTotalTTC;
     private javax.swing.JLabel labTotalTVA;
+    private javax.swing.JLabel labTypeClient;
     private javax.swing.JLabel labTypeFacture;
     private javax.swing.JPanel panContacts;
     private javax.swing.JPanel panDetailsBancaires;

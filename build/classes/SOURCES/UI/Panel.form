@@ -214,12 +214,9 @@
         <Component class="javax.swing.JComboBox" name="comboTypeFacture">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="5">
+              <StringArray count="2">
                 <StringItem index="0" value="Facture"/>
                 <StringItem index="1" value="Facture pro forma"/>
-                <StringItem index="2" value="Bon de Commande"/>
-                <StringItem index="3" value="Bon d&apos;entr&#xe9;e en Stock"/>
-                <StringItem index="4" value="Bon de sortie du Stock"/>
               </StringArray>
             </Property>
           </Properties>
@@ -256,7 +253,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="jLabel1" min="-2" pref="87" max="-2" attributes="0"/>
+                          <Component id="labTypeClient" min="-2" pref="87" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="labNomClient" max="32767" attributes="0"/>
                       </Group>
@@ -287,7 +284,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="labTypeClient" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labNomClient" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -312,7 +309,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="labTypeClient">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="10" style="0"/>

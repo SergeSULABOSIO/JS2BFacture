@@ -48,7 +48,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     private Font Font_Titre2 = null;
     private Font Font_Titre3 = null;
     private Font Font_TexteSimple = null;
-    private Font Font_TexteSimple_petit = null;
+    private Font Font_TexteSimple_petit, Font_TexteSimple_petit_Gras = null;
     private Font Font_TexteSimple_Gras = null;
     private Font Font_TexteSimple_Italique = null;
     private Font Font_TexteSimple_Gras_Italique = null;
@@ -87,6 +87,7 @@ public class DocumentPDF extends PdfPageEventHelper {
         //Les textes simples
         this.Font_TexteSimple = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.NORMAL, BaseColor.BLACK);
         this.Font_TexteSimple_petit = new Font(Font.FontFamily.TIMES_ROMAN, 7, Font.NORMAL, BaseColor.BLACK);
+        this.Font_TexteSimple_petit_Gras = new Font(Font.FontFamily.TIMES_ROMAN, 7, Font.BOLD, BaseColor.BLACK);
         this.Font_TexteSimple_Gras = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLD, BaseColor.BLACK);
         this.Font_TexteSimple_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.ITALIC, BaseColor.BLACK);
         this.Font_TexteSimple_Gras_Italique = new Font(Font.FontFamily.TIMES_ROMAN, 9, Font.BOLDITALIC, BaseColor.BLACK);
@@ -602,24 +603,24 @@ public class DocumentPDF extends PdfPageEventHelper {
             InterfaceEntreprise entreprise = this.gestionnaireFacture.getEntreprise();
             if (entreprise != null) {
                 if (entreprise.getBanque().trim().length() != 0) {
-                    tableau.addCell(getCelluleTableau("Banque :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-                    tableau.addCell(getCelluleTableau(entreprise.getBanque() + "", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+                    tableau.addCell(getCelluleTableau("Banque :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
+                    tableau.addCell(getCelluleTableau(entreprise.getBanque() + "", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
                 }
                 if (entreprise.getIntituleCompte().trim().length() != 0) {
-                    tableau.addCell(getCelluleTableau("Intitulé du compte :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-                    tableau.addCell(getCelluleTableau(entreprise.getIntituleCompte() + "", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+                    tableau.addCell(getCelluleTableau("Intitulé du compte :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
+                    tableau.addCell(getCelluleTableau(entreprise.getIntituleCompte() + "", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
                 }
                 if (entreprise.getNumeroCompte().trim().length() != 0) {
-                    tableau.addCell(getCelluleTableau("N° de compte :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-                    tableau.addCell(getCelluleTableau(entreprise.getNumeroCompte(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+                    tableau.addCell(getCelluleTableau("N° de compte :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
+                    tableau.addCell(getCelluleTableau(entreprise.getNumeroCompte(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
                 }
                 if (entreprise.getCodeSwift().trim().length() != 0) {
-                    tableau.addCell(getCelluleTableau("Code Swift :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-                    tableau.addCell(getCelluleTableau(entreprise.getCodeSwift(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+                    tableau.addCell(getCelluleTableau("Code Swift :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
+                    tableau.addCell(getCelluleTableau(entreprise.getCodeSwift(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
                 }
                 if (entreprise.getIBAN().trim().length() != 0) {
-                    tableau.addCell(getCelluleTableau("IBAN :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-                    tableau.addCell(getCelluleTableau(entreprise.getIBAN(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+                    tableau.addCell(getCelluleTableau("IBAN :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
+                    tableau.addCell(getCelluleTableau(entreprise.getIBAN(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
                 }
             } else {
                 setDefaultDetailsBancaires(tableau, borderwidth);
@@ -704,7 +705,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             );
             setDetailsBanque(tableBanque, 0);
             Font_TexteSimple_Italique.setColor(BaseColor.BLACK);
-            document.add(getParagraphe("Référence bancaire", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+            document.add(getParagraphe("Référence bancaire", Font_TexteSimple_petit, Element.ALIGN_LEFT));
             document.add(tableBanque);
         } catch (Exception e) {
             e.printStackTrace();

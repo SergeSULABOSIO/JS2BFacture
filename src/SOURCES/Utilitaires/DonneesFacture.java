@@ -14,32 +14,14 @@ import SOURCES.Interface.InterfaceEcheance;
  *
  * @author HP Pavilion
  */
-public class Donnees {
+public class DonneesFacture {
     private Vector<InterfaceArticle> articles;
     private Vector<InterfacePaiement> paiements;
-    private Vector<InterfaceEcheance> echeance;
-
-    public Donnees(Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeance) {
-        this.articles = articles;
-        this.paiements = paiements;
-        this.echeance = echeance;
-    }
-
-    public Donnees(Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements) {
-        this.articles = articles;
-        this.paiements = paiements;
-        this.echeance = new Vector<>();
-    }
-
-    public Vector<InterfaceEcheance> getEcheance() {
-        return echeance;
-    }
-
-    public void setEcheance(Vector<InterfaceEcheance> echeance) {
-        this.echeance = echeance;
-    }
-
     
+    public DonneesFacture(Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements) {
+        this.articles = articles;
+        this.paiements = paiements;
+    }
 
     public Vector<InterfaceArticle> getArticles() {
         return articles;

@@ -5,13 +5,13 @@
  */
 package SOURCES.CallBack;
 
-import SOURCES.Utilitaires.SortiesFacture;
-
 /**
  *
  * @author HP Pavilion
  */
-public abstract class EcouteurFacture {
-    public abstract void onEnregistre(SortiesFacture sortiesFacture);
+public abstract class EcouteurEnregistrement {
     
+    public abstract void onDone(String message);
+    public abstract void onError(String message);
+    public abstract void onUploading(String message);
 }

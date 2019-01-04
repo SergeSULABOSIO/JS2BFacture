@@ -22,23 +22,31 @@ import SOURCES.Interface.InterfacePaiement;
  */
 public class EditeurArticlePaiement extends AbstractCellEditor implements TableCellEditor {
 
-    private JComboBox<String> champEditionCombo = new JComboBox();
+    public JComboBox<String> champEditionCombo = new JComboBox();
     private Vector<InterfaceArticle> listeArticle;
     private ModeleListePaiement modeleListePaiement;
     private ModeleListeArticles modeleListeArticles;
     private int updatedRow;
 
     public EditeurArticlePaiement(Vector<InterfaceArticle> listeArticle, ModeleListeArticles modeleListeArticles, ModeleListePaiement modeleListePaiement) {
-        this.listeArticle = listeArticle;
+        this.listeArticle = modeleListeArticles.getListeData();
         this.modeleListePaiement = modeleListePaiement;
         this.modeleListeArticles = modeleListeArticles;
         initCombo();
     }
 
-    private void initCombo() {
+    public void initCombo() {
         this.champEditionCombo.removeAllItems();
+        Vector<String> lArts = new Vector<>();
         for (InterfaceArticle article : listeArticle) {
-            this.champEditionCombo.addItem(article.getId() + "_" + article.getNom());
+            double reste = modeleListePaiement.getReste(article.getId());
+            if(reste > 0){
+                String articleS = article.getId() + "_" + article.getNom();
+                if(!lArts.contains(articleS)){
+                    this.champEditionCombo.addItem(articleS);
+                    lArts.add(articleS);
+                }
+            }
         }
     }
 

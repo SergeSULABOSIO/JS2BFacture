@@ -12,98 +12,107 @@ import SOURCES.Utilitaires.Parametres;
 import java.util.Date;
 import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
-import SOURCES.Interface.InterfaceClient;
-import SOURCES.Utilitaires.Donnees;
+import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.ExerciceFiscale;
+import SOURCES.Utilitaires.SortiesFacture;
 
 /**
  *
  * @author HP Pavilion
  */
 public class TestPrincipal extends javax.swing.JFrame {
-    
-    private Parametres parametres;
+
+    private Parametres parametres = null;
+    private DonneesFacture donnees = null;
+    private TESTClient client = new TESTClient(12, "Elève", "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
+    private TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
+    private ExerciceFiscale anneeScolaire = new ExerciceFiscale(new Date(119, 0, 1), new Date(119, 11, 31), "Année Scolaire 2018-2019");
+    private int idFacture = 20;
+    private int idMonnaie = 10;
+    private double tva = 0;
+    private double remise = 0;
+    private String monnaie = "USD";
+    private String numeroFacture = "" + (new Date().getTime());
+    private Vector<InterfaceArticle> typesArticles = new Vector<>();
+    private Vector<InterfaceArticle> donneesArticles = new Vector<>();
+    private Vector<InterfacePaiement> donneesPaiements = new Vector<>();
+
+    private PanelFacture panelFacture = null;
+    private DialogueFacture dialogueFacture = null;
+
     /**
      * Creates new form TestPrincipal
      */
     public TestPrincipal() {
         initComponents();
     }
-    
-    private void initData(){
-        String numeroFacture = ""+(new Date().getTime());
-        int idFacture = 20;
-        Date dateDebut = new Date(119, 0, 1);
-        Date dateFin = new Date(119, 11, 31);
-        ExerciceFiscale anneeScolaire = new ExerciceFiscale(dateDebut, dateFin, "Année Scolaire 2018-2019");
-        Vector<InterfaceArticle> listArticles = new Vector<>();
-        listArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
-        listArticles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
-        listArticles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
-        
-        TESTClient client = new TESTClient(12, "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
-        
-        TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
-        
-        String monnaie = "USD";
-        int idMonnaie = 10;
-        double tva = 0;
-        double remise = 0;
-        
-        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, idFacture, listArticles, client, entreprise, monnaie, idMonnaie, tva, remise, anneeScolaire);
-        
+
+    private void initParametres() {
+        //On charge les types d'articles qui existent
+        typesArticles.removeAllElements();
+        typesArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
+        typesArticles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
+        typesArticles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
+
+        //Initialisation des paramètres
+        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, idFacture, typesArticles, client, entreprise, monnaie, idMonnaie, tva, remise, anneeScolaire);
+
+        //Initialisation de l'écouteur du gestionnaire de facture
         this.parametres.setEcouteurFacture(new EcouteurFacture() {
             @Override
-            public void onEnregistre(InterfaceClient client, Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeances) {
+            public void onEnregistre(SortiesFacture sortiesFacture) {
                 
-                System.out.println("CLIENT : " + client.getNom());
-                System.out.println("ARTICLES : ");
-                double tot = 0;
-                for(InterfaceArticle article : articles){
-                    System.out.println(" * "+article.getQte()+", " + article.getNom()+", "+ article.getTotalTTC());
-                    tot += article.getTotalTTC();
-                }
-                System.out.println("Total : "+tot+" "+parametres.getMonnaie());
-                System.out.println("PAIEMENTS : ");
-                double paie = 0;
-                for(InterfacePaiement paiement : paiements){
-                    System.out.println(" * "+paiement.getDate().toLocaleString()+", " + paiement.getNomDepositaire()+", "+ paiement.getMontant()+", ");
-                    paie += paiement.getMontant();
-                }
-                System.out.println("Total : "+paie+" "+parametres.getMonnaie());
-                System.out.println("Total Solde : "+(tot - paie)+" "+parametres.getMonnaie());
-                System.out.println("PLAN DE PAIEMENT:");
-                for(InterfaceEcheance echeance : echeances){
-                    System.out.println(" * Echéance : "+echeance.toString());
-                }
+                Thread th = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            /**/
+                            
+                            sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
+                            sleep(5000);
+                            System.out.println("CLIENT : \n * " + client.toString());
+                            System.out.println("ARTICLES : ");
+                            for (InterfaceArticle article : sortiesFacture.getArticles()) {
+                                System.out.println(" * " + article.toString());
+                            }
+                            System.out.println("PAIEMENTS : ");
+                            for (InterfacePaiement paiement : sortiesFacture.getPaiements()) {
+                                System.out.println(" * " + paiement.toString());
+                            }
+                            System.out.println("ECHEANCES:");
+                            for (InterfaceEcheance echeance : sortiesFacture.getEcheances()) {
+                                System.out.println(" * Echéance : " + echeance.toString());
+                            }
+                            sortiesFacture.getEcouteurEnregistrement().onDone("Enregistré!");
+                            
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                };
+                th.start();
+
             }
         });
-        
-        Vector<InterfaceArticle> articles = new Vector<>();
-        articles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
-        articles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
-        articles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
-        
-        Vector<InterfacePaiement> paiements = new Vector<>();
-        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
-        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
-        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
-        paiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
-        
-        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
-        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
-        paiements.add(new TESTPaiement(-1, 12, 2, "Serge SULA BOSIO", "MINERVALE", "Serge SULA BOSIO", 100, new Date()));
-        
-        Vector<InterfaceEcheance> echeances = new Vector<>();
-        echeances.add(new TESTEcheance(-1, "PREMIER VERSEMENT", -1, new Date(), new Date(), numeroFacture, 0, 600, 1, monnaie));
-        
-        this.parametres.setDonnees(new Donnees(articles, paiements));
+
+        //On charges les articles séléctionés
+        donneesArticles.removeAllElements();
+        donneesArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
+
+        //On charge les paiements déjà reçus ou  effectués par le client
+        donneesPaiements.removeAllElements();
+        donneesPaiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+
+        //Initialisation des données (Articles et paiements reçus)
+        donnees = new DonneesFacture(donneesArticles, donneesPaiements);
+
+        //Chargement des données (articles & paiements reçus)
+        this.parametres.setDonnees(donnees);
     }
-    
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -161,23 +170,33 @@ public class TestPrincipal extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
-        initData();    
-        DialogueFacture df = new DialogueFacture(this, true, parametres);
-        df.show();
-        
+
+        //Initialisation des données
+        initParametres();
+
+        //Initialisation du gestionnaire des factures sous forme de la boîte de dialogue
+        dialogueFacture = new DialogueFacture(this, true, parametres);
+
+        //On l'affiche
+        dialogueFacture.show();
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        
-        initData();
-        PanelFacture pf = new PanelFacture(parametres, jTabbedPane1);
-        
-        
-        jTabbedPane1.add("Facture", pf);
-        jTabbedPane1.setSelectedComponent(pf);
-        
+
+        //Initialisation des données
+        initParametres();
+
+        //Initialisation du gestionnaire des factures
+        this.panelFacture = new PanelFacture(parametres, jTabbedPane1);
+
+        //Chargement du gestionnaire sur l'onglet
+        jTabbedPane1.add("Facture", panelFacture);
+
+        //On séléctionne l'onglet actuel
+        jTabbedPane1.setSelectedComponent(panelFacture);
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

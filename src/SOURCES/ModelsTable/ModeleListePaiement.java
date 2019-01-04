@@ -216,7 +216,7 @@ public class ModeleListePaiement extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         //{"N°", "Date", "Article", "Dépositaire", "Montant reçu", "Reste"};
-        if (columnIndex == 5 && columnIndex == 0) {
+        if (columnIndex == 0 || columnIndex == 5) {
             return false;
         } else {
             return true;

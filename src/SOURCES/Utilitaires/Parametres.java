@@ -34,7 +34,7 @@ public class Parametres {
     private double remise;
     private EcouteurAjout ecouteurAjout;
     private EcouteurFacture ecouteurFacture = null;
-    private Donnees donnees = null;
+    private DonneesFacture donnees = null;
     private String nomUtilisateur;
     private ExerciceFiscale exerciceFiscale;
 
@@ -140,11 +140,11 @@ public class Parametres {
         this.numero = numero;
     }
 
-    public Donnees getDonnees() {
+    public DonneesFacture getDonnees() {
         return donnees;
     }
 
-    public void setDonnees(Donnees donnees) {
+    public void setDonnees(DonneesFacture donnees) {
         this.donnees = donnees;
     }
 

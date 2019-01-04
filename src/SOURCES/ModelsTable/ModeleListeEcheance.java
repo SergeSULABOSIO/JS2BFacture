@@ -71,16 +71,6 @@ public class ModeleListeEcheance extends AbstractTableModel {
         redessinerTable();
     }
 
-    public void setListeEcheance(Vector<InterfaceEcheance> listeData) {
-        if (listeData != null) {
-            if (!listeData.isEmpty()) {
-                this.listeData = listeData;
-                redessinerTable();
-            }
-        }
-
-    }
-
     public Vector<InterfaceEcheance> getListeData() {
         return listeData;
     }
@@ -228,7 +218,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
                 for (InterfaceArticle article : this.modeleListeArticles.getListeData()) {
                     //System.out.println(" * " + article.toString() + ", tranches = " + article.getTranches());
                     //Si et seulement si le rabais reste strictement inférieur au prix unitaire avant remise
-                    if (article.getPrixUHT_avant_rabais()> article.getRabais()) {
+                    if (article.getPrixUHT_avant_rabais() > article.getRabais()) {
                         if (article.getTranches() > nombreTranches) {
                             nombreTranches = article.getTranches();
                         }
@@ -335,7 +325,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
         //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
         switch (columnIndex) {
             case 0:
-                return (rowIndex + 1)+"";
+                return (rowIndex + 1) + "";
             case 1:
                 return listeData.elementAt(rowIndex).getNom();
             case 2:
@@ -379,11 +369,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
-        if (columnIndex == 1 || columnIndex == 2 || columnIndex == 3 || columnIndex == 5) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     @Override

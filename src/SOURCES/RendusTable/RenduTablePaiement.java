@@ -6,6 +6,7 @@
 package SOURCES.RendusTable;
 
 import SOURCES.UI.CelluleSimpleTableau;
+import SOURCES.Utilitaires.Util;
 import java.awt.Component;
 import java.util.Date;
 import javax.swing.ImageIcon;
@@ -33,7 +34,7 @@ public class RenduTablePaiement implements TableCellRenderer {
             if(column == 0){
                 celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
             }else if(column == 1){
-                celluleNum = new CelluleSimpleTableau(" " + ((Date)value).toLocaleString() + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date)value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
             }else{
                 celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
             }

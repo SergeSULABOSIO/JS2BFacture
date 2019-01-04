@@ -46,8 +46,11 @@ public class RenduTableEcheance implements TableCellRenderer {
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 2:
+                celluleNum = new CelluleSimpleTableau(" Du " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
+                celluleNum.ecouterSelection(isSelected, row);
+                return celluleNum;
             case 3:
-                celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" au " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 4:
@@ -55,7 +58,7 @@ public class RenduTableEcheance implements TableCellRenderer {
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 5:
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 6:
