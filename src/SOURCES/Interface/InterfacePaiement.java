@@ -13,6 +13,9 @@ import java.util.Date;
  */
 public interface InterfacePaiement {
     
+    public static int MODE_CAISSE = 0;
+    public static int MODE_BANQUE = 1;
+    
     public abstract int getId();
     public abstract int getIdClient();
     public abstract int getIdArticle();
@@ -20,7 +23,8 @@ public interface InterfacePaiement {
     public abstract String getNomArticle();
     public abstract double getMontant();
     public abstract Date getDate();
-    public abstract String getNomDepositaire();
+    public abstract String getReferenceTransaction();
+    public abstract int getMode();  // 0=caisse & 1=banque
     
     
     public abstract void setId(int id);
@@ -30,7 +34,8 @@ public interface InterfacePaiement {
     public abstract void setNomArticle(String nomArticle);
     public abstract void setMontant(double montant);
     public abstract void setDate(Date date);
-    public abstract void setNomDepositaire(String NomDepositaire);
+    public abstract void setReferenceTransaction(String reference);
+    public abstract void setMode(int mode); // 0=caisse & 1=banque
     
     
     

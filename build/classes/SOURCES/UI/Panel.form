@@ -990,8 +990,8 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Articles">
-                <Property name="tabTitle" type="java.lang.String" value="Articles"/>
+              <JTabbedPaneConstraints tabName="Biens/Services/Frais">
+                <Property name="tabTitle" type="java.lang.String" value="Biens/Services/Frais"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -1072,8 +1072,8 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Relev&#xe9; de compte">
-                <Property name="tabTitle" type="java.lang.String" value="Relev&#xe9; de compte"/>
+              <JTabbedPaneConstraints tabName="Paiements">
+                <Property name="tabTitle" type="java.lang.String" value="Paiements"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

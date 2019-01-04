@@ -16,6 +16,8 @@ public class TESTPaiement implements InterfacePaiement{
     public int id;
     public int idClient;
     public int idArticle;
+    public int mode;
+    public String reference;
     public String nomClient;
     public String nomArticle;
     public String nomDepositaire;
@@ -25,7 +27,7 @@ public class TESTPaiement implements InterfacePaiement{
     public TESTPaiement() {
     }
 
-    public TESTPaiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date) {
+    public TESTPaiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference) {
         this.id = id;
         this.idClient = idClient;
         this.idArticle = idArticle;
@@ -34,6 +36,8 @@ public class TESTPaiement implements InterfacePaiement{
         this.nomDepositaire = nomDepositaire;
         this.montant = montant;
         this.date = date;
+        this.mode = mode;
+        this.reference = reference;
     }
 
     
@@ -105,5 +109,25 @@ public class TESTPaiement implements InterfacePaiement{
     @Override
     public String toString() {
         return "TESTPaiement{" + "id=" + id + ", idClient=" + idClient + ", idArticle=" + idArticle + ", nomClient=" + nomClient + ", nomArticle=" + nomArticle + ", nomDepositaire=" + nomDepositaire + ", montant=" + montant + ", date=" + date + '}';
+    }
+
+    @Override
+    public String getReferenceTransaction() {
+        return this.reference;
+    }
+
+    @Override
+    public int getMode() {
+        return this.mode;
+    }
+
+    @Override
+    public void setReferenceTransaction(String reference) {
+        this.reference = reference;
+    }
+
+    @Override
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }

@@ -21,7 +21,7 @@ import SOURCES.Interface.InterfacePaiement;
  */
 public class ModeleListePaiement extends AbstractTableModel {
 
-    private String[] titreColonnes = {"N°", "Date", "Article", "Dépositaire", "Montant reçu", "Reste"};
+    private String[] titreColonnes = {"N°", "Date", "Article", "Référence", "Montant reçu", "Reste"};
     private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -181,7 +181,7 @@ public class ModeleListePaiement extends AbstractTableModel {
                     return listeData.elementAt(rowIndex).getNomArticle();
                 }
             case 3:
-                return listeData.elementAt(rowIndex).getNomDepositaire();
+                return listeData.elementAt(rowIndex).getReferenceTransaction();
             case 4:
                 return listeData.elementAt(rowIndex).getMontant();
             case 5:
@@ -239,7 +239,7 @@ public class ModeleListePaiement extends AbstractTableModel {
                 article.setNomArticle(nom);
                 break;
             case 3:
-                article.setNomDepositaire(aValue + "");
+                article.setReferenceTransaction(aValue + "");
                 break;
             case 4:
                 //System.out.println("RESTE - AVANT MODIF : " + getReste(article.getIdArticle()));

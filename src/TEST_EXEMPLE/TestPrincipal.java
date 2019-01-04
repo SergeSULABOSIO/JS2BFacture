@@ -104,7 +104,7 @@ public class TestPrincipal extends javax.swing.JFrame {
 
         //On charge les paiements déjà reçus ou  effectués par le client
         donneesPaiements.removeAllElements();
-        donneesPaiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date()));
+        donneesPaiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSEREDVFGFD22445"));
 
         //Initialisation des données (Articles et paiements reçus)
         donnees = new DonneesFacture(donneesArticles, donneesPaiements);

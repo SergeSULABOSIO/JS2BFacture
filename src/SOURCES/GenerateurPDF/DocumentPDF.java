@@ -331,7 +331,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
             PdfPTable tableReleve = getTableau(
                     -1,
-                    new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu", "Solde"},
+                    new String[]{"N°", "Dates", "Biens/Services/Frais", "Référence", "Montant reçu", "Solde"},
                     new int[]{80, 200, 500, 500, 200, 200},
                     Element.ALIGN_CENTER,
                     0.2f
@@ -342,13 +342,13 @@ public class DocumentPDF extends PdfPageEventHelper {
                 int i = 0;
                 for (InterfacePaiement paiement : listePaiement) {
                     String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getNomDepositaire(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getReferenceTransaction(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
                     i++;
                 }
                 setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
             } else {
                 for (int i = 0; i < 10; i++) {
-                    setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35, 5);
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "REFDCE001440021", i, 35, 5);
                 }
                 setDerniereLigneTabReleve(tableReleve, 1500, 350);
             }
@@ -363,7 +363,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
             PdfPTable tableReleve = getTableau(
                     -1,
-                    new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu"},
+                    new String[]{"N°", "Dates", "Biens/Services/Frais", "Référence", "Montant reçu"},
                     new int[]{80, 200, 500, 500, 200},
                     Element.ALIGN_CENTER,
                     0.2f
@@ -375,7 +375,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                     double totRecu = 0;
                     for (InterfacePaiement paiement : listePaiementRecusSelected) {
                         String nomArticle = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                        setLigneRecuSelected(tableReleve, Util.getDateFrancais(paiement.getDate()), nomArticle, paiement.getNomDepositaire(), i, paiement.getMontant());
+                        setLigneRecuSelected(tableReleve, Util.getDateFrancais(paiement.getDate()), nomArticle, paiement.getReferenceTransaction(), i, paiement.getMontant());
                         i++;
                         totRecu += paiement.getMontant();
                     }
@@ -383,7 +383,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                 }
             } else {
                 for (int i = 0; i < 10; i++) {
-                    setLigneRecuSelected(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "Serge SULA BOSIO", i, 35);
+                    setLigneRecuSelected(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "REFBVVC001455410", i, 35);
                 }
                 setDerniereLigneRecuSelected(tableReleve, 1500);
             }
@@ -463,7 +463,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             document.add(getParagraphe("Détails - Articles", Font_TexteSimple, Element.ALIGN_CENTER));
             PdfPTable tableDetailsArticles = getTableau(
                     -1,
-                    new String[]{"N°", "Articles", "Qté", "Prix Unit.", "Rabais", "Prix Unit.", "Tva", "Total TTC"},
+                    new String[]{"N°", "Biens/Services/Frais", "Qté", "Prix Unit.", "Rabais", "Prix Unit.", "Tva", "Total TTC"},
                     new int[]{100, 800, 150, 250, 250, 250, 250, 300},
                     Element.ALIGN_CENTER,
                     0.2f

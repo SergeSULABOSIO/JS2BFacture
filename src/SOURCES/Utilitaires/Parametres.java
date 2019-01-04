@@ -16,6 +16,7 @@ import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.Interface.InterfacePaiement;
 
 /**
  *
@@ -64,7 +65,8 @@ public class Parametres {
             @Override
             public void setAjoutPaiement(ModeleListePaiement modeleListePaiement) {
                 double montant = 0;
-                modeleListePaiement.AjouterPaiement(new XX_Paiement(-1, client.getId(), -1, client.getNom(), "", client.getNom(), montant, new Date()));
+                Date newDate = new Date();
+                modeleListePaiement.AjouterPaiement(new XX_Paiement(-1, client.getId(), -1, client.getNom(), "", client.getNom(), montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime()+""));
             }
 
             @Override

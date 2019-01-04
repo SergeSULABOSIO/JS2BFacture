@@ -681,7 +681,7 @@ public class Panel extends javax.swing.JPanel {
             case 1:
                 InterfacePaiement paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
                 if (paiment != null) {
-                    this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", " + paiment.getNomDepositaire() + " a payé " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
+                    this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", ref.: " + paiment.getReferenceTransaction()+ ", montant : " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
                 }
                 break;
             default:
@@ -1347,7 +1347,7 @@ public class Panel extends javax.swing.JPanel {
             tableListeArticle.getColumnModel().getColumn(6).setPreferredWidth(50);
         }
 
-        tabPrincipal.addTab("Articles", scrollListeArticles);
+        tabPrincipal.addTab("Biens/Services/Frais", scrollListeArticles);
 
         scrollListeReleveCompte.setBackground(new java.awt.Color(255, 255, 255));
         scrollListeReleveCompte.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1393,7 +1393,7 @@ public class Panel extends javax.swing.JPanel {
             tableListePaiement.getColumnModel().getColumn(2).setPreferredWidth(50);
         }
 
-        tabPrincipal.addTab("Relevé de compte", scrollListeReleveCompte);
+        tabPrincipal.addTab("Paiements", scrollListeReleveCompte);
 
         scrollListeEcheances.setBackground(new java.awt.Color(255, 255, 255));
         scrollListeEcheances.addMouseListener(new java.awt.event.MouseAdapter() {

@@ -16,6 +16,8 @@ public class XX_Paiement implements InterfacePaiement{
     public int id;
     public int idClient;
     public int idArticle;
+    public int mode;
+    public String reference;
     public String nomClient;
     public String nomArticle;
     public String nomDepositaire;
@@ -25,7 +27,7 @@ public class XX_Paiement implements InterfacePaiement{
     public XX_Paiement() {
     }
 
-    public XX_Paiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date) {
+    public XX_Paiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference) {
         this.id = id;
         this.idClient = idClient;
         this.idArticle = idArticle;
@@ -34,6 +36,8 @@ public class XX_Paiement implements InterfacePaiement{
         this.nomDepositaire = nomDepositaire;
         this.montant = montant;
         this.date = date;
+        this.mode = mode;
+        this.reference = reference;
     }
 
     
@@ -100,6 +104,26 @@ public class XX_Paiement implements InterfacePaiement{
 
     public void setDate(Date date) {
         this.date = date;
+    }
+    
+    @Override
+    public String getReferenceTransaction() {
+        return this.reference;
+    }
+
+    @Override
+    public int getMode() {
+        return this.mode;
+    }
+
+    @Override
+    public void setReferenceTransaction(String reference) {
+        this.reference = reference;
+    }
+
+    @Override
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
     @Override
