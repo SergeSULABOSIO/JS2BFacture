@@ -69,7 +69,6 @@ public class TestPrincipal extends javax.swing.JFrame {
                     public void run() {
                         try {
                             /**/
-                            
                             sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
                             sleep(5000);
                             System.out.println("CLIENT : \n * " + client.toString());

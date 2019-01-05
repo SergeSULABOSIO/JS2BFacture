@@ -326,7 +326,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     }
 
-    private void setTableauDetailsReleveDeCompte() {
+    private void setTableauDetailsPaiementsRecus(Vector<InterfacePaiement> listePaiement) {
         try {
             document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
             PdfPTable tableReleve = getTableau(
@@ -338,54 +338,22 @@ public class DocumentPDF extends PdfPageEventHelper {
             );
             if (this.gestionnaireFacture != null) {
                 ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
-                Vector<InterfacePaiement> listePaiement = modelPaiement.getListeData();
+                //Vector<InterfacePaiement> listePaiement = modelPaiement.getListeData();
                 int i = 0;
+                double totPaye = 0;
                 for (InterfacePaiement paiement : listePaiement) {
+                    //cumuls
+                    totPaye += paiement.getMontant();
                     String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
                     setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getReferenceTransaction(), paiement.getMode(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
                     i++;
                 }
-                setDerniereLigneTabReleve(tableReleve, modelPaiement.getTotalMontant(), modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
+                setDerniereLigneTabReleve(tableReleve, totPaye, modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
             } else {
                 for (int i = 0; i < 10; i++) {
                     setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "REFDCE001440021", InterfacePaiement.MODE_BANQUE, i, 35, 5);
                 }
                 setDerniereLigneTabReleve(tableReleve, 1500, 350);
-            }
-            document.add(tableReleve);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setTableauPaiementsRecusSelected() {
-        try {
-            document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
-            PdfPTable tableReleve = getTableau(
-                    -1,
-                    new String[]{"N°", "Dates", "Biens/Services/Frais", "Référence", "Mode", "Montant reçu"},
-                    new int[]{80, 200, 500, 500, 200, 200},
-                    Element.ALIGN_CENTER,
-                    0.2f
-            );
-            if (this.gestionnaireFacture != null) {
-                Vector<InterfacePaiement> listePaiementRecusSelected = gestionnaireFacture.getPaiementsSelected();
-                if (!listePaiementRecusSelected.isEmpty()) {
-                    int i = 0;
-                    double totRecu = 0;
-                    for (InterfacePaiement paiement : listePaiementRecusSelected) {
-                        String nomArticle = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                        setLigneRecuSelected(tableReleve, Util.getDateFrancais(paiement.getDate()), nomArticle, paiement.getReferenceTransaction(), paiement.getMode(), i, paiement.getMontant());
-                        i++;
-                        totRecu += paiement.getMontant();
-                    }
-                    setDerniereLigneRecuSelected(tableReleve, Util.round(totRecu, 2));
-                }
-            } else {
-                for (int i = 0; i < 10; i++) {
-                    setLigneRecuSelected(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "REFBVVC001455410", InterfacePaiement.MODE_BANQUE, i, 35);
-                }
-                setDerniereLigneRecuSelected(tableReleve, 1500);
             }
             document.add(tableReleve);
         } catch (Exception e) {
@@ -433,7 +401,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             PdfPTable tableSynthese = getTableau(
                     120f,
                     new String[]{"Synthèse", ""},
-                    new int[]{70, 50},
+                    new int[]{120, 120},
                     Element.ALIGN_RIGHT,
                     0
             );
@@ -542,21 +510,6 @@ public class DocumentPDF extends PdfPageEventHelper {
         }
         tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(reste + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-    }
-    
-    private void setLigneRecuSelected(PdfPTable tableDetailsArticles, String date, String NomArticle, String depositaire, int mode, int i, double montant) {
-        //new String[]{"N°", "Dates", "Articles", "Reçu de", "Montant reçu"},
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
-        tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(date, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(depositaire, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        if(mode == InterfacePaiement.MODE_BANQUE){
-            tableDetailsArticles.addCell(getCelluleTableau("BANQUE", 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        }else{
-            tableDetailsArticles.addCell(getCelluleTableau("CAISSE", 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        }
-        tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
     }
     
     private void setLigneTabEcheance(PdfPTable tableEchances, String nomEcheance, String dateDebut, String dateFin, String progression, int i, double montantDu, double montantPaye) {
@@ -677,17 +630,6 @@ public class DocumentPDF extends PdfPageEventHelper {
         tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau(reste + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
     }
-    
-    private void setDerniereLigneRecuSelected(PdfPTable tableDetailsArticles, double montant) {
-        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie();
-        tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-        tableDetailsArticles.addCell(getCelluleTableau(montant + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
-    }
 
     private PdfPCell getCelluleTableau(String texte, float BorderWidth, BaseColor background, BaseColor textColor, int alignement, Font font) {
         PdfPCell cellule = new PdfPCell();
@@ -749,15 +691,15 @@ public class DocumentPDF extends PdfPageEventHelper {
             }
             if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerRelever() == true) {
                 if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
-                    setTableauDetailsReleveDeCompte();//ok
+                    setTableauDetailsPaiementsRecus(this.gestionnaireFacture.getModeleListePaiement().getListeData());//ok
                 }
             }
         } else {
             //C'est ici que les détails sur le recu seront affichés
-            setTableauPaiementsRecusSelected();
+            setTableauDetailsPaiementsRecus(this.gestionnaireFacture.getPaiementsSelected());//ok
         }
 
-        //ajouterLigne(1);//ok
+        ajouterLigne(1);//ok
         setSignataire();//ok
         setLigneSeparateur();//ok
         setTableauDetailsBancaires();//ok
