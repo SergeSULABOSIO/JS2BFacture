@@ -90,7 +90,6 @@ public class TestPrincipal extends javax.swing.JFrame {
                             e.printStackTrace();
                         }
                     }
-
                 };
                 th.start();
 
