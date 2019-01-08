@@ -176,7 +176,7 @@ public class Panel extends javax.swing.JPanel {
             if (ef != null) {
                 exercice = ", " + ef.getNom() + " [" + Util.getDateFrancais(ef.getDebut()) + " - " + Util.getDateFrancais(ef.getFin()) + "].";
             }
-            labTypeClient.setText(this.parametres.getClient().getType()+" :");
+            labTypeClient.setText(this.parametres.getClient().getType() + " :");
             labNomClient.setText(client.getNom() + exercice);
 
             labTelephone.setIcon(icones.getTéléphone_01());
@@ -229,27 +229,41 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeArticle.setRowHeight(25);
 
         TableColumn col_No = this.tableListeArticle.getColumnModel().getColumn(0);
+        col_No.setPreferredWidth(50);
+        col_No.setMaxWidth(50);
 
         TableColumn colNomArt = this.tableListeArticle.getColumnModel().getColumn(1);
+        colNomArt.setPreferredWidth(260);
         colNomArt.setCellEditor(new EditeurArticleFacture(this.parametres.getListArticles(), this.modeleListeArticles));
 
         TableColumn col_Qt = this.tableListeArticle.getColumnModel().getColumn(2);
-        TableColumn col_PU_avant_Rabais = this.tableListeArticle.getColumnModel().getColumn(3);
-        TableColumn col_Rabais = this.tableListeArticle.getColumnModel().getColumn(4);
-        TableColumn col_PU_aprs_Rabais = this.tableListeArticle.getColumnModel().getColumn(5);
-        TableColumn col_Tva_mnt = this.tableListeArticle.getColumnModel().getColumn(6);
-        TableColumn col_TTC_mnt = this.tableListeArticle.getColumnModel().getColumn(7);
-        TableColumn col_Tranches = this.tableListeArticle.getColumnModel().getColumn(8);
-
-        col_No.setPreferredWidth(50);
-        colNomArt.setPreferredWidth(260);
         col_Qt.setPreferredWidth(80);
+        col_Qt.setMaxWidth(80);
+
+        TableColumn col_PU_avant_Rabais = this.tableListeArticle.getColumnModel().getColumn(3);
         col_PU_avant_Rabais.setPreferredWidth(150);
+        col_PU_avant_Rabais.setMaxWidth(150);
+
+        TableColumn col_Rabais = this.tableListeArticle.getColumnModel().getColumn(4);
         col_Rabais.setPreferredWidth(150);
+        col_Rabais.setMaxWidth(150);
+
+        TableColumn col_PU_aprs_Rabais = this.tableListeArticle.getColumnModel().getColumn(5);
         col_PU_aprs_Rabais.setPreferredWidth(150);
+        col_PU_aprs_Rabais.setMaxWidth(150);
+
+        TableColumn col_Tva_mnt = this.tableListeArticle.getColumnModel().getColumn(6);
         col_Tva_mnt.setPreferredWidth(120);
+        col_Tva_mnt.setMaxWidth(120);
+
+        TableColumn col_TTC_mnt = this.tableListeArticle.getColumnModel().getColumn(7);
         col_TTC_mnt.setPreferredWidth(150);
+        col_TTC_mnt.setMaxWidth(150);
+
+        TableColumn col_Tranches = this.tableListeArticle.getColumnModel().getColumn(8);
         col_Tranches.setPreferredWidth(110);
+        col_Tranches.setMaxWidth(110);
+
         appliquerTva();
     }
 
@@ -277,26 +291,34 @@ public class Panel extends javax.swing.JPanel {
         this.tableListePaiement.setRowHeight(25);
 
         TableColumn col_No = this.tableListePaiement.getColumnModel().getColumn(0);
+        col_No.setPreferredWidth(30);
+        col_No.setMaxWidth(30);
 
         TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(1);
         col_Date.setCellEditor(new EditeurDatePaiement(this.modeleListePaiement));
+        col_Date.setPreferredWidth(150);
+        col_Date.setMaxWidth(150);
 
         TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(2);
         col_Article.setCellEditor(editeurArticlePaiement);
+        col_Article.setPreferredWidth(200);
 
         TableColumn col_Reference = this.tableListePaiement.getColumnModel().getColumn(3);
+        col_Reference.setPreferredWidth(200);
+        col_Reference.setMaxWidth(200);
+        
         TableColumn col_Mode = this.tableListePaiement.getColumnModel().getColumn(4);
         col_Mode.setCellEditor(new EditeurModePaiement());
-        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(5);
-        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(6);
-
-        col_No.setPreferredWidth(50);
-        col_Date.setPreferredWidth(150);
-        col_Article.setPreferredWidth(200);
-        col_Reference.setPreferredWidth(200);
         col_Mode.setPreferredWidth(150);
+        col_Mode.setMaxWidth(150);
+        
+        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(5);
         col_Montant.setPreferredWidth(120);
+        col_Montant.setMaxWidth(120);
+        
+        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(6);
         col_Reste.setPreferredWidth(120);
+        col_Reste.setMaxWidth(120);
     }
 
     private void parametrerTableEcheance() {
@@ -315,20 +337,31 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeEcheance.setRowHeight(25);
 
         TableColumn col_No = this.tableListeEcheance.getColumnModel().getColumn(0);
+        col_No.setPreferredWidth(30);
+        col_No.setMaxWidth(30);
+        
         TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(1);
-        TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(2);
-        TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(3);
-        TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(4);
-        TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(5);
-        TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(6);
-
-        col_No.setPreferredWidth(20);
         col_Nom.setPreferredWidth(80);
+        
+        TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(2);
         col_Date_initiale.setPreferredWidth(90);
+        col_Date_initiale.setMaxWidth(90);
+        
+        TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(3);
         col_Date_finale.setPreferredWidth(90);
+        col_Date_finale.setMaxWidth(90);
+        
+        TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(4);
         col_status.setPreferredWidth(120);
+        col_status.setMaxWidth(120);
+        
+        TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(5);
         col_montant_du.setPreferredWidth(80);
+        col_montant_du.setMaxWidth(80);
+        
+        TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(6);
         col_progression.setPreferredWidth(80);
+        col_progression.setMaxWidth(80);
     }
 
     private void appliquerTva() {
@@ -375,27 +408,42 @@ public class Panel extends javax.swing.JPanel {
         SortiesFacture sortiesFacture = null;
         if (ecouteurFacture != null) {
             sortiesFacture = new SortiesFacture(
-                    this.parametres.getClient(), 
-                    this.modeleListeArticles.getListeData(), 
-                    this.modeleListePaiement.getListeData(), 
-                    this.modeleListeEcheance.getListeData(), 
+                    this.parametres.getClient(),
+                    this.modeleListeArticles.getListeData(),
+                    this.modeleListePaiement.getListeData(),
+                    this.modeleListeEcheance.getListeData(),
                     new EcouteurEnregistrement() {
                 @Override
                 public void onDone(String message) {
                     callBackSynthese.onActualiser(message);
+                    btEnregistrer.appliquerDroitAccessDynamique(true);
+                    rubEnregistrer.appliquerDroitAccessDynamique(true);
+                    if(PanelFacture.labStatus != null){
+                        PanelFacture.labStatus.setIcon(icones.getInfos_01());
+                    }
                 }
 
                 @Override
                 public void onError(String message) {
                     callBackSynthese.onActualiser(message);
+                    btEnregistrer.appliquerDroitAccessDynamique(true);
+                    rubEnregistrer.appliquerDroitAccessDynamique(true);
+                    if(PanelFacture.labStatus != null){
+                        PanelFacture.labStatus.setIcon(icones.getAlert_01());
+                    }
                 }
 
                 @Override
                 public void onUploading(String message) {
                     callBackSynthese.onActualiser(message);
+                    btEnregistrer.appliquerDroitAccessDynamique(false);
+                    rubEnregistrer.appliquerDroitAccessDynamique(false);
+                    if(PanelFacture.labStatus != null){
+                        PanelFacture.labStatus.setIcon(icones.getSablier_01());
+                    }
                 }
             });
-            
+
             ecouteurFacture.onEnregistre(sortiesFacture);
         }
     }
@@ -685,7 +733,7 @@ public class Panel extends javax.swing.JPanel {
             case 1:
                 InterfacePaiement paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
                 if (paiment != null) {
-                    this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", ref.: " + paiment.getReferenceTransaction()+ ", montant : " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
+                    this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
                 }
                 break;
             default:
