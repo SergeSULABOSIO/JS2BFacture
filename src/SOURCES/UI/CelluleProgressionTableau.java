@@ -5,6 +5,7 @@
  */
 package SOURCES.UI;
 
+import SOURCES.Utilitaires.Util;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.ImageIcon;
@@ -49,7 +50,7 @@ public class CelluleProgressionTableau extends javax.swing.JPanel {
     public void setValeur(String monnaie, double val, double totalDu){
         this.progress.setStringPainted(true);
         this.progress.setMaximum((int)totalDu);
-        this.progress.setString(val + " " + monnaie);
+        this.progress.setString(Util.getMontantFrancais(val) + " " + monnaie);
         this.progress.setValue((int)val);
     }
 

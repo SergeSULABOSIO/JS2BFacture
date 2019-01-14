@@ -69,4 +69,31 @@ public class Util {
 
         return dateS;
     }
+    
+    public static String getMontantFrancais(double montant) {
+        String val = "";
+        int ValEntiere = (int) montant;
+        char[] valInput = (ValEntiere + "").toCharArray();
+        int index = 0;
+        for (int i = valInput.length - 1; i >= 0; i--) {
+            //System.out.println(" \t *  " + valInput[i]);
+            if (index % 3 == 0 && index != 0) {
+                val = valInput[i] + "." + val;
+            } else {
+                val = valInput[i] + val;
+            }
+            index++;
+        }
+        int ValApresVirgule = (int)(round(((montant - ValEntiere)*100), 0));
+        //System.out.println("Valeur d'origine = " + montant);
+        //System.out.println("Partie entière = " + ValEntiere);
+        //System.out.println("Partie décimale = " + ValApresVirgule);
+        return val+"," + ValApresVirgule;
+    }
+    
+    public static void main(String[] args) {
+        double origine = 10000.14;
+        String res = Util.getMontantFrancais(origine);
+        System.out.println("Résultat = " + res);
+    }
 }

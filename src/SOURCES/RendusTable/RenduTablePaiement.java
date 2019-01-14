@@ -60,9 +60,11 @@ public class RenduTablePaiement implements TableCellRenderer {
             }
         } else {
             if (column == 5) {
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
+                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
             } else {
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
+                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
             }
         }
         celluleNum.ecouterSelection(isSelected, row);

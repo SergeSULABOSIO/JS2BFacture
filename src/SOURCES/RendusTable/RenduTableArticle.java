@@ -6,6 +6,7 @@
 package SOURCES.RendusTable;
 
 import SOURCES.UI.CelluleSimpleTableau;
+import SOURCES.Utilitaires.Util;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
@@ -45,10 +46,12 @@ public class RenduTableArticle implements TableCellRenderer {
             case 5:
             case 6:
             case 7:
-                cellule = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
+                cellule = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
                 break;
             case 4:
-                cellule = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                String mont01 = Util.getMontantFrancais(Double.parseDouble(value+""));
+                cellule = new CelluleSimpleTableau(" " + mont01 + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
                 break;
             case 8:
                 cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, iconeEdition);

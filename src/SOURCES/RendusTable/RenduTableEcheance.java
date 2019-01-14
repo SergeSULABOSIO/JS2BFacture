@@ -58,7 +58,8 @@ public class RenduTableEcheance implements TableCellRenderer {
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 5:
-                celluleNum = new CelluleSimpleTableau(" " + value + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
+                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
                 celluleNum.ecouterSelection(isSelected, row);
                 return celluleNum;
             case 6:

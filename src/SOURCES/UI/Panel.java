@@ -459,14 +459,14 @@ public class Panel extends javax.swing.JPanel {
         double Trab = modeleListeArticles.getTotal_Rabais();
         double Tsolde = Util.round(Tttc - Tpaye, 2);
 
-        labTotalHT.setText(Tnet + " " + this.parametres.getMonnaie());
-        labRemise.setText("-" + Trab + " " + this.parametres.getMonnaie());
-        labTotalTVA.setText(Ttva + " " + this.parametres.getMonnaie());
-        labTotalTTC.setText(Tttc + " " + this.parametres.getMonnaie());
-        labTotalPaye.setText(Tpaye + " " + this.parametres.getMonnaie());
-        labTotalSolde.setText(Tsolde + " " + this.parametres.getMonnaie());
+        labTotalHT.setText(Util.getMontantFrancais(Tnet) + " " + this.parametres.getMonnaie());
+        labRemise.setText("-" + Util.getMontantFrancais(Trab) + " " + this.parametres.getMonnaie());
+        labTotalTVA.setText(Util.getMontantFrancais(Ttva) + " " + this.parametres.getMonnaie());
+        labTotalTTC.setText(Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie());
+        labTotalPaye.setText(Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie());
+        labTotalSolde.setText(Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie());
 
-        callBackSynthese.onActualiser("Mnt TTC (" + Tttc + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Tpaye + " " + this.parametres.getMonnaie() + "), Solde (" + Tsolde + " " + this.parametres.getMonnaie() + ").");
+        callBackSynthese.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").");
     }
 
     private void supprimer() {
@@ -727,19 +727,19 @@ public class Panel extends javax.swing.JPanel {
             case 0:
                 InterfaceArticle artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
                 if (artcl != null) {
-                    this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + artcl.getTotalTTC() + " " + this.parametres.getMonnaie());
+                    this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + Util.getMontantFrancais(artcl.getTotalTTC()) + " " + this.parametres.getMonnaie());
                 }
                 break;
             case 1:
                 InterfacePaiement paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
                 if (paiment != null) {
-                    this.callBackSynthese.onActualiser(paiment.getDate().toLocaleString() + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + paiment.getMontant() + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + modeleListePaiement.getReste(paiment.getIdArticle()) + " " + this.parametres.getMonnaie() + ").");
+                    this.callBackSynthese.onActualiser(Util.getDateFrancais(paiment.getDate()) + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(paiment.getMontant()) + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(paiment.getIdArticle())) + " " + this.parametres.getMonnaie() + ").");
                 }
                 break;
             default:
                 InterfaceEcheance echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
                 if (echeance != null) {
-                    this.callBackSynthese.onActualiser("Entre " + echeance.getDateInitiale().toLocaleString() + " et " + echeance.getDateFinale().toLocaleString() + ", il faut payer " + Util.round(echeance.getMontantDu(), 2) + " " + this.parametres.getMonnaie());
+                    this.callBackSynthese.onActualiser("Entre " + Util.getDateFrancais(echeance.getDateInitiale()) + " et " + Util.getDateFrancais(echeance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(echeance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie());
                 }
                 break;
         }
