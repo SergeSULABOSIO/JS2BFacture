@@ -8,6 +8,7 @@ package SOURCES.UI;
 import SOURCES.UI.Panel;
 import SOURCES.CallBack.EcouteurUpdateClose;
 import SOURCES.Utilitaires.Parametres;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -28,14 +29,16 @@ public class DialogueFacture extends javax.swing.JDialog {
     private void setPanelFacture(Parametres parametres){
         this.setIconImage(parametres.getIcones().getFacture_03().getImage());
         this.scrollContenuFacture.setViewportView(new Panel(parametres, new EcouteurUpdateClose() {
-            @Override
-            public void onActualiser(String texte) {
-                labStatus.setText(texte);
-            }
-
+            
             @Override
             public void onFermer() {
                 dispose();
+            }
+
+            @Override
+            public void onActualiser(String texte, ImageIcon icone) {
+                labStatus.setText(texte);
+                labStatus.setIcon(icone);
             }
         }));
     }

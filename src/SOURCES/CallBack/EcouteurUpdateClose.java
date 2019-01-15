@@ -5,13 +5,15 @@
  */
 package SOURCES.CallBack;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author HP Pavilion
  */
 public abstract class EcouteurUpdateClose {
     
-    public abstract void onActualiser(String texte);
+    public abstract void onActualiser(String texte, ImageIcon icone);
     public abstract void onFermer();
     
     

@@ -7,6 +7,7 @@ package SOURCES.UI;
 
 import SOURCES.CallBack.EcouteurUpdateClose;
 import SOURCES.Utilitaires.Parametres;
+import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 
 
@@ -32,15 +33,17 @@ public class PanelFacture extends javax.swing.JPanel {
     
     private void setPanelFacture(Parametres parametres){
         this.scrollContenuFacture.setViewportView(new Panel(parametres, new EcouteurUpdateClose() {
-            @Override
-            public void onActualiser(String texte) {
-                labStatus.setText(texte);
-            }
-
+            
             @Override
             public void onFermer() {
                 //parent.removeAll();
                 parent.remove(moi);
+            }
+
+            @Override
+            public void onActualiser(String texte, ImageIcon icone) {
+                labStatus.setText(texte);
+                labStatus.setIcon(icone);
             }
         }));
     }

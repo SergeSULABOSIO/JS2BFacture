@@ -29,7 +29,6 @@ import SOURCES.GenerateurPDF.DocumentPDF;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.Utilitaires.Util;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -71,28 +70,32 @@ public class Panel extends javax.swing.JPanel {
     public Vector<InterfacePaiement> paiementsSelected = new Vector<InterfacePaiement>();
 
     public Panel(Parametres parametres, EcouteurUpdateClose callBackSynthese) {
-        this.initComponents();
+        initComponents();
         this.parametres = parametres;
         this.callBackSynthese = callBackSynthese;
         this.icones = new Icones();
-
-        this.setClient();
-        this.setContactEtBanques();
-        this.setTypeFacture();
-
+        setClient();
+        setContactEtBanques();
+        setTypeFacture();
         //Liste d'articles
-        this.setBoutonsOutilsArticles();
-        this.setMenuContArticles();
+        setBoutonsOutilsArticles();
+        setMenuContArticles();
         //Liste des paiements - Rélévé de compte
-        this.parametrerTableArticles();
-        this.parametrerTablePaiement();
-        this.parametrerTableEcheance();
-        this.actualiserTotaux();
-
+        parametrerTableArticles();
+        parametrerTablePaiement();
+        parametrerTableEcheance();
+        actualiserTotaux();
+        
         this.dateFacture.setDate(new Date());
         this.chTva.setText(this.parametres.getTva() + "");
-
-        this.activerBoutons(tabPrincipal.getSelectedIndex());
+        activerBoutons(tabPrincipal.getSelectedIndex());
+        setIconesTabs();
+    }
+    
+    private void setIconesTabs() {
+        this.tabPrincipal.setIconAt(0, icones.getTaxes_01());   //Frais
+        this.tabPrincipal.setIconAt(1, icones.getClient_01());  //Relevé de compte
+        this.tabPrincipal.setIconAt(2, icones.getCalendrier_01()); //Revenu
     }
 
     public Vector<InterfacePaiement> getPaiementsSelected() {
@@ -306,16 +309,16 @@ public class Panel extends javax.swing.JPanel {
         TableColumn col_Reference = this.tableListePaiement.getColumnModel().getColumn(3);
         col_Reference.setPreferredWidth(200);
         col_Reference.setMaxWidth(200);
-        
+
         TableColumn col_Mode = this.tableListePaiement.getColumnModel().getColumn(4);
         col_Mode.setCellEditor(new EditeurModePaiement());
         col_Mode.setPreferredWidth(150);
         col_Mode.setMaxWidth(150);
-        
+
         TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(5);
         col_Montant.setPreferredWidth(120);
         col_Montant.setMaxWidth(120);
-        
+
         TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(6);
         col_Reste.setPreferredWidth(120);
         col_Reste.setMaxWidth(120);
@@ -339,26 +342,26 @@ public class Panel extends javax.swing.JPanel {
         TableColumn col_No = this.tableListeEcheance.getColumnModel().getColumn(0);
         col_No.setPreferredWidth(30);
         col_No.setMaxWidth(30);
-        
+
         TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(1);
         col_Nom.setPreferredWidth(80);
-        
+
         TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(2);
         col_Date_initiale.setPreferredWidth(90);
         col_Date_initiale.setMaxWidth(90);
-        
+
         TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(3);
         col_Date_finale.setPreferredWidth(90);
         col_Date_finale.setMaxWidth(90);
-        
+
         TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(4);
         col_status.setPreferredWidth(120);
         col_status.setMaxWidth(120);
-        
+
         TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(5);
         col_montant_du.setPreferredWidth(80);
         col_montant_du.setMaxWidth(80);
-        
+
         TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(6);
         col_progression.setPreferredWidth(80);
         col_progression.setMaxWidth(80);
@@ -372,13 +375,32 @@ public class Panel extends javax.swing.JPanel {
         }
     }
 
+    private void genererRecu() {
+        if (paiementsSelected != null) {
+            int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter le reçu dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                try {
+                    SortiesFacture sortie = getSortieFacture(btRecu, rubRecu);
+                    DocumentPDF recuPDF = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR, true, sortie);
+                    paiementsSelected.removeAllElements();
+                    modeleListePaiement.redessinerTable();
+                    activerRecu(false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void exporterPDF() {
-        try {
-            callBackSynthese.onActualiser("Production du fichier PDF...");
-            DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR, false);
-            callBackSynthese.onActualiser("Fichier PDF produit avec succèss : " + (new File(getNomfichierPreuve())));
-        } catch (Exception e) {
-            e.printStackTrace();
+        int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            try {
+                SortiesFacture sortie = getSortieFacture(btPDF, rubPDF);
+                DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR, false, sortie);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -389,60 +411,65 @@ public class Panel extends javax.swing.JPanel {
         }
     }
 
+    private SortiesFacture getSortieFacture(Bouton boutonDeclencheur, RubriqueSimple rubriqueDeclencheur) {
+        SortiesFacture sortiesFacture = new SortiesFacture(
+                this.parametres.getClient(),
+                this.modeleListeArticles.getListeData(),
+                this.modeleListePaiement.getListeData(),
+                this.modeleListeEcheance.getListeData(),
+                new EcouteurEnregistrement() {
+            @Override
+            public void onDone(String message) {
+                callBackSynthese.onActualiser(message, icones.getAimer_01());
+                if (boutonDeclencheur != null) {
+                    boutonDeclencheur.appliquerDroitAccessDynamique(true);
+                }
+                if (rubriqueDeclencheur != null) {
+                    rubriqueDeclencheur.appliquerDroitAccessDynamique(true);
+                }
+            }
+
+            @Override
+            public void onError(String message) {
+                callBackSynthese.onActualiser(message, icones.getAlert_01());
+                if (boutonDeclencheur != null) {
+                    boutonDeclencheur.appliquerDroitAccessDynamique(true);
+                }
+                if (rubriqueDeclencheur != null) {
+                    rubriqueDeclencheur.appliquerDroitAccessDynamique(true);
+                }
+            }
+
+            @Override
+            public void onUploading(String message) {
+                callBackSynthese.onActualiser(message, icones.getSablier_01());
+                if (boutonDeclencheur != null) {
+                    boutonDeclencheur.appliquerDroitAccessDynamique(false);
+                }
+                if (rubriqueDeclencheur != null) {
+                    rubriqueDeclencheur.appliquerDroitAccessDynamique(false);
+                }
+            }
+        });
+        return sortiesFacture;
+    }
+
     private void imprimer() {
         int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir imprimer ce document?", "Avertissement", JOptionPane.YES_NO_OPTION);
         if (dialogResult == JOptionPane.YES_OPTION) {
             try {
-                callBackSynthese.onActualiser("Impression du fichier PDF...");
-                DocumentPDF docpdf = new DocumentPDF(this, DocumentPDF.ACTION_IMPRIMER, false);
-                callBackSynthese.onActualiser("Fichier PDF imprimé avec succèss : " + (new File(getNomfichierPreuve())));
+                SortiesFacture sortie = getSortieFacture(btImprimer, rubImprimer);
+                DocumentPDF documentPDF = new DocumentPDF(this, DocumentPDF.ACTION_IMPRIMER, false, sortie);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     private void enregistrer() {
         EcouteurFacture ecouteurFacture = this.parametres.getEcouteurFacture();
         SortiesFacture sortiesFacture = null;
         if (ecouteurFacture != null) {
-            sortiesFacture = new SortiesFacture(
-                    this.parametres.getClient(),
-                    this.modeleListeArticles.getListeData(),
-                    this.modeleListePaiement.getListeData(),
-                    this.modeleListeEcheance.getListeData(),
-                    new EcouteurEnregistrement() {
-                @Override
-                public void onDone(String message) {
-                    callBackSynthese.onActualiser(message);
-                    btEnregistrer.appliquerDroitAccessDynamique(true);
-                    rubEnregistrer.appliquerDroitAccessDynamique(true);
-                    if(PanelFacture.labStatus != null){
-                        PanelFacture.labStatus.setIcon(icones.getInfos_01());
-                    }
-                }
-
-                @Override
-                public void onError(String message) {
-                    callBackSynthese.onActualiser(message);
-                    btEnregistrer.appliquerDroitAccessDynamique(true);
-                    rubEnregistrer.appliquerDroitAccessDynamique(true);
-                    if(PanelFacture.labStatus != null){
-                        PanelFacture.labStatus.setIcon(icones.getAlert_01());
-                    }
-                }
-
-                @Override
-                public void onUploading(String message) {
-                    callBackSynthese.onActualiser(message);
-                    btEnregistrer.appliquerDroitAccessDynamique(false);
-                    rubEnregistrer.appliquerDroitAccessDynamique(false);
-                    if(PanelFacture.labStatus != null){
-                        PanelFacture.labStatus.setIcon(icones.getSablier_01());
-                    }
-                }
-            });
 
             ecouteurFacture.onEnregistre(sortiesFacture);
         }
@@ -465,8 +492,7 @@ public class Panel extends javax.swing.JPanel {
         labTotalTTC.setText(Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie());
         labTotalPaye.setText(Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie());
         labTotalSolde.setText(Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie());
-
-        callBackSynthese.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").");
+        callBackSynthese.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").", icones.getInfos_01());
     }
 
     private void supprimer() {
@@ -696,19 +722,6 @@ public class Panel extends javax.swing.JPanel {
         barreOutilsA.AjouterBouton(btFermer);
     }
 
-    private void genererRecu() {
-        if (paiementsSelected != null) {
-            System.out.println("Production du reçu...[" + paiementsSelected.size() + "]");
-            for (InterfacePaiement ipaiement : paiementsSelected) {
-                System.out.println(" ** " + ipaiement.toString());
-            }
-            DocumentPDF recuPDF = new DocumentPDF(this, DocumentPDF.ACTION_OUVRIR, true);
-            paiementsSelected.removeAllElements();
-            modeleListePaiement.redessinerTable();
-            activerRecu(false);
-        }
-    }
-
     private void ecouterMenContA(java.awt.event.MouseEvent evt, int tab) {
         if (evt.getButton() == MouseEvent.BUTTON3) {
             switch (tab) {
@@ -727,23 +740,22 @@ public class Panel extends javax.swing.JPanel {
             case 0:
                 InterfaceArticle artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
                 if (artcl != null) {
-                    this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + Util.getMontantFrancais(artcl.getTotalTTC()) + " " + this.parametres.getMonnaie());
+                    this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + Util.getMontantFrancais(artcl.getTotalTTC()) + " " + this.parametres.getMonnaie(), icones.getTaxes_01());
                 }
                 break;
             case 1:
                 InterfacePaiement paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
                 if (paiment != null) {
-                    this.callBackSynthese.onActualiser(Util.getDateFrancais(paiment.getDate()) + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(paiment.getMontant()) + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(paiment.getIdArticle())) + " " + this.parametres.getMonnaie() + ").");
+                    this.callBackSynthese.onActualiser(Util.getDateFrancais(paiment.getDate()) + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(paiment.getMontant()) + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(paiment.getIdArticle())) + " " + this.parametres.getMonnaie() + ").", icones.getClient_01());
                 }
                 break;
             default:
                 InterfaceEcheance echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
                 if (echeance != null) {
-                    this.callBackSynthese.onActualiser("Entre " + Util.getDateFrancais(echeance.getDateInitiale()) + " et " + Util.getDateFrancais(echeance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(echeance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie());
+                    this.callBackSynthese.onActualiser("Entre " + Util.getDateFrancais(echeance.getDateInitiale()) + " et " + Util.getDateFrancais(echeance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(echeance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie(), icones.getCalendrier_01());
                 }
                 break;
         }
-
     }
 
     private void setTypeFacture() {
