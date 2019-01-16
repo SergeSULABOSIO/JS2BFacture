@@ -41,7 +41,7 @@ public class EditeurArticleFacture extends AbstractCellEditor implements TableCe
     private InterfaceArticle getArticle(String nom) {
         for (InterfaceArticle articleRech : listeArticle) {
             String id_nom = articleRech.getId() + "_" + articleRech.getNom();
-            if (id_nom.equals(nom)) {
+            if (id_nom.trim().equals(nom.trim())) {
                 return articleRech;
             }
         }

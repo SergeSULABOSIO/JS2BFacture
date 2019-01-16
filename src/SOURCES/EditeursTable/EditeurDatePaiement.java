@@ -10,11 +10,9 @@ import SOURCES.ModelsTable.ModeleListePaiement;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
 import java.util.Date;
-import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
-import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 
 /**

@@ -276,6 +276,9 @@ public class Panel extends javax.swing.JPanel {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
+                if(editeurArticlePaiement != null){
+                    editeurArticlePaiement.initCombo();
+                }
             }
         });
 
