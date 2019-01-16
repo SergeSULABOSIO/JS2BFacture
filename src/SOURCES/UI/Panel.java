@@ -215,6 +215,9 @@ public class Panel extends javax.swing.JPanel {
                 if (modeleListeEcheance != null) {
                     modeleListeEcheance.actualiser();
                 }
+                if(editeurArticlePaiement != null){
+                    editeurArticlePaiement.initCombo();
+                }
                 actualiserTotaux();
             }
         });
