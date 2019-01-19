@@ -208,7 +208,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void parametrerTableArticles() {
-        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, this.parametres.getTva(), new EcouteurValeursChangees() {
+        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, this.parametres.getTva(), this.parametres.getListArticles(), new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 //Actualisation des listes de base
@@ -231,7 +231,7 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeArticle.setModel(this.modeleListeArticles);
 
         //Parametrage du rendu de la table
-        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), icones.getModifier_01()));
+        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), this.parametres.getListArticles(), icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
 
         TableColumn col_No = this.tableListeArticle.getColumnModel().getColumn(0);
@@ -240,7 +240,7 @@ public class Panel extends javax.swing.JPanel {
 
         TableColumn colNomArt = this.tableListeArticle.getColumnModel().getColumn(1);
         colNomArt.setPreferredWidth(260);
-        colNomArt.setCellEditor(new EditeurArticleFacture(this.parametres.getListArticles(), this.modeleListeArticles));
+        colNomArt.setCellEditor(new EditeurArticleFacture(this.parametres.getListArticles()));
 
         TableColumn col_Qt = this.tableListeArticle.getColumnModel().getColumn(2);
         col_Qt.setPreferredWidth(80);

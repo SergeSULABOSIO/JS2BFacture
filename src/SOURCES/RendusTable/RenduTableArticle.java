@@ -5,9 +5,11 @@
  */
 package SOURCES.RendusTable;
 
+import SOURCES.Interface.InterfaceArticle;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -21,12 +23,23 @@ public class RenduTableArticle implements TableCellRenderer {
     
     private String monnaie;
     private ImageIcon iconeEdition;
+    private Vector<InterfaceArticle> listeArticles;
 
-    public RenduTableArticle(String monnaie, ImageIcon iconeEdition) {
+    public RenduTableArticle(String monnaie, Vector<InterfaceArticle> listeArticles, ImageIcon iconeEdition) {
         this.monnaie = monnaie;
         this.iconeEdition = iconeEdition;
+        this.listeArticles = listeArticles;
     }
     
+    
+    private String getArticle(int idArticle){
+        for(InterfaceArticle article : listeArticles){
+            if(idArticle == article.getId()){
+                return article.getNom();
+            }
+        }
+        return "";
+    }
     
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -37,7 +50,8 @@ public class RenduTableArticle implements TableCellRenderer {
                 cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
                 break;
             case 1:
-                cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                String nomArticle = getArticle(Integer.parseInt(value+""));
+                cellule = new CelluleSimpleTableau(" " + nomArticle + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
                 break;
             case 2:
                 cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, iconeEdition);

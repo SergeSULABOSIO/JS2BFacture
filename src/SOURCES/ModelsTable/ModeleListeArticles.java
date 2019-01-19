@@ -21,16 +21,17 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     private String[] titreColonnes = {"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
     private Vector<InterfaceArticle> listeData = new Vector<>();
+    private Vector<InterfaceArticle> listeTypeArticle;
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
     //private boolean canPayVAT;
     private double pourcTVA = 16;
 
-    public ModeleListeArticles(JScrollPane parent, double pourcTVA, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListeArticles(JScrollPane parent, double pourcTVA, Vector<InterfaceArticle> listeTypeArticle, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.pourcTVA = pourcTVA;
-
+        this.listeTypeArticle = listeTypeArticle;
         appliquerAssigetissementTVA();
     }
 
@@ -115,7 +116,7 @@ public class ModeleListeArticles extends AbstractTableModel {
         }
         return Util.round((mntTTC - mntTva), 2);
     }
-    
+
     public double getTotal_Net_AvantRabais() {
         double mnt = 0;
         for (InterfaceArticle art : listeData) {
@@ -165,7 +166,6 @@ public class ModeleListeArticles extends AbstractTableModel {
     public int getRowCount() {
         return listeData.size();
     }
-    
 
     @Override
     public int getColumnCount() {
@@ -182,13 +182,9 @@ public class ModeleListeArticles extends AbstractTableModel {
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         switch (columnIndex) {
             case 0:
-                return (rowIndex+1)+"";
+                return (rowIndex + 1) + "";
             case 1:
-                if(listeData.elementAt(rowIndex).getNom().trim().length() != 0){
-                    return listeData.elementAt(rowIndex).getId() + "_" + listeData.elementAt(rowIndex).getNom();
-                }else{
-                    return listeData.elementAt(rowIndex).getNom();
-                }
+                return listeData.elementAt(rowIndex).getId();
             case 2:
                 return listeData.elementAt(rowIndex).getQte();
             case 3:
@@ -213,7 +209,7 @@ public class ModeleListeArticles extends AbstractTableModel {
             case 0:
                 return String.class;//N°
             case 1:
-                return String.class;//Nom
+                return Integer.class;//Nom
             case 2:
                 return Double.class;//Qte
             case 3:
@@ -243,17 +239,29 @@ public class ModeleListeArticles extends AbstractTableModel {
         }
     }
 
+    private void updateNomArticle(InterfaceArticle newArticle) {
+        if (newArticle != null && listeTypeArticle != null) {
+            for (InterfaceArticle Iarticle : listeTypeArticle) {
+                if (Iarticle.getId() == newArticle.getId()) {
+                    newArticle.setNom(Iarticle.getNom());
+                    newArticle.setPrixUHT_avant_rabais(Iarticle.getPrixUHT_avant_rabais());
+                    newArticle.setUnite(Iarticle.getUnite());
+                    newArticle.setTranches(Iarticle.getTranches());
+                    return;
+                }
+            }
+        }
+        redessinerTable();
+    }
+
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         InterfaceArticle article = listeData.get(rowIndex);
         switch (columnIndex) {
             case 1:
-                String nom = aValue + "";
-                if(nom.contains("_")){
-                    nom = nom.split("_")[1];
-                }
-                article.setNom(nom);
+                article.setId(Integer.parseInt(aValue + ""));
+                updateNomArticle(article);
                 break;
             case 2:
                 article.setQte(Double.parseDouble(aValue + ""));

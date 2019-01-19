@@ -22,26 +22,42 @@ public class EditeurArticleFacture extends AbstractCellEditor implements TableCe
 
     private JComboBox<String> champEditionCombo = new JComboBox();
     private Vector<InterfaceArticle> listeArticle;
-    private ModeleListeArticles modeleListeArticles;
-    private int updatedRow;
+    
 
-    public EditeurArticleFacture(Vector<InterfaceArticle> listeArticle, ModeleListeArticles modeleListeArticles) {
+    public EditeurArticleFacture(Vector<InterfaceArticle> listeArticle) {
         this.listeArticle = listeArticle;
-        this.modeleListeArticles = modeleListeArticles;
         initCombo();
     }
 
     private void initCombo() {
         this.champEditionCombo.removeAllItems();
         for (InterfaceArticle article : listeArticle) {
-            this.champEditionCombo.addItem(article.getId() + "_" + article.getNom());
+            this.champEditionCombo.addItem(article.getNom());
         }
     }
 
-    private InterfaceArticle getArticle(String nom) {
+    private int getIdArticle(String nom) {
         for (InterfaceArticle articleRech : listeArticle) {
-            String id_nom = articleRech.getId() + "_" + articleRech.getNom();
+            String id_nom = articleRech.getNom();
             if (id_nom.trim().equals(nom.trim())) {
+                return articleRech.getId();
+            }
+        }
+        return -1;
+    }
+    
+    private InterfaceArticle getArticle_id(int id) {
+        for (InterfaceArticle articleRech : listeArticle) {
+            if (id == articleRech.getId()) {
+                return articleRech;
+            }
+        }
+        return null;
+    }
+    
+    private InterfaceArticle getArticle_nom(String nom) {
+        for (InterfaceArticle articleRech : listeArticle) {
+            if (nom.trim().equals(articleRech.getNom().trim())) {
                 return articleRech;
             }
         }
@@ -51,27 +67,17 @@ public class EditeurArticleFacture extends AbstractCellEditor implements TableCe
     @Override
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
-        String nomSelArt = champEditionCombo.getSelectedItem() + "";
-        InterfaceArticle artFromBase = getArticle(nomSelArt);
-        if (artFromBase != null) {
-            InterfaceArticle updatedArticleInTable = modeleListeArticles.getArticle(updatedRow);
-            if (updatedArticleInTable != null) {
-                //On charge infos de base sur l'article qui vient d'être séléctionné par le client
-                updatedArticleInTable.setPrixUHT_avant_rabais(artFromBase.getPrixUHT_avant_rabais());
-                updatedArticleInTable.setUnite(artFromBase.getUnite());
-                updatedArticleInTable.setId(artFromBase.getId());
-                updatedArticleInTable.setTranches(artFromBase.getTranches());
-                //System.out.println("id="+artFromBase.getId());
-            }
-        }
-        return nomSelArt;
+        return getIdArticle(champEditionCombo.getSelectedItem() + "");
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         //Pendant édition de l'utilisateur
-        this.updatedRow = row;
-        this.champEditionCombo.setSelectedItem(value);
+        initCombo();
+        InterfaceArticle iArt = getArticle_id(Integer.parseInt(value+""));
+        if(iArt != null){
+            this.champEditionCombo.setSelectedItem(iArt.getNom());
+        }
         return champEditionCombo;
     }
 
