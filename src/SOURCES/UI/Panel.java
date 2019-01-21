@@ -16,10 +16,9 @@ import BEAN_MenuContextuel.RubriqueSimple;
 import ICONES.Icones;
 import SOURCES.CallBack.EcouteurEnregistrement;
 import SOURCES.CallBack.EcouteurFacture;
-import SOURCES.EditeursTable.EditeurArticleFacture;
-import SOURCES.EditeursTable.EditeurArticlePaiement;
-import SOURCES.EditeursTable.EditeurDatePaiement;
-import SOURCES.EditeursTable.EditeurModePaiement;
+import SOURCES.EditeursTable.EditeurArticle;
+import SOURCES.EditeursTable.EditeurDate;
+import SOURCES.EditeursTable.EditeurMode;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.Utilitaires.Parametres;
@@ -64,7 +63,7 @@ public class Panel extends javax.swing.JPanel {
     public ModeleListeArticles modeleListeArticles = null;
     public ModeleListePaiement modeleListePaiement = null;
     public ModeleListeEcheance modeleListeEcheance = null;
-    public EditeurArticlePaiement editeurArticlePaiement = null;
+    public EditeurArticle editeurArticle = null;
     private EcouteurUpdateClose callBackSynthese;
     private Parametres parametres;
     public Vector<InterfacePaiement> paiementsSelected = new Vector<InterfacePaiement>();
@@ -215,17 +214,17 @@ public class Panel extends javax.swing.JPanel {
                 if (modeleListeEcheance != null) {
                     modeleListeEcheance.actualiser();
                 }
-                if(editeurArticlePaiement != null){
-                    editeurArticlePaiement.initCombo();
-                }
                 actualiserTotaux();
             }
         });
+        
 
         //On charge les données s'il y en a
         if (this.parametres.getDonnees() != null) {
             this.modeleListeArticles.setListeArticles(this.parametres.getDonnees().getArticles());
         }
+        
+        this.editeurArticle = new EditeurArticle(this.parametres.getListArticles(), modeleListePaiement);
 
         //Parametrage du modele contenant les données de la table
         this.tableListeArticle.setModel(this.modeleListeArticles);
@@ -240,7 +239,7 @@ public class Panel extends javax.swing.JPanel {
 
         TableColumn colNomArt = this.tableListeArticle.getColumnModel().getColumn(1);
         colNomArt.setPreferredWidth(260);
-        colNomArt.setCellEditor(new EditeurArticleFacture(this.parametres.getListArticles()));
+        colNomArt.setCellEditor(editeurArticle);
 
         TableColumn col_Qt = this.tableListeArticle.getColumnModel().getColumn(2);
         col_Qt.setPreferredWidth(80);
@@ -274,18 +273,14 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void parametrerTablePaiement() {
-
         this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, this.modeleListeArticles, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
-                if(editeurArticlePaiement != null){
-                    editeurArticlePaiement.initCombo();
-                }
             }
         });
-
-        this.editeurArticlePaiement = new EditeurArticlePaiement(this.parametres.getListArticles(), this.modeleListeArticles, this.modeleListePaiement);
+        
+        this.editeurArticle = new EditeurArticle(this.parametres.getListArticles(), modeleListePaiement);
 
         //On charge les données s'il y en a
         if (this.parametres.getDonnees() != null) {
@@ -296,7 +291,7 @@ public class Panel extends javax.swing.JPanel {
         this.tableListePaiement.setModel(this.modeleListePaiement);
 
         //Parametrage du rendu de la table
-        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaie(), icones.getModifier_01()));
+        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaie(), icones.getModifier_01(), this.parametres.getListArticles()));
         this.tableListePaiement.setRowHeight(25);
 
         TableColumn col_No = this.tableListePaiement.getColumnModel().getColumn(0);
@@ -304,12 +299,12 @@ public class Panel extends javax.swing.JPanel {
         col_No.setMaxWidth(30);
 
         TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(1);
-        col_Date.setCellEditor(new EditeurDatePaiement(this.modeleListePaiement));
+        col_Date.setCellEditor(new EditeurDate(this.modeleListePaiement));
         col_Date.setPreferredWidth(150);
         col_Date.setMaxWidth(150);
 
         TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(2);
-        col_Article.setCellEditor(editeurArticlePaiement);
+        col_Article.setCellEditor(editeurArticle);
         col_Article.setPreferredWidth(200);
 
         TableColumn col_Reference = this.tableListePaiement.getColumnModel().getColumn(3);
@@ -317,7 +312,7 @@ public class Panel extends javax.swing.JPanel {
         col_Reference.setMaxWidth(200);
 
         TableColumn col_Mode = this.tableListePaiement.getColumnModel().getColumn(4);
-        col_Mode.setCellEditor(new EditeurModePaiement());
+        col_Mode.setCellEditor(new EditeurMode());
         col_Mode.setPreferredWidth(150);
         col_Mode.setMaxWidth(150);
 
@@ -539,10 +534,10 @@ public class Panel extends javax.swing.JPanel {
             case 1:
                 if (modeleListeArticles.getRowCount() != 0) {
                     //On reinitialise la liste d'article dans le combo
-                    if (this.editeurArticlePaiement != null) {
-                        this.editeurArticlePaiement.initCombo();
+                    if (this.editeurArticle != null) {
+                        this.editeurArticle.initCombo();
                         //System.out.println(".initCombo()...");
-                        if (this.editeurArticlePaiement.champEditionCombo.getItemCount() != 0) {
+                        if (this.editeurArticle.getTailleCombo() != 0) {
                             this.parametres.getEcouteurAjout().setAjoutPaiement(modeleListePaiement);
                         } else {
                             JOptionPane.showMessageDialog(tabPrincipal, "Désolé " + this.parametres.getNomUtilisateur() + ", il n'y a plus d'autre frais à payer !");

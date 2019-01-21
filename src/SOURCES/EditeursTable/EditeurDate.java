@@ -20,13 +20,13 @@ import SOURCES.Interface.InterfacePaiement;
  * @author user
  */
 
-public class EditeurDatePaiement extends AbstractCellEditor implements TableCellEditor {
+public class EditeurDate extends AbstractCellEditor implements TableCellEditor {
 
     private JDateChooser dateChooser = new JDateChooser();
     private ModeleListePaiement modeleListePaiement;
     private int updatedRow;
     
-    public EditeurDatePaiement(ModeleListePaiement modeleListePaiement) {
+    public EditeurDate(ModeleListePaiement modeleListePaiement) {
         this.modeleListePaiement = modeleListePaiement;
     }
 

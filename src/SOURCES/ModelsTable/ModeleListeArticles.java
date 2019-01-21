@@ -239,7 +239,7 @@ public class ModeleListeArticles extends AbstractTableModel {
         }
     }
 
-    private void updateNomArticle(InterfaceArticle newArticle) {
+    private void updateArticle(InterfaceArticle newArticle) {
         if (newArticle != null && listeTypeArticle != null) {
             for (InterfaceArticle Iarticle : listeTypeArticle) {
                 if (Iarticle.getId() == newArticle.getId()) {
@@ -261,7 +261,7 @@ public class ModeleListeArticles extends AbstractTableModel {
         switch (columnIndex) {
             case 1:
                 article.setId(Integer.parseInt(aValue + ""));
-                updateNomArticle(article);
+                updateArticle(article);
                 break;
             case 2:
                 article.setQte(Double.parseDouble(aValue + ""));

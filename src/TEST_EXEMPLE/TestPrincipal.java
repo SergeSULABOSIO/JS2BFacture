@@ -63,29 +63,31 @@ public class TestPrincipal extends javax.swing.JFrame {
         this.parametres.setEcouteurFacture(new EcouteurFacture() {
             @Override
             public void onEnregistre(SortiesFacture sortiesFacture) {
-                
+
                 Thread th = new Thread() {
                     @Override
                     public void run() {
                         try {
                             /**/
-                            sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
-                            sleep(5000);
-                            System.out.println("CLIENT : \n * " + client.toString());
-                            System.out.println("ARTICLES : ");
-                            for (InterfaceArticle article : sortiesFacture.getArticles()) {
-                                System.out.println(" * " + article.toString());
+                            if (sortiesFacture != null) {
+                                sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
+                                sleep(5000);
+                                System.out.println("CLIENT : \n * " + client.toString());
+                                System.out.println("ARTICLES : ");
+                                for (InterfaceArticle article : sortiesFacture.getArticles()) {
+                                    System.out.println(" * " + article.toString());
+                                }
+                                System.out.println("PAIEMENTS : ");
+                                for (InterfacePaiement paiement : sortiesFacture.getPaiements()) {
+                                    System.out.println(" * " + paiement.toString());
+                                }
+                                System.out.println("ECHEANCES:");
+                                for (InterfaceEcheance echeance : sortiesFacture.getEcheances()) {
+                                    System.out.println(" * Echéance : " + echeance.toString());
+                                }
+                                sortiesFacture.getEcouteurEnregistrement().onDone("Enregistré!");
                             }
-                            System.out.println("PAIEMENTS : ");
-                            for (InterfacePaiement paiement : sortiesFacture.getPaiements()) {
-                                System.out.println(" * " + paiement.toString());
-                            }
-                            System.out.println("ECHEANCES:");
-                            for (InterfaceEcheance echeance : sortiesFacture.getEcheances()) {
-                                System.out.println(" * Echéance : " + echeance.toString());
-                            }
-                            sortiesFacture.getEcouteurEnregistrement().onDone("Enregistré!");
-                            
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -16,10 +16,10 @@ import SOURCES.Interface.InterfacePaiement;
  *
  * @author user
  */
-public class EditeurModePaiement extends AbstractCellEditor implements TableCellEditor {
+public class EditeurMode extends AbstractCellEditor implements TableCellEditor {
 
     public JComboBox<String> champEditionCombo = new JComboBox();
-    public EditeurModePaiement() {
+    public EditeurMode() {
         initCombo();
     }
 

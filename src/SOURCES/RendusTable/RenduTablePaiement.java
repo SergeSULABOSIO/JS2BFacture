@@ -5,11 +5,13 @@
  */
 package SOURCES.RendusTable;
 
+import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;
 import java.util.Date;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -22,10 +24,21 @@ public class RenduTablePaiement implements TableCellRenderer {
 
     private String monnaie;
     private ImageIcon iconeEdition;
+    private Vector<InterfaceArticle> listeArticles;
 
-    public RenduTablePaiement(String monnaie, ImageIcon iconeEdition) {
+    public RenduTablePaiement(String monnaie, ImageIcon iconeEdition, Vector<InterfaceArticle> listeArticles) {
         this.monnaie = monnaie;
         this.iconeEdition = iconeEdition;
+        this.listeArticles = listeArticles;
+    }
+    
+    private String getArticle(int id) {
+        for (InterfaceArticle articleRech : this.listeArticles) {
+            if (id == articleRech.getId()) {
+                return articleRech.getNom();
+            }
+        }
+        return "";
     }
 
     @Override
@@ -39,6 +52,10 @@ public class RenduTablePaiement implements TableCellRenderer {
                     break;
                 case 1:
                     celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date)value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    break;
+                case 2:
+                    String nomArticle = getArticle(Integer.parseInt(value+""));
+                    celluleNum = new CelluleSimpleTableau(" " + nomArticle + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 case 4:
                     String mode = "Null";

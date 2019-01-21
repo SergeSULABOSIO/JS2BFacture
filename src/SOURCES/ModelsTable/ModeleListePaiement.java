@@ -175,11 +175,7 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 1:
                 return listeData.elementAt(rowIndex).getDate();
             case 2:
-                if (listeData.elementAt(rowIndex).getNomArticle().trim().length() != 0) {
-                    return listeData.elementAt(rowIndex).getIdArticle() + "_" + listeData.elementAt(rowIndex).getNomArticle();
-                } else {
-                    return listeData.elementAt(rowIndex).getNomArticle();
-                }
+                return listeData.elementAt(rowIndex).getIdArticle();
             case 3:
                 return listeData.elementAt(rowIndex).getReferenceTransaction();
             case 4:
@@ -202,7 +198,7 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 1:
                 return Date.class;//Date
             case 2:
-                return String.class;//NomArticle
+                return Integer.class;//NomArticle
             case 3:
                 return String.class;//Reference
             case 4:
@@ -226,6 +222,19 @@ public class ModeleListePaiement extends AbstractTableModel {
             return true;
         }
     }
+    
+    private void updateArticle(InterfacePaiement newArticle) {
+        if (newArticle != null && modeleListeArticles != null) {
+            for (InterfaceArticle Iarticle : modeleListeArticles.getListeData()) {
+                if (Iarticle.getId() == newArticle.getId()) {
+                    newArticle.setNomArticle(Iarticle.getNom());
+                    newArticle.setMontant(0);
+                    return;
+                }
+            }
+        }
+        redessinerTable();
+    }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
@@ -236,11 +245,8 @@ public class ModeleListePaiement extends AbstractTableModel {
                 article.setDate((Date) aValue);
                 break;
             case 2:
-                String nom = aValue + "";
-                if (nom.contains("_")) {
-                    nom = nom.split("_")[1];
-                }
-                article.setNomArticle(nom);
+                article.setIdArticle(Integer.parseInt(aValue+""));
+                updateArticle(article);
                 break;
             case 3:
                 article.setReferenceTransaction(aValue + "");
@@ -249,8 +255,6 @@ public class ModeleListePaiement extends AbstractTableModel {
                 article.setMode(Integer.parseInt(aValue + ""));
                 break;
             case 5:
-                //System.out.println("RESTE - AVANT MODIF : " + getReste(article.getIdArticle()));
-                //System.out.println("MONTANT SAISI : " + Double.parseDouble(aValue + ""));
                 article.setMontant(Double.parseDouble(aValue + ""));
                 break;
             default:
