@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfacePaiement;
 
 /**
@@ -236,31 +237,40 @@ public class ModeleListePaiement extends AbstractTableModel {
         redessinerTable();
     }
 
+    
+    
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
-        InterfacePaiement article = listeData.get(rowIndex);
+        InterfacePaiement Ipaiement = listeData.get(rowIndex);
+        String avant = Ipaiement.toString();
         switch (columnIndex) {
             case 1:
-                article.setDate((Date) aValue);
+                Ipaiement.setDate((Date) aValue);
                 break;
             case 2:
-                article.setIdArticle(Integer.parseInt(aValue+""));
-                updateArticle(article);
+                Ipaiement.setIdArticle(Integer.parseInt(aValue+""));
+                updateArticle(Ipaiement);
                 break;
             case 3:
-                article.setReferenceTransaction(aValue + "");
+                Ipaiement.setReferenceTransaction(aValue + "");
                 break;
             case 4:
-                article.setMode(Integer.parseInt(aValue + ""));
+                Ipaiement.setMode(Integer.parseInt(aValue + ""));
                 break;
             case 5:
-                article.setMontant(Double.parseDouble(aValue + ""));
+                Ipaiement.setMontant(Double.parseDouble(aValue + ""));
                 break;
             default:
                 break;
         }
-        listeData.set(rowIndex, article);
+        String apres = Ipaiement.toString();
+        if(!avant.equals(apres)){
+            if(Ipaiement.getId() != -1){
+                Ipaiement.setBeta(InterfacePaiement.BETA_MODIFIE);
+            }
+        }
+        listeData.set(rowIndex, Ipaiement);
         ecouteurModele.onValeurChangee();
         fireTableDataChanged();
     }

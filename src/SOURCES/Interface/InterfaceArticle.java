@@ -11,6 +11,12 @@ package SOURCES.Interface;
  */
 public interface InterfaceArticle {
     
+    //Conatantes - BETA
+    public static final int BETA_EXISTANT = 0;
+    public static final int BETA_MODIFIE = 1;
+    public static final int BETA_NOUVEAU = 2;
+    
+    
     public abstract int getId();
     public abstract String getNom();
     public abstract double getQte();
@@ -22,6 +28,7 @@ public interface InterfaceArticle {
     public abstract double getTvaPoucentage();
     public abstract double getTvaMontant();
     public abstract double getTotalTTC();
+    public abstract int getBeta();  // 0 = Existant, 1 =  Modifié, 2 = Nouveau
     
     public abstract void setId(int id);
     public abstract void setNom(String nom);
@@ -31,4 +38,5 @@ public interface InterfaceArticle {
     public abstract void setPrixUHT_avant_rabais(double prixUht);
     public abstract void setRabais(double rabais);
     public abstract void setTvaPoucentage(double tvapourc);
+    public abstract void setBeta(int newbeta);
 }

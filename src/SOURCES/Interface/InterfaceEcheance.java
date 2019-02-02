@@ -23,6 +23,7 @@ public interface InterfaceEcheance {
     public abstract double getMontantPaye();
     public abstract double getMontantDu();
     public abstract String getMonnaie();
+    
     //les setters
     public abstract void setId(int id);
     public abstract void setNom(String nom);

@@ -5,7 +5,8 @@
  */
 package SOURCES.UI;
 
-import ICONES.Icones;
+
+import SOURCES.Interface.InterfaceArticle;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.ImageIcon;
@@ -15,11 +16,16 @@ import javax.swing.ImageIcon;
  * @author user
  */
 public class CelluleSimpleTableau extends javax.swing.JPanel {
-    
+
     private ImageIcon iconeEdition;
     public static int ALIGNE_GAUCHE = 0;
     public static int ALIGNE_CENTRE = 1;
     public static int ALIGNE_DROITE = 2;
+    public static final Color COULEUR_ROUGE_SELECTION = new Color(255, 121, 121);
+    public static final Color COULEUR_ROUGE_SIMPLE = new Color(192, 0, 0);
+    public static final Color COULEUR_BLEU_SELECTION = new Color(139, 205, 255);
+    public static final Color COULEUR_BLEU_SIMPLE = new Color(11, 88, 237);
+
     /**
      * Creates new form PanValeurTable
      */
@@ -27,41 +33,68 @@ public class CelluleSimpleTableau extends javax.swing.JPanel {
         initComponents();
         this.iconeEdition = iconeEdition;
         setValeur(val);
-        if(alignement == ALIGNE_DROITE){
+        if (alignement == ALIGNE_DROITE) {
             labvaleur.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        }else if(alignement == ALIGNE_CENTRE){
+        } else if (alignement == ALIGNE_CENTRE) {
             labvaleur.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        }else{
+        } else {
             labvaleur.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         }
         labvaleur.setIcon(this.iconeEdition);
     }
-    
-    
-    
-    
-    private void ecouterLigneImpare(int row){
-        if((row % 2) == 0){
+
+    private void ecouterLigneImpaire(int row) {
+        if ((row % 2) == 0) {
             this.setBackground(Color.WHITE);
-        }else{
+        } else {
             this.setBackground(Color.lightGray);
         }
     }
-    
-    public void ecouterSelection(boolean isSelected, int row){
-        if(isSelected == true){
+
+    public void ecouterSelection(boolean isSelected, int row, int beta) {
+        appliqerCouleurSelection(isSelected, row);
+        appliquerCouleurBeta(isSelected, beta);
+    }
+
+    private void appliqerCouleurSelection(boolean isSelected, int row) {
+        if (isSelected == true) {
             labvaleur.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11));
-            labvaleur.setForeground(Color.WHITE);
             this.setBackground(Color.BLACK);
-        }else{
+        } else {
             labvaleur.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 11));
-            labvaleur.setForeground(Color.BLACK);
-            ecouterLigneImpare(row);
+            ecouterLigneImpaire(row);
         }
     }
-    
-    
-    public void setValeur(String val){
+
+    private void appliquerCouleurBeta(boolean isSelected, int beta) {
+        switch (beta) {
+            case InterfaceArticle.BETA_EXISTANT:
+                if (isSelected == true) {
+                    labvaleur.setForeground(Color.WHITE);
+                } else {
+                    labvaleur.setForeground(Color.BLACK);
+                }
+                break;
+            case InterfaceArticle.BETA_MODIFIE:
+                if (isSelected == true) {
+                    labvaleur.setForeground(COULEUR_BLEU_SELECTION);
+                } else {
+                    labvaleur.setForeground(COULEUR_BLEU_SIMPLE);
+                }
+                break;
+            case InterfaceArticle.BETA_NOUVEAU:
+                if (isSelected == true) {
+                    labvaleur.setForeground(COULEUR_ROUGE_SELECTION);
+                } else {
+                    labvaleur.setForeground(COULEUR_ROUGE_SIMPLE);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setValeur(String val) {
         this.labvaleur.setText(val);
     }
 

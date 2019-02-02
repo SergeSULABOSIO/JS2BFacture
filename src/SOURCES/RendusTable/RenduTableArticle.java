@@ -6,6 +6,7 @@
 package SOURCES.RendusTable;
 
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;
@@ -24,11 +25,13 @@ public class RenduTableArticle implements TableCellRenderer {
     private String monnaie;
     private ImageIcon iconeEdition;
     private Vector<InterfaceArticle> listeArticles;
+    private ModeleListeArticles modeleListeArticles;
 
-    public RenduTableArticle(String monnaie, Vector<InterfaceArticle> listeArticles, ImageIcon iconeEdition) {
+    public RenduTableArticle(String monnaie, Vector<InterfaceArticle> listeArticles, ModeleListeArticles modeleListeArticles, ImageIcon iconeEdition) {
         this.monnaie = monnaie;
         this.iconeEdition = iconeEdition;
         this.listeArticles = listeArticles;
+        this.modeleListeArticles = modeleListeArticles;
     }
     
     
@@ -71,7 +74,17 @@ public class RenduTableArticle implements TableCellRenderer {
                 cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, iconeEdition);
                 break;
         }
-        cellule.ecouterSelection(isSelected, row);
+        cellule.ecouterSelection(isSelected, row, getBeta(row));
         return cellule;
+    }
+    
+    private int getBeta(int row) {
+        if (this.modeleListeArticles != null) {
+            InterfaceArticle Iarticle = this.modeleListeArticles.getArticle(row);
+            if (Iarticle != null) {
+                return Iarticle.getBeta();
+            }
+        }
+        return InterfaceArticle.BETA_NOUVEAU;
     }
 }

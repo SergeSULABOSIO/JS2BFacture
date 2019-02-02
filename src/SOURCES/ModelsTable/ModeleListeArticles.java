@@ -157,7 +157,7 @@ public class ModeleListeArticles extends AbstractTableModel {
         }
     }
 
-    private void redessinerTable() {
+    public void redessinerTable() {
         ecouteurModele.onValeurChangee();
         fireTableDataChanged();
     }
@@ -258,6 +258,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         InterfaceArticle article = listeData.get(rowIndex);
+        String avant = article.toString();
         switch (columnIndex) {
             case 1:
                 article.setId(Integer.parseInt(aValue + ""));
@@ -275,10 +276,14 @@ public class ModeleListeArticles extends AbstractTableModel {
             default:
                 break;
         }
-        //System.out.println("idd = "+article.getId());
+        String apres = article.toString();
+        if(!avant.equals(apres)){
+            if(article.getBeta() == InterfaceArticle.BETA_EXISTANT){
+                article.setBeta(InterfaceArticle.BETA_MODIFIE);
+            }
+        }
         listeData.set(rowIndex, article);
         ecouteurModele.onValeurChangee();
         fireTableDataChanged();
     }
-
 }

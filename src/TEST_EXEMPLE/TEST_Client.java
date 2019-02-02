@@ -11,7 +11,7 @@ import SOURCES.Interface.InterfaceClient;
  *
  * @author HP Pavilion
  */
-public class TESTClient implements InterfaceClient{
+public class TEST_Client implements InterfaceClient{
     
     private int id;
     private String type;
@@ -20,7 +20,7 @@ public class TESTClient implements InterfaceClient{
     private String adresse;
     private String autresInfos;
 
-    public TESTClient(int id, String type, String nom, String telephone, String adresse, String autresInfos) {
+    public TEST_Client(int id, String type, String nom, String telephone, String adresse, String autresInfos) {
         this.id = id;
         this.type = type;
         this.nom = nom;

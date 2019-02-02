@@ -64,14 +64,14 @@ public class Panel extends javax.swing.JPanel {
     public ModeleListePaiement modeleListePaiement = null;
     public ModeleListeEcheance modeleListeEcheance = null;
     public EditeurArticle editeurArticle = null;
-    private EcouteurUpdateClose callBackSynthese;
+    private EcouteurUpdateClose ecouteurClose;
     private Parametres parametres;
     public Vector<InterfacePaiement> paiementsSelected = new Vector<InterfacePaiement>();
 
-    public Panel(Parametres parametres, EcouteurUpdateClose callBackSynthese) {
+    public Panel(Parametres parametres, EcouteurUpdateClose ecouteurClose) {
         initComponents();
         this.parametres = parametres;
-        this.callBackSynthese = callBackSynthese;
+        this.ecouteurClose = ecouteurClose;
         this.icones = new Icones();
         setClient();
         setContactEtBanques();
@@ -230,7 +230,7 @@ public class Panel extends javax.swing.JPanel {
         this.tableListeArticle.setModel(this.modeleListeArticles);
 
         //Parametrage du rendu de la table
-        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), this.parametres.getListArticles(), icones.getModifier_01()));
+        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), this.parametres.getListArticles(), this.modeleListeArticles, icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
 
         TableColumn col_No = this.tableListeArticle.getColumnModel().getColumn(0);
@@ -286,12 +286,12 @@ public class Panel extends javax.swing.JPanel {
         if (this.parametres.getDonnees() != null) {
             this.modeleListePaiement.setListePaiements(this.parametres.getDonnees().getPaiements());
         }
-
+        
         //Parametrage du modele contenant les données de la table
         this.tableListePaiement.setModel(this.modeleListePaiement);
 
         //Parametrage du rendu de la table
-        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaie(), icones.getModifier_01(), this.parametres.getListArticles()));
+        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaie(), icones.getModifier_01(), this.parametres.getListArticles(), this.modeleListePaiement));
         this.tableListePaiement.setRowHeight(25);
 
         TableColumn col_No = this.tableListePaiement.getColumnModel().getColumn(0);
@@ -404,11 +404,41 @@ public class Panel extends javax.swing.JPanel {
             }
         }
     }
+    
+    
+    
+    private boolean mustBeSaved() {
+        boolean rep = false;
+        //On vérifie dans la liste d'articles
+        for (InterfaceArticle Iarticle : this.modeleListeArticles.getListeData()) {
+            if (Iarticle.getBeta() == InterfaceArticle.BETA_MODIFIE || Iarticle.getBeta() == InterfaceArticle.BETA_NOUVEAU) {
+                rep = true;
+            }
+        }
+
+        //On vérifie aussi dans la liste des paiements
+        for (InterfacePaiement Ipaiement : this.modeleListePaiement.getListeData()) {
+            if (Ipaiement.getBeta() == InterfacePaiement.BETA_MODIFIE || Ipaiement.getBeta() == InterfacePaiement.BETA_MODIFIE) {
+                rep = true;
+            }
+        }
+        return rep;
+    }
 
     private void fermer() {
-        int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir fermer cette fenêtre?", "Avertissement", JOptionPane.YES_NO_OPTION);
-        if (dialogResult == JOptionPane.YES_OPTION) {
-            callBackSynthese.onFermer();
+        if (mustBeSaved() == true) {
+            int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous enregistrer les modifications et/ou ajouts apportés à ces données?", "Avertissement", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                this.parametres.getEcouteurFacture().onEnregistre(getSortieFacture(btEnregistrer, rubEnregistrer));
+                this.ecouteurClose.onFermer();
+            }else if(dialogResult == JOptionPane.NO_OPTION){
+                this.ecouteurClose.onFermer();
+            }
+        }else{
+            int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir fermer cette fenêtre?", "Avertissement", JOptionPane.YES_NO_OPTION);
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                this.ecouteurClose.onFermer();
+            }
         }
     }
 
@@ -421,18 +451,29 @@ public class Panel extends javax.swing.JPanel {
                 new EcouteurEnregistrement() {
             @Override
             public void onDone(String message) {
-                callBackSynthese.onActualiser(message, icones.getAimer_01());
+                ecouteurClose.onActualiser(message, icones.getAimer_01());
                 if (boutonDeclencheur != null) {
                     boutonDeclencheur.appliquerDroitAccessDynamique(true);
                 }
                 if (rubriqueDeclencheur != null) {
                     rubriqueDeclencheur.appliquerDroitAccessDynamique(true);
                 }
+                
+                //On redessine les tableau afin que les couleurs se réinitialisent / Tout redevient noire
+                if(modeleListeArticles != null){
+                    modeleListeArticles.redessinerTable();
+                }
+                if(modeleListePaiement != null){
+                    modeleListePaiement.redessinerTable();
+                }
+                if(modeleListeEcheance != null){
+                    modeleListeEcheance.redessinerTable();
+                }
             }
 
             @Override
             public void onError(String message) {
-                callBackSynthese.onActualiser(message, icones.getAlert_01());
+                ecouteurClose.onActualiser(message, icones.getAlert_01());
                 if (boutonDeclencheur != null) {
                     boutonDeclencheur.appliquerDroitAccessDynamique(true);
                 }
@@ -443,7 +484,7 @@ public class Panel extends javax.swing.JPanel {
 
             @Override
             public void onUploading(String message) {
-                callBackSynthese.onActualiser(message, icones.getSablier_01());
+                ecouteurClose.onActualiser(message, icones.getSablier_01());
                 if (boutonDeclencheur != null) {
                     boutonDeclencheur.appliquerDroitAccessDynamique(false);
                 }
@@ -468,11 +509,9 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void enregistrer() {
-        EcouteurFacture ecouteurFacture = this.parametres.getEcouteurFacture();
-        SortiesFacture sortiesFacture = null;
-        if (ecouteurFacture != null) {
-
-            ecouteurFacture.onEnregistre(sortiesFacture);
+        if (this.parametres.getEcouteurFacture() != null) {
+            SortiesFacture sortiesFacture = getSortieFacture(btEnregistrer, rubEnregistrer);
+            this.parametres.getEcouteurFacture().onEnregistre(sortiesFacture);
         }
     }
 
@@ -493,7 +532,7 @@ public class Panel extends javax.swing.JPanel {
         labTotalTTC.setText(Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie());
         labTotalPaye.setText(Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie());
         labTotalSolde.setText(Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie());
-        callBackSynthese.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").", icones.getInfos_01());
+        ecouteurClose.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").", icones.getInfos_01());
     }
 
     private void supprimer() {
@@ -624,6 +663,8 @@ public class Panel extends javax.swing.JPanel {
         });
 
         menuContextuel = new MenuContextuel();
+        menuContextuel.Ajouter(rubEnregistrer);
+        menuContextuel.Ajouter(new JPopupMenu.Separator());
         menuContextuel.Ajouter(rubAjouter);
         menuContextuel.Ajouter(rubSupprimer);
         menuContextuel.Ajouter(rubVider);
@@ -633,7 +674,6 @@ public class Panel extends javax.swing.JPanel {
         menuContextuel.Ajouter(rubPDF);
         menuContextuel.Ajouter(rubRecu);
         menuContextuel.Ajouter(new JPopupMenu.Separator());
-        menuContextuel.Ajouter(rubEnregistrer);
         menuContextuel.Ajouter(rubFermer);
     }
 
@@ -710,6 +750,8 @@ public class Panel extends javax.swing.JPanel {
         });
 
         barreOutilsA = new BarreOutils(barreOutilsArticles);
+        barreOutilsA.AjouterBouton(btEnregistrer);
+        barreOutilsA.AjouterSeparateur();
         barreOutilsA.AjouterBouton(btAjouter);
         barreOutilsA.AjouterBouton(btSupprimer);
         barreOutilsA.AjouterBouton(btVider);
@@ -719,7 +761,6 @@ public class Panel extends javax.swing.JPanel {
         barreOutilsA.AjouterBouton(btPDF);
         barreOutilsA.AjouterBouton(btRecu);
         barreOutilsA.AjouterSeparateur();
-        barreOutilsA.AjouterBouton(btEnregistrer);
         barreOutilsA.AjouterBouton(btFermer);
     }
 
@@ -741,19 +782,19 @@ public class Panel extends javax.swing.JPanel {
             case 0:
                 InterfaceArticle artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
                 if (artcl != null) {
-                    this.callBackSynthese.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + Util.getMontantFrancais(artcl.getTotalTTC()) + " " + this.parametres.getMonnaie(), icones.getTaxes_01());
+                    this.ecouteurClose.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + Util.getMontantFrancais(artcl.getTotalTTC()) + " " + this.parametres.getMonnaie(), icones.getTaxes_01());
                 }
                 break;
             case 1:
                 InterfacePaiement paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
                 if (paiment != null) {
-                    this.callBackSynthese.onActualiser(Util.getDateFrancais(paiment.getDate()) + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(paiment.getMontant()) + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(paiment.getIdArticle())) + " " + this.parametres.getMonnaie() + ").", icones.getClient_01());
+                    this.ecouteurClose.onActualiser(Util.getDateFrancais(paiment.getDate()) + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(paiment.getMontant()) + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(paiment.getIdArticle())) + " " + this.parametres.getMonnaie() + ").", icones.getClient_01());
                 }
                 break;
             default:
                 InterfaceEcheance echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
                 if (echeance != null) {
-                    this.callBackSynthese.onActualiser("Entre " + Util.getDateFrancais(echeance.getDateInitiale()) + " et " + Util.getDateFrancais(echeance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(echeance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie(), icones.getCalendrier_01());
+                    this.ecouteurClose.onActualiser("Entre " + Util.getDateFrancais(echeance.getDateInitiale()) + " et " + Util.getDateFrancais(echeance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(echeance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie(), icones.getCalendrier_01());
                 }
                 break;
         }

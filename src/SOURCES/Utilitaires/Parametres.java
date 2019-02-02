@@ -16,6 +16,7 @@ import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfacePaiement;
 
 /**
@@ -59,14 +60,14 @@ public class Parametres {
                 double punit = 0;
                 double rabais = 0;
                 int nbTranches = 1;
-                modeleListeArticles.AjouterArticle(new XX_Article(-1, "", 1, "Pièce", tvaPrc, punit, rabais, nbTranches));
+                modeleListeArticles.AjouterArticle(new XX_Article(-1, "", 1, "Pièce", tvaPrc, punit, rabais, nbTranches, InterfaceArticle.BETA_NOUVEAU));
             }
 
             @Override
             public void setAjoutPaiement(ModeleListePaiement modeleListePaiement) {
                 double montant = 0;
                 Date newDate = new Date();
-                modeleListePaiement.AjouterPaiement(new XX_Paiement(-1, client.getId(), -1, client.getNom(), "", client.getNom(), montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime()+""));
+                modeleListePaiement.AjouterPaiement(new XX_Paiement(-1, client.getId(), -1, client.getNom(), "", client.getNom(), montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime()+"", InterfacePaiement.BETA_NOUVEAU));
             }
 
             @Override

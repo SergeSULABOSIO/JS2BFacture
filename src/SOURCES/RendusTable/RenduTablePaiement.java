@@ -7,6 +7,7 @@ package SOURCES.RendusTable;
 
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
+import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;
@@ -25,11 +26,13 @@ public class RenduTablePaiement implements TableCellRenderer {
     private String monnaie;
     private ImageIcon iconeEdition;
     private Vector<InterfaceArticle> listeArticles;
+    private ModeleListePaiement modeleListePaiement;
 
-    public RenduTablePaiement(String monnaie, ImageIcon iconeEdition, Vector<InterfaceArticle> listeArticles) {
+    public RenduTablePaiement(String monnaie, ImageIcon iconeEdition, Vector<InterfaceArticle> listeArticles, ModeleListePaiement modeleListePaiement) {
         this.monnaie = monnaie;
         this.iconeEdition = iconeEdition;
         this.listeArticles = listeArticles;
+        this.modeleListePaiement = modeleListePaiement;
     }
     
     private String getArticle(int id) {
@@ -84,7 +87,17 @@ public class RenduTablePaiement implements TableCellRenderer {
                 celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
             }
         }
-        celluleNum.ecouterSelection(isSelected, row);
+        celluleNum.ecouterSelection(isSelected, row, getBeta(row));
         return celluleNum;
+    }
+    
+    private int getBeta(int row) {
+        if (this.modeleListePaiement != null) {
+            InterfacePaiement Ipaiement = this.modeleListePaiement.getPaiement(row);
+            if (Ipaiement != null) {
+                return Ipaiement.getBeta();
+            }
+        }
+        return InterfacePaiement.BETA_NOUVEAU;
     }
 }

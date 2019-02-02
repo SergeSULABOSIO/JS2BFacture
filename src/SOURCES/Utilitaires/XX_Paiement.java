@@ -23,11 +23,12 @@ public class XX_Paiement implements InterfacePaiement{
     public String nomDepositaire;
     public double montant;
     public Date date;
+    public int beta;
 
     public XX_Paiement() {
     }
 
-    public XX_Paiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference) {
+    public XX_Paiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference, int beta) {
         this.id = id;
         this.idClient = idClient;
         this.idArticle = idArticle;
@@ -38,9 +39,17 @@ public class XX_Paiement implements InterfacePaiement{
         this.date = date;
         this.mode = mode;
         this.reference = reference;
+        this.beta = beta;
     }
 
-    
+    public int getBeta() {
+        return beta;
+    }
+
+    public void setBeta(int beta) {
+        this.beta = beta;
+    }
+
 
     public int getId() {
         return id;

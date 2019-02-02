@@ -11,7 +11,7 @@ import SOURCES.Interface.InterfaceEntreprise;
  *
  * @author HP Pavilion
  */
-public class TESTEntreprise implements InterfaceEntreprise{
+public class TEST_Entreprise implements InterfaceEntreprise{
     public int id;
     public String nom;
     public String adresse;
@@ -29,7 +29,7 @@ public class TESTEntreprise implements InterfaceEntreprise{
     public String IBAN;
     public String codeSwift;
 
-    public TESTEntreprise(int id, String nom, String adresse, String telephone, String email, String siteWeb, String banque, String intituleCompte, String numeroCompte, String IBAN, String codeSwift, String logo, String rccm, String idNat, String numeroImpot) {
+    public TEST_Entreprise(int id, String nom, String adresse, String telephone, String email, String siteWeb, String banque, String intituleCompte, String numeroCompte, String IBAN, String codeSwift, String logo, String rccm, String idNat, String numeroImpot) {
         this.id = id;
         this.nom = nom;
         this.adresse = adresse;

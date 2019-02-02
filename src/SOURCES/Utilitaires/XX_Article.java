@@ -21,8 +21,9 @@ public class XX_Article implements InterfaceArticle{
     public double prixUht;
     public double rabais;
     public int tranches;
+    public int beta;
 
-    public XX_Article(int id, String nom, double qte, String unite, double tvaprc, double prixUht, double rabais, int tranches) {
+    public XX_Article(int id, String nom, double qte, String unite, double tvaprc, double prixUht, double rabais, int tranches, int beta) {
         this.id = id;
         this.nom = nom;
         this.qte = qte;
@@ -31,7 +32,17 @@ public class XX_Article implements InterfaceArticle{
         this.prixUht = prixUht;
         this.rabais = rabais;
         this.tranches = tranches;
+        this.beta = beta;
     }
+
+    public int getBeta() {
+        return beta;
+    }
+
+    public void setBeta(int beta) {
+        this.beta = beta;
+    }
+    
 
     @Override
     public int getId() {
@@ -132,10 +143,8 @@ public class XX_Article implements InterfaceArticle{
 
     @Override
     public String toString() {
-        return "TESTProduit{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + ", tranches=" + tranches + '}';
+        return "XX_Article{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + ", tranches=" + tranches + ", beta=" + beta + '}';
     }
-    
-    
 
     
 }

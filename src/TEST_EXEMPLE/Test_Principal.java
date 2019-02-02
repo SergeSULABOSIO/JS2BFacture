@@ -22,12 +22,12 @@ import SOURCES.Utilitaires.SortiesFacture;
  *
  * @author HP Pavilion
  */
-public class TestPrincipal extends javax.swing.JFrame {
+public class Test_Principal extends javax.swing.JFrame {
 
     private Parametres parametres = null;
     private DonneesFacture donnees = null;
-    private TESTClient client = new TESTClient(12, "Elève", "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
-    private TESTEntreprise entreprise = new TESTEntreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
+    private TEST_Client client = new TEST_Client(12, "Elève", "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
+    private TEST_Entreprise entreprise = new TEST_Entreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
     private ExerciceFiscale anneeScolaire = new ExerciceFiscale(new Date(119, 0, 1), new Date(119, 11, 31), "Année Scolaire 2018-2019");
     private int idFacture = 20;
     private int idMonnaie = 10;
@@ -45,16 +45,16 @@ public class TestPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form TestPrincipal
      */
-    public TestPrincipal() {
+    public Test_Principal() {
         initComponents();
     }
 
     private void initParametres() {
         //On charge les types d'articles qui existent
         typesArticles.removeAllElements();
-        typesArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
-        typesArticles.add(new TESTProduit(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3));
-        typesArticles.add(new TESTProduit(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1));
+        typesArticles.add(new TEST_Article(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1, InterfaceArticle.BETA_EXISTANT));
+        typesArticles.add(new TEST_Article(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3, InterfaceArticle.BETA_EXISTANT));
+        typesArticles.add(new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1, InterfaceArticle.BETA_EXISTANT));
 
         //Initialisation des paramètres
         this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, idFacture, typesArticles, client, entreprise, monnaie, idMonnaie, tva, remise, anneeScolaire);
@@ -71,20 +71,26 @@ public class TestPrincipal extends javax.swing.JFrame {
                             /**/
                             if (sortiesFacture != null) {
                                 sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
-                                sleep(5000);
-                                System.out.println("CLIENT : \n * " + client.toString());
-                                System.out.println("ARTICLES : ");
+                                sleep(1000);
+                                
                                 for (InterfaceArticle article : sortiesFacture.getArticles()) {
-                                    System.out.println(" * " + article.toString());
+                                    if(article.getBeta() == InterfaceArticle.BETA_MODIFIE || article.getBeta() == InterfaceArticle.BETA_NOUVEAU){
+                                        System.out.println(" * Article: " + article.toString());
+                                        
+                                        //Après enregistrement
+                                        article.setBeta(InterfaceArticle.BETA_EXISTANT);
+                                    }
                                 }
-                                System.out.println("PAIEMENTS : ");
+                                
                                 for (InterfacePaiement paiement : sortiesFacture.getPaiements()) {
-                                    System.out.println(" * " + paiement.toString());
+                                    if(paiement.getBeta() == InterfacePaiement.BETA_MODIFIE || paiement.getBeta() == InterfacePaiement.BETA_NOUVEAU){
+                                        System.out.println(" * Paiement: " + paiement.toString());
+                                        
+                                        //Après enregistrement
+                                        paiement.setBeta(InterfacePaiement.BETA_EXISTANT);
+                                    }
                                 }
-                                System.out.println("ECHEANCES:");
-                                for (InterfaceEcheance echeance : sortiesFacture.getEcheances()) {
-                                    System.out.println(" * Echéance : " + echeance.toString());
-                                }
+                                
                                 sortiesFacture.getEcouteurEnregistrement().onDone("Enregistré!");
                             }
 
@@ -100,11 +106,11 @@ public class TestPrincipal extends javax.swing.JFrame {
 
         //On charges les articles séléctionés
         donneesArticles.removeAllElements();
-        donneesArticles.add(new TESTProduit(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1));
+        donneesArticles.add(new TEST_Article(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1, InterfaceArticle.BETA_EXISTANT));
 
         //On charge les paiements déjà reçus ou  effectués par le client
         donneesPaiements.removeAllElements();
-        donneesPaiements.add(new TESTPaiement(-1, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSEREDVFGFD22445"));
+        donneesPaiements.add(new TEST_Paiement(120, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSEREDVFGFD22445", InterfacePaiement.BETA_EXISTANT));
 
         //Initialisation des données (Articles et paiements reçus)
         donnees = new DonneesFacture(donneesArticles, donneesPaiements);
@@ -216,20 +222,21 @@ public class TestPrincipal extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TestPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Test_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TestPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Test_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TestPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Test_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TestPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Test_Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TestPrincipal().setVisible(true);
+                new Test_Principal().setVisible(true);
             }
         });
     }

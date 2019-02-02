@@ -38,6 +38,7 @@ public class XX_Echeance implements InterfaceEcheance{
         this.monnaie = monnaie;
     }
 
+
     public int getId() {
         return id;
     }
@@ -120,9 +121,6 @@ public class XX_Echeance implements InterfaceEcheance{
 
     @Override
     public String toString() {
-        return "Tranches{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
-    }
-
-    
-    
+        return "XX_Echeance{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
+    }    
 }
