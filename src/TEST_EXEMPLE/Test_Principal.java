@@ -12,7 +12,6 @@ import SOURCES.Utilitaires.Parametres;
 import java.util.Date;
 import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.ExerciceFiscale;
