@@ -418,7 +418,7 @@ public class Panel extends javax.swing.JPanel {
 
         //On vérifie aussi dans la liste des paiements
         for (InterfacePaiement Ipaiement : this.modeleListePaiement.getListeData()) {
-            if (Ipaiement.getBeta() == InterfacePaiement.BETA_MODIFIE || Ipaiement.getBeta() == InterfacePaiement.BETA_MODIFIE) {
+            if (Ipaiement.getBeta() == InterfacePaiement.BETA_MODIFIE || Ipaiement.getBeta() == InterfacePaiement.BETA_NOUVEAU) {
                 rep = true;
             }
         }

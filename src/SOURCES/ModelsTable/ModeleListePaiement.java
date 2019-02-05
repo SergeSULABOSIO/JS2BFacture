@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfacePaiement;
 
 /**
@@ -266,7 +265,7 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
         String apres = Ipaiement.toString();
         if(!avant.equals(apres)){
-            if(Ipaiement.getId() != -1){
+            if(Ipaiement.getBeta() == InterfacePaiement.BETA_EXISTANT){
                 Ipaiement.setBeta(InterfacePaiement.BETA_MODIFIE);
             }
         }
