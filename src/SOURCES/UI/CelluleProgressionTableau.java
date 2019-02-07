@@ -5,6 +5,7 @@
  */
 package SOURCES.UI;
 
+import static SOURCES.UI.CelluleSimpleTableau.COULEUR_CELLULE_SELECTIONNEE;
 import SOURCES.Utilitaires.Util;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,6 +20,10 @@ public class CelluleProgressionTableau extends javax.swing.JPanel {
     /**
      * Creates new form PanValeurTable
      */
+    
+    public static final Color COULEUR_CELLULE_SELECTIONNEE = new java.awt.Color(255, 255, 51);
+    
+    
     public CelluleProgressionTableau(String monnaie, double value, double totalDu, ImageIcon iconeProgression) {
         initComponents();
         labicone.setIcon(iconeProgression);
@@ -34,7 +39,7 @@ public class CelluleProgressionTableau extends javax.swing.JPanel {
         }
     }
     
-    public void ecouterSelection(boolean isSelected, int row){
+    public void ecouterSelection(boolean isSelected, int row, boolean hasfocus){
         if(isSelected == true){
             labicone.setFont(new java.awt.Font("Tahoma", Font.BOLD, 11));
             labicone.setForeground(Color.WHITE);
@@ -43,6 +48,15 @@ public class CelluleProgressionTableau extends javax.swing.JPanel {
             labicone.setFont(new java.awt.Font("Tahoma", Font.PLAIN, 11));
             labicone.setForeground(Color.BLACK);
             ecouterLigneImpare(row);
+        }
+        appliquerCouleurFocusBordureCellule(hasfocus);
+    }
+    
+    public void appliquerCouleurFocusBordureCellule(boolean hasFocus){
+        if(hasFocus == true){
+            this.setBorder(javax.swing.BorderFactory.createLineBorder(COULEUR_CELLULE_SELECTIONNEE, 2));
+        }else{
+            this.setBorder(null);
         }
     }
     

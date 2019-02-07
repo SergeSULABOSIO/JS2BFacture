@@ -6,7 +6,6 @@
 package SOURCES.RendusTable;
 
 import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.UI.CelluleProgressionTableau;
 import SOURCES.UI.CelluleSimpleTableau;
@@ -41,34 +40,34 @@ public class RenduTableEcheance implements TableCellRenderer {
         switch (column) {
             case 0:
                 celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
-                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT);
+                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 1:
                 celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
-                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT);
+                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 2:
                 celluleNum = new CelluleSimpleTableau(" Du " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
-                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT);
+                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 3:
                 celluleNum = new CelluleSimpleTableau(" au " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
-                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT);
+                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 4:
                 celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, null);
-                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT);
+                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 5:
                 String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
                 celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
-                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT);
+                celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 6:
                 double valeur = Double.parseDouble(value+"");
                 double montDu = modeleListeEcheance.getEcheance_row(row).getMontantDu();
                 CelluleProgressionTableau celluleProgress = new CelluleProgressionTableau(monnaie, valeur, montDu, iconeProgression);
-                celluleProgress.ecouterSelection(isSelected, row);
+                celluleProgress.ecouterSelection(isSelected, row, hasFocus);
                 return celluleProgress;
             default:
                 return null;

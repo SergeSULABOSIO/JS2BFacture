@@ -87,7 +87,7 @@ public class RenduTablePaiement implements TableCellRenderer {
                 celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
             }
         }
-        celluleNum.ecouterSelection(isSelected, row, getBeta(row));
+        celluleNum.ecouterSelection(isSelected, row, getBeta(row), hasFocus);
         return celluleNum;
     }
     

@@ -25,6 +25,7 @@ public class CelluleSimpleTableau extends javax.swing.JPanel {
     public static final Color COULEUR_ROUGE_SIMPLE = new Color(192, 0, 0);
     public static final Color COULEUR_BLEU_SELECTION = new Color(139, 205, 255);
     public static final Color COULEUR_BLEU_SIMPLE = new Color(11, 88, 237);
+    public static final Color COULEUR_CELLULE_SELECTIONNEE = new java.awt.Color(255, 255, 51);
 
     /**
      * Creates new form PanValeurTable
@@ -51,9 +52,18 @@ public class CelluleSimpleTableau extends javax.swing.JPanel {
         }
     }
 
-    public void ecouterSelection(boolean isSelected, int row, int beta) {
+    public void ecouterSelection(boolean isSelected, int row, int beta, boolean hasFocus) {
         appliqerCouleurSelection(isSelected, row);
         appliquerCouleurBeta(isSelected, beta);
+        appliquerCouleurFocusBordureCellule(hasFocus);
+    }
+    
+    public void appliquerCouleurFocusBordureCellule(boolean hasFocus){
+        if(hasFocus == true){
+            this.setBorder(javax.swing.BorderFactory.createLineBorder(COULEUR_CELLULE_SELECTIONNEE, 2));
+        }else{
+            this.setBorder(null);
+        }
     }
 
     private void appliqerCouleurSelection(boolean isSelected, int row) {

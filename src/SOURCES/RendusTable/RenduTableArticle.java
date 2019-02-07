@@ -74,7 +74,7 @@ public class RenduTableArticle implements TableCellRenderer {
                 cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, iconeEdition);
                 break;
         }
-        cellule.ecouterSelection(isSelected, row, getBeta(row));
+        cellule.ecouterSelection(isSelected, row, getBeta(row), hasFocus);
         return cellule;
     }
     
