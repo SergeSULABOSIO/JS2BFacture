@@ -5,6 +5,8 @@
  */
 package SOURCES.ModelsTable;
 
+import BEAN_BARRE_OUTILS.Bouton;
+import BEAN_MenuContextuel.RubriqueSimple;
 import SOURCES.CallBack.EcouteurValeursChangees;
 import SOURCES.Utilitaires.Util;
 import java.util.Vector;
@@ -12,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
+import java.awt.Color;
 
 /**
  *
@@ -26,12 +29,16 @@ public class ModeleListeArticles extends AbstractTableModel {
     private EcouteurValeursChangees ecouteurModele;
     //private boolean canPayVAT;
     private double pourcTVA = 16;
+    private Bouton btEnreg;
+    private RubriqueSimple mEnreg;
 
-    public ModeleListeArticles(JScrollPane parent, double pourcTVA, Vector<InterfaceArticle> listeTypeArticle, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListeArticles(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, double pourcTVA, Vector<InterfaceArticle> listeTypeArticle, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.pourcTVA = pourcTVA;
         this.listeTypeArticle = listeTypeArticle;
+        this.mEnreg = mEnreg;
+        this.btEnreg = btEnreg;
         appliquerAssigetissementTVA();
     }
 
@@ -88,6 +95,8 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     public void AjouterArticle(InterfaceArticle art) {
         this.listeData.add(art);
+        mEnreg.setCouleur(Color.blue);
+        btEnreg.setCouleur(Color.blue);
         appliquerAssigetissementTVA();
         redessinerTable();
     }
@@ -280,6 +289,8 @@ public class ModeleListeArticles extends AbstractTableModel {
         if(!avant.equals(apres)){
             if(article.getBeta() == InterfaceArticle.BETA_EXISTANT){
                 article.setBeta(InterfaceArticle.BETA_MODIFIE);
+                mEnreg.setCouleur(Color.blue);
+                btEnreg.setCouleur(Color.blue);
             }
         }
         listeData.set(rowIndex, article);

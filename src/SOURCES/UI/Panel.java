@@ -15,7 +15,6 @@ import BEAN_MenuContextuel.RubriqueListener;
 import BEAN_MenuContextuel.RubriqueSimple;
 import ICONES.Icones;
 import SOURCES.CallBack.EcouteurEnregistrement;
-import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.EditeursTable.EditeurArticle;
 import SOURCES.EditeursTable.EditeurDate;
 import SOURCES.EditeursTable.EditeurMode;
@@ -41,6 +40,7 @@ import SOURCES.Interface.InterfaceClient;
 import SOURCES.RendusTable.RenduTableEcheance;
 import SOURCES.Utilitaires.ExerciceFiscale;
 import SOURCES.Utilitaires.SortiesFacture;
+import java.awt.Color;
 import java.util.Vector;
 
 /**
@@ -207,7 +207,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void parametrerTableArticles() {
-        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, this.parametres.getTva(), this.parametres.getListArticles(), new EcouteurValeursChangees() {
+        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, btEnregistrer, rubEnregistrer, this.parametres.getTva(), this.parametres.getListArticles(), new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 //Actualisation des listes de base
@@ -273,7 +273,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void parametrerTablePaiement() {
-        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, this.modeleListeArticles, new EcouteurValeursChangees() {
+        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.modeleListeArticles, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
@@ -510,6 +510,9 @@ public class Panel extends javax.swing.JPanel {
 
     private void enregistrer() {
         if (this.parametres.getEcouteurFacture() != null) {
+            rubEnregistrer.setCouleur(Color.BLACK);
+            btEnregistrer.setCouleur(Color.BLACK);
+            
             SortiesFacture sortiesFacture = getSortieFacture(btEnregistrer, rubEnregistrer);
             this.parametres.getEcouteurFacture().onEnregistre(sortiesFacture);
         }
@@ -600,62 +603,62 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void setMenuContArticles() {
-        rubAjouter = new RubriqueSimple("Ajouter", icones.getAjouter_01(), new RubriqueListener() {
+        rubAjouter = new RubriqueSimple("Ajouter", 12, false, icones.getAjouter_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 ajouter();
             }
         });
-        rubSupprimer = new RubriqueSimple("Supprimer", icones.getSupprimer_01(), new RubriqueListener() {
+        rubSupprimer = new RubriqueSimple("Supprimer", 12, false, icones.getSupprimer_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 supprimer();
             }
         });
 
-        rubVider = new RubriqueSimple("Vider", icones.getAnnuler_01(), new RubriqueListener() {
+        rubVider = new RubriqueSimple("Vider", 12, false, icones.getAnnuler_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 vider();
             }
         });
 
-        rubActualiser = new RubriqueSimple("Actualiser", icones.getSynchroniser_01(), new RubriqueListener() {
+        rubActualiser = new RubriqueSimple("Actualiser", 12, false, icones.getSynchroniser_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 actualiserTotaux();
             }
         });
 
-        rubImprimer = new RubriqueSimple("Imprimer", icones.getImprimer_01(), new RubriqueListener() {
+        rubImprimer = new RubriqueSimple("Imprimer", 12, false, icones.getImprimer_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 imprimer();
             }
         });
 
-        rubFermer = new RubriqueSimple("Fermer", icones.getFermer_01(), new RubriqueListener() {
+        rubFermer = new RubriqueSimple("Fermer", 12, false, icones.getFermer_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 fermer();
             }
         });
 
-        rubPDF = new RubriqueSimple("Exp. PDF", icones.getPDF_01(), new RubriqueListener() {
+        rubPDF = new RubriqueSimple("Exp. PDF", 12, false, icones.getPDF_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 exporterPDF();
             }
         });
 
-        rubEnregistrer = new RubriqueSimple("Enregistrer", icones.getEnregistrer_01(), new RubriqueListener() {
+        rubEnregistrer = new RubriqueSimple("Enregistrer", 12, true, icones.getEnregistrer_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 enregistrer();
             }
         });
 
-        rubRecu = new RubriqueSimple("Prod. Reçu", icones.getPDF_01(), new RubriqueListener() {
+        rubRecu = new RubriqueSimple("Prod. Reçu", 12, false, icones.getPDF_01(), new RubriqueListener() {
             @Override
             public void OnEcouterLaSelection() {
                 genererRecu();
@@ -740,6 +743,7 @@ public class Panel extends javax.swing.JPanel {
                 enregistrer();
             }
         });
+        btEnregistrer.setGras(true);
 
         //Recu
         btRecu = new Bouton(12, "Prod. Reçu", icones.getPDF_02(), new BoutonListener() {

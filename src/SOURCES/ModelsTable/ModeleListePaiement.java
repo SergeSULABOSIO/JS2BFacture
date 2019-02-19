@@ -5,6 +5,8 @@
  */
 package SOURCES.ModelsTable;
 
+import BEAN_BARRE_OUTILS.Bouton;
+import BEAN_MenuContextuel.RubriqueSimple;
 import SOURCES.CallBack.EcouteurValeursChangees;
 import SOURCES.Utilitaires.Util;
 import java.util.Date;
@@ -14,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
+import java.awt.Color;
 
 /**
  *
@@ -26,11 +29,15 @@ public class ModeleListePaiement extends AbstractTableModel {
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
     private ModeleListeArticles modeleListeArticles;
+    private Bouton btEnreg;
+    private RubriqueSimple mEnreg;
 
-    public ModeleListePaiement(JScrollPane parent, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.modeleListeArticles = modeleListeArticles;
+        this.mEnreg = mEnreg;
+        this.btEnreg = btEnreg;
     }
 
     public void setListePaiements(Vector<InterfacePaiement> listeData) {
@@ -57,6 +64,8 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     public void AjouterPaiement(InterfacePaiement art) {
         this.listeData.add(art);
+        mEnreg.setCouleur(Color.blue);
+        btEnreg.setCouleur(Color.blue);
         //System.out.println("Ajout!!!!"+art.toString());
         redessinerTable();
     }
@@ -267,6 +276,8 @@ public class ModeleListePaiement extends AbstractTableModel {
         if(!avant.equals(apres)){
             if(Ipaiement.getBeta() == InterfacePaiement.BETA_EXISTANT){
                 Ipaiement.setBeta(InterfacePaiement.BETA_MODIFIE);
+                mEnreg.setCouleur(Color.blue);
+                btEnreg.setCouleur(Color.blue);
             }
         }
         listeData.set(rowIndex, Ipaiement);
