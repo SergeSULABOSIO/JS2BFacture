@@ -352,11 +352,12 @@ public class DocumentPDF extends PdfPageEventHelper {
                     Element.ALIGN_CENTER,
                     0.2f
             );
+            double totPaye = 0;
             if (this.gestionnaireFacture != null) {
                 ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
                 //Vector<InterfacePaiement> listePaiement = modelPaiement.getListeData();
                 int i = 0;
-                double totPaye = 0;
+                totPaye = 0;
                 for (InterfacePaiement paiement : listePaiement) {
                     //cumuls
                     totPaye += paiement.getMontant();
@@ -372,6 +373,9 @@ public class DocumentPDF extends PdfPageEventHelper {
                 setDerniereLigneTabReleve(tableReleve, 1500, 350);
             }
             document.add(tableReleve);
+            String monnaie = gestionnaireFacture.getParametres().getMonnaie();
+            document.add(getParagraphe("En lettre : " + (Util.getMontantLettres(totPaye, monnaie)), Font_TexteSimple_petit_Gras, Element.ALIGN_RIGHT));
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

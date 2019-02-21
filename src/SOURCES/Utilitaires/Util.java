@@ -91,9 +91,22 @@ public class Util {
         return val+"," + ValApresVirgule;
     }
     
+    public static String getMontantLettres(double montant, String NomMonnaie){
+        String texte = "";
+        try{
+            texte = Nombre.CALCULATE.getLettres(montant, NomMonnaie);
+        }catch(Exception e){
+            System.out.println("Un problème est survenu lors de la conversion des chiffres en nombre.");
+            texte = "";
+        }
+        return texte;
+    }
+
     public static void main(String[] args) {
         double origine = 10000.14;
+        
         String res = Util.getMontantFrancais(origine);
         System.out.println("Résultat = " + res);
+        System.out.println("Résultat = " + Util.getMontantLettres(origine, "Dollars Américains"));
     }
 }
