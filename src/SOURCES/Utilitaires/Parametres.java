@@ -16,7 +16,7 @@ import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceClient;
-import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Interface.InterfacePaiement;
 
 /**
@@ -29,8 +29,7 @@ public class Parametres {
     private Vector<InterfaceArticle> listArticles;
     private InterfaceClient client;
     private InterfaceEntreprise entreprise;
-    private String monnaie;
-    private int idMonnaie;
+    private InterfaceMonnaie monnaie;
     private int idFacture;
     private double tva;
     private double remise;
@@ -40,7 +39,7 @@ public class Parametres {
     private String nomUtilisateur;
     private ExerciceFiscale exerciceFiscale;
 
-    public Parametres(String nomUtilisateur, String numero, int idFacture, Vector<InterfaceArticle> listArticles, InterfaceClient client, InterfaceEntreprise entreprise, String monnaie, int idMonnaie, double tva, double remise, ExerciceFiscale exerciceFiscale) {
+    public Parametres(String nomUtilisateur, String numero, int idFacture, Vector<InterfaceArticle> listArticles, InterfaceClient client, InterfaceEntreprise entreprise, InterfaceMonnaie monnaie, double tva, double remise, ExerciceFiscale exerciceFiscale) {
         this.nomUtilisateur = nomUtilisateur;
         this.numero = numero;
         this.listArticles = listArticles;
@@ -49,7 +48,6 @@ public class Parametres {
         this.tva = tva;
         this.remise = remise;
         this.entreprise = entreprise;
-        this.idMonnaie = idMonnaie;
         this.idFacture = idFacture;
         this.icones = new Icones();
         this.exerciceFiscale = exerciceFiscale;
@@ -60,7 +58,7 @@ public class Parametres {
                 double punit = 0;
                 double rabais = 0;
                 int nbTranches = 1;
-                modeleListeArticles.AjouterArticle(new XX_Article(-1, "", 1, "Pièce", tvaPrc, punit, rabais, nbTranches, InterfaceArticle.BETA_NOUVEAU));
+                modeleListeArticles.AjouterArticle(new XX_Article(-1, "", 1, "Pièce", monnaie.getId(), tvaPrc, punit, rabais, nbTranches, InterfaceArticle.BETA_NOUVEAU));
             }
 
             @Override
@@ -77,7 +75,7 @@ public class Parametres {
                 if(nbEcheancesExistant > 1){
                     nomTransche = (nbEcheancesExistant + 1) + "ème Tranche";
                 }
-                modeleListeEcheance.AjouterEcheanceAutomatique(new XX_Echeance(-1, nomTransche, idFacture, exerciceFiscale.getDebut(), exerciceFiscale.getFin(), numero, 0, 0, idMonnaie, monnaie));
+                modeleListeEcheance.AjouterEcheanceAutomatique(new XX_Echeance(-1, nomTransche, idFacture, exerciceFiscale.getDebut(), exerciceFiscale.getFin(), numero, 0, 0, monnaie.getId()));
             }
         };
     }
@@ -104,14 +102,7 @@ public class Parametres {
         this.nomUtilisateur = nomUtilisateur;
     }
 
-    public int getIdMonnaie() {
-        return idMonnaie;
-    }
-
-    public void setIdMonnaie(int idMonnaie) {
-        this.idMonnaie = idMonnaie;
-    }
-
+    
     public int getIdFacture() {
         return idFacture;
     }
@@ -120,8 +111,6 @@ public class Parametres {
         this.idFacture = idFacture;
     }
     
-    
-
     public void setEntreprise(InterfaceEntreprise entreprise) {
         this.entreprise = entreprise;
     }
@@ -167,14 +156,14 @@ public class Parametres {
         this.client = client;
     }
 
-    public String getMonnaie() {
+    public InterfaceMonnaie getMonnaie() {
         return monnaie;
     }
 
-    public void setMonnaie(String monnaie) {
+    public void setMonnaie(InterfaceMonnaie monnaie) {
         this.monnaie = monnaie;
     }
-
+    
     public double getTva() {
         return tva;
     }

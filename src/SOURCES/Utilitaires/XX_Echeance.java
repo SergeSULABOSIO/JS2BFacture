@@ -23,9 +23,8 @@ public class XX_Echeance implements InterfaceEcheance{
     public double montantPaye;
     public double montantDu;
     public int idMonnaie;
-    public String monnaie;
 
-    public XX_Echeance(int id, String nom, int idFacture, Date dateInitiale, Date dateFinale, String numeroFacture, double montantPaye, double montantDu, int idMonnaie, String monnaie) {
+    public XX_Echeance(int id, String nom, int idFacture, Date dateInitiale, Date dateFinale, String numeroFacture, double montantPaye, double montantDu, int idMonnaie) {
         this.id = id;
         this.nom = nom;
         this.idFacture = idFacture;
@@ -35,7 +34,6 @@ public class XX_Echeance implements InterfaceEcheance{
         this.montantPaye = montantPaye;
         this.montantDu = montantDu;
         this.idMonnaie = idMonnaie;
-        this.monnaie = monnaie;
     }
 
 
@@ -111,16 +109,8 @@ public class XX_Echeance implements InterfaceEcheance{
         this.idMonnaie = idMonnaie;
     }
 
-    public String getMonnaie() {
-        return monnaie;
-    }
-
-    public void setMonnaie(String monnaie) {
-        this.monnaie = monnaie;
-    }
-
     @Override
     public String toString() {
-        return "XX_Echeance{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + ", monnaie=" + monnaie + '}';
-    }    
+        return "XX_Echeance{" + "id=" + id + ", nom=" + nom + ", idFacture=" + idFacture + ", dateInitiale=" + dateInitiale + ", dateFinale=" + dateFinale + ", numeroFacture=" + numeroFacture + ", montantPaye=" + montantPaye + ", montantDu=" + montantDu + ", idMonnaie=" + idMonnaie + '}';
+    }
 }

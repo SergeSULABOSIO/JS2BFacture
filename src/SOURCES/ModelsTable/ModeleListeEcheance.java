@@ -16,6 +16,7 @@ import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Utilitaires.ExerciceFiscale;
 
 /**
@@ -30,7 +31,6 @@ public class ModeleListeEcheance extends AbstractTableModel {
     private EcouteurValeursChangees ecouteurModele;
     private ModeleListePaiement modeleListePaiement;
     private ModeleListeArticles modeleListeArticles;
-    private String monnaie;
     private int idMonnaie;
     private String numeroFacture;
     private int idFacture;
@@ -38,15 +38,14 @@ public class ModeleListeEcheance extends AbstractTableModel {
     private ExerciceFiscale exerciceFiscale;
     public int nombreTranches = 1;
 
-    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele, String monnaie, int idMonnaie, String numeroFacture, int idFacture, ExerciceFiscale exerciceFiscale) {
+    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele, String numeroFacture, int idFacture, int idMonnaie, ExerciceFiscale exerciceFiscale) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.modeleListePaiement = modeleListePaiement;
         this.modeleListeArticles = modeleListeArticles;
-        this.monnaie = monnaie;
-        this.idMonnaie = idMonnaie;
         this.numeroFacture = numeroFacture;
         this.idFacture = idFacture;
+        this.idMonnaie = idMonnaie;
         this.exerciceFiscale = exerciceFiscale;
 
         this.param_tranches_creer();
@@ -239,7 +238,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
             if ((i + 1) > 1) {
                 nomTranche = (i + 1) + "ème Tranche";
             }
-            XX_Echeance trancheTempo = new XX_Echeance(-1, nomTranche, idFacture, this.exerciceFiscale.getDebut(), exerciceFiscale.getFin(), numeroFacture, 0, 0, idMonnaie, monnaie);
+            XX_Echeance trancheTempo = new XX_Echeance(-1, nomTranche, idFacture, this.exerciceFiscale.getDebut(), exerciceFiscale.getFin(), numeroFacture, 0, 0, idMonnaie);
 
             this.listeData.add(trancheTempo);
         }

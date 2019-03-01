@@ -21,6 +21,7 @@ public interface InterfaceArticle {
     public abstract String getNom();
     public abstract double getQte();
     public abstract String getUnite();
+    public abstract int getIdMonnaie();
     public abstract double getPrixUHT_avant_rabais();
     public abstract double getRabais();
     public abstract int getTranches();
@@ -34,6 +35,7 @@ public interface InterfaceArticle {
     public abstract void setNom(String nom);
     public abstract void setQte(double Qt);
     public abstract void setUnite(String unite);
+    public abstract void setIdMonnaie(int idMonnaie);
     public abstract void setTranches(int tranches);
     public abstract void setPrixUHT_avant_rabais(double prixUht);
     public abstract void setRabais(double rabais);

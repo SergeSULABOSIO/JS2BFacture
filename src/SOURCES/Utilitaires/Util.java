@@ -34,6 +34,17 @@ public class Util {
         }
         return texte;
     }
+    
+    public static Date getDate_AjouterAnnee(Date dateActuelle, int nbAnnee) {
+        try {
+            int plus = dateActuelle.getYear() + nbAnnee;
+            dateActuelle.setYear(plus);
+            return dateActuelle;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static double getNombre_jours(Date dateFin, Date dateDebut) {
         try {

@@ -37,11 +37,16 @@ import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceClient;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.RendusTable.RenduTableEcheance;
 import SOURCES.Utilitaires.ExerciceFiscale;
 import SOURCES.Utilitaires.SortiesFacture;
 import java.awt.Color;
 import java.util.Vector;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
 
 /**
  *
@@ -67,6 +72,9 @@ public class Panel extends javax.swing.JPanel {
     private EcouteurUpdateClose ecouteurClose;
     private Parametres parametres;
     public Vector<InterfacePaiement> paiementsSelected = new Vector<InterfacePaiement>();
+    private InterfaceArticle SelectedArticle = null;
+    private InterfacePaiement SelectedPaiement = null;
+    private InterfaceEcheance SelectedEcheance = null;
 
     public Panel(Parametres parametres, EcouteurUpdateClose ecouteurClose) {
         initComponents();
@@ -84,13 +92,13 @@ public class Panel extends javax.swing.JPanel {
         parametrerTablePaiement();
         parametrerTableEcheance();
         actualiserTotaux();
-        
+
         this.dateFacture.setDate(new Date());
         this.chTva.setText(this.parametres.getTva() + "");
         activerBoutons(tabPrincipal.getSelectedIndex());
         setIconesTabs();
     }
-    
+
     private void setIconesTabs() {
         this.tabPrincipal.setIconAt(0, icones.getTaxes_01());   //Frais
         this.tabPrincipal.setIconAt(1, icones.getClient_01());  //Relevé de compte
@@ -206,7 +214,7 @@ public class Panel extends javax.swing.JPanel {
         }
     }
 
-    private void parametrerTableArticles() {
+    private void initModelTableArticle() {
         this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, btEnregistrer, rubEnregistrer, this.parametres.getTva(), this.parametres.getListArticles(), new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
@@ -217,155 +225,199 @@ public class Panel extends javax.swing.JPanel {
                 actualiserTotaux();
             }
         });
-        
+        this.editeurArticle = new EditeurArticle(this.parametres.getListArticles(), modeleListePaiement);
+        this.tableListeArticle.setModel(this.modeleListeArticles);
+    }
 
+    private void chargerDataTableArticle() {
         //On charge les données s'il y en a
         if (this.parametres.getDonnees() != null) {
             this.modeleListeArticles.setListeArticles(this.parametres.getDonnees().getArticles());
         }
-        
-        this.editeurArticle = new EditeurArticle(this.parametres.getListArticles(), modeleListePaiement);
+    }
 
-        //Parametrage du modele contenant les données de la table
-        this.tableListeArticle.setModel(this.modeleListeArticles);
+    private void setTaille(TableColumn column, int taille, boolean fixe, TableCellEditor editor) {
+        column.setPreferredWidth(taille);
+        if (fixe == true) {
+            column.setMaxWidth(taille);
+            column.setMinWidth(taille);
+        }
+        if (editor != null) {
+            column.setCellEditor(editor);
+        }
+    }
 
+    private void fixerColonnesTableArticles(boolean resizeTable) {
         //Parametrage du rendu de la table
         this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), this.parametres.getListArticles(), this.modeleListeArticles, icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
 
-        TableColumn col_No = this.tableListeArticle.getColumnModel().getColumn(0);
-        col_No.setPreferredWidth(50);
-        col_No.setMaxWidth(50);
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(0), 30, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 260, false, editeurArticle);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(2), 80, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(3), 100, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(4), 100, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(5), 100, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(6), 120, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(7), 120, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(8), 110, true, null);
 
-        TableColumn colNomArt = this.tableListeArticle.getColumnModel().getColumn(1);
-        colNomArt.setPreferredWidth(260);
-        colNomArt.setCellEditor(editeurArticle);
+        //On écoute les sélction
+        this.tableListeArticle.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() == false) {
+                    ecouterArticleSelectionne();
+                    actualiserTotaux();
+                }
+            }
+        });
 
-        TableColumn col_Qt = this.tableListeArticle.getColumnModel().getColumn(2);
-        col_Qt.setPreferredWidth(80);
-        col_Qt.setMaxWidth(80);
+        if (resizeTable == true) {
+            this.tableListeArticle.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        }
+    }
 
-        TableColumn col_PU_avant_Rabais = this.tableListeArticle.getColumnModel().getColumn(3);
-        col_PU_avant_Rabais.setPreferredWidth(150);
-        col_PU_avant_Rabais.setMaxWidth(150);
+    private void ecouterArticleSelectionne() {
+        int ligneSelected = tableListeArticle.getSelectedRow();
+        if (ligneSelected != -1) {
+            this.SelectedArticle = modeleListeArticles.getArticle(ligneSelected);
+            if (SelectedArticle != null) {
+                this.ecouteurClose.onActualiser(SelectedArticle.getNom() + ", " + SelectedArticle.getQte() + " " + SelectedArticle.getUnite() + ", Total TTC : " + Util.getMontantFrancais(SelectedArticle.getTotalTTC()) + " " + this.parametres.getMonnaie().getCode(), icones.getTaxes_01());
+            }
+        }
+    }
 
-        TableColumn col_Rabais = this.tableListeArticle.getColumnModel().getColumn(4);
-        col_Rabais.setPreferredWidth(150);
-        col_Rabais.setMaxWidth(150);
+    private void ecouterPaiementSelectionne() {
+        int ligneSelected = tableListePaiement.getSelectedRow();
+        if (ligneSelected != -1) {
+            this.SelectedPaiement = modeleListePaiement.getPaiement(ligneSelected);
+            if (SelectedPaiement != null) {
+                this.ecouteurClose.onActualiser(Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + this.parametres.getMonnaie().getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle())) + " " + this.parametres.getMonnaie().getCode() + ").", icones.getClient_01());
+            }
+        }
+    }
 
-        TableColumn col_PU_aprs_Rabais = this.tableListeArticle.getColumnModel().getColumn(5);
-        col_PU_aprs_Rabais.setPreferredWidth(150);
-        col_PU_aprs_Rabais.setMaxWidth(150);
+    private void ecouterEcheanceSelectionne() {
+        int ligneSelected = tableListeEcheance.getSelectedRow();
+        if (ligneSelected != -1) {
+            this.SelectedEcheance = modeleListeEcheance.getEcheance_row(ligneSelected);
+            if (SelectedEcheance != null) {
+                this.ecouteurClose.onActualiser("Entre " + Util.getDateFrancais(SelectedEcheance.getDateInitiale()) + " et " + Util.getDateFrancais(SelectedEcheance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(SelectedEcheance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie().getCode(), icones.getCalendrier_01());
+            }
+        }
+    }
 
-        TableColumn col_Tva_mnt = this.tableListeArticle.getColumnModel().getColumn(6);
-        col_Tva_mnt.setPreferredWidth(120);
-        col_Tva_mnt.setMaxWidth(120);
-
-        TableColumn col_TTC_mnt = this.tableListeArticle.getColumnModel().getColumn(7);
-        col_TTC_mnt.setPreferredWidth(150);
-        col_TTC_mnt.setMaxWidth(150);
-
-        TableColumn col_Tranches = this.tableListeArticle.getColumnModel().getColumn(8);
-        col_Tranches.setPreferredWidth(110);
-        col_Tranches.setMaxWidth(110);
-
+    private void parametrerTableArticles() {
+        initModelTableArticle();
+        chargerDataTableArticle();
+        fixerColonnesTableArticles(true);
         appliquerTva();
     }
 
-    private void parametrerTablePaiement() {
+    private void initModelTablePaiement() {
         this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.modeleListeArticles, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
             }
         });
-        
         this.editeurArticle = new EditeurArticle(this.parametres.getListArticles(), modeleListePaiement);
+        this.tableListePaiement.setModel(this.modeleListePaiement);
+    }
 
-        //On charge les données s'il y en a
+    private void chargerDataTablePaiement() {
         if (this.parametres.getDonnees() != null) {
             this.modeleListePaiement.setListePaiements(this.parametres.getDonnees().getPaiements());
         }
-        
-        //Parametrage du modele contenant les données de la table
-        this.tableListePaiement.setModel(this.modeleListePaiement);
+    }
 
+    private void fixerColonnesTablePaiement(boolean resizeTable) {
         //Parametrage du rendu de la table
         this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaie(), icones.getModifier_01(), this.parametres.getListArticles(), this.modeleListePaiement));
         this.tableListePaiement.setRowHeight(25);
 
-        TableColumn col_No = this.tableListePaiement.getColumnModel().getColumn(0);
-        col_No.setPreferredWidth(30);
-        col_No.setMaxWidth(30);
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(0), 30, true, null);
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(1), 150, true, new EditeurDate(this.modeleListePaiement));
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(2), 200, false, editeurArticle);
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(3), 200, true, null);
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(4), 150, true, new EditeurMode());
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(5), 120, true, null);
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(6), 120, true, null);
 
-        TableColumn col_Date = this.tableListePaiement.getColumnModel().getColumn(1);
-        col_Date.setCellEditor(new EditeurDate(this.modeleListePaiement));
-        col_Date.setPreferredWidth(150);
-        col_Date.setMaxWidth(150);
+        //On écoute les sélction
+        this.tableListePaiement.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() == false) {
+                    ecouterPaiementSelectionne();
+                    actualiserTotaux();
+                }
+            }
+        });
 
-        TableColumn col_Article = this.tableListePaiement.getColumnModel().getColumn(2);
-        col_Article.setCellEditor(editeurArticle);
-        col_Article.setPreferredWidth(200);
-
-        TableColumn col_Reference = this.tableListePaiement.getColumnModel().getColumn(3);
-        col_Reference.setPreferredWidth(200);
-        col_Reference.setMaxWidth(200);
-
-        TableColumn col_Mode = this.tableListePaiement.getColumnModel().getColumn(4);
-        col_Mode.setCellEditor(new EditeurMode());
-        col_Mode.setPreferredWidth(150);
-        col_Mode.setMaxWidth(150);
-
-        TableColumn col_Montant = this.tableListePaiement.getColumnModel().getColumn(5);
-        col_Montant.setPreferredWidth(120);
-        col_Montant.setMaxWidth(120);
-
-        TableColumn col_Reste = this.tableListePaiement.getColumnModel().getColumn(6);
-        col_Reste.setPreferredWidth(120);
-        col_Reste.setMaxWidth(120);
+        if (resizeTable == true) {
+            this.tableListePaiement.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        }
     }
 
-    private void parametrerTableEcheance() {
+    private void parametrerTablePaiement() {
+        initModelTablePaiement();
+        chargerDataTablePaiement();
+        fixerColonnesTablePaiement(true);
+    }
+
+    private void initModelTableEcheance() {
         this.modeleListeEcheance = new ModeleListeEcheance(scrollListeEcheances, modeleListePaiement, modeleListeArticles, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
             }
-        }, parametres.getMonnaie(), parametres.getIdMonnaie(), parametres.getNumero(), parametres.getIdFacture(), parametres.getExerciceFiscale());
+        }, parametres.getNumero(), parametres.getIdFacture(), parametres.getMonnaie().getId(), parametres.getExerciceFiscale());
 
         //Parametrage du modele contenant les données de la table
         this.tableListeEcheance.setModel(this.modeleListeEcheance);
-
+    }
+    
+    private void chargerDataTableEcheance(){
+        //Rien
+    }
+    
+    private void fixerColonnesTableEcheance(boolean resizeTable){
         //Parametrage du rendu de la table
         this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaie(), icones.getModifier_01(), icones.getSablier_01(), modeleListeEcheance));
         this.tableListeEcheance.setRowHeight(25);
 
-        TableColumn col_No = this.tableListeEcheance.getColumnModel().getColumn(0);
-        col_No.setPreferredWidth(30);
-        col_No.setMaxWidth(30);
+        //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(0), 30, true, null);
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(1), 150, false, null);
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(2), 130, true, null);
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(3), 130, true, null);
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(4), 150, true, null);
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(5), 150, true, null);
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(6), 150, true, null);
+        
+        //On écoute les sélction
+        this.tableListeEcheance.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting() == false) {
+                    ecouterEcheanceSelectionne();
+                    actualiserTotaux();
+                }
+            }
+        });
 
-        TableColumn col_Nom = this.tableListeEcheance.getColumnModel().getColumn(1);
-        col_Nom.setPreferredWidth(80);
+        if (resizeTable == true) {
+            this.tableListeEcheance.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        }
+    }
 
-        TableColumn col_Date_initiale = this.tableListeEcheance.getColumnModel().getColumn(2);
-        col_Date_initiale.setPreferredWidth(90);
-        col_Date_initiale.setMaxWidth(90);
-
-        TableColumn col_Date_finale = this.tableListeEcheance.getColumnModel().getColumn(3);
-        col_Date_finale.setPreferredWidth(90);
-        col_Date_finale.setMaxWidth(90);
-
-        TableColumn col_status = this.tableListeEcheance.getColumnModel().getColumn(4);
-        col_status.setPreferredWidth(120);
-        col_status.setMaxWidth(120);
-
-        TableColumn col_montant_du = this.tableListeEcheance.getColumnModel().getColumn(5);
-        col_montant_du.setPreferredWidth(80);
-        col_montant_du.setMaxWidth(80);
-
-        TableColumn col_progression = this.tableListeEcheance.getColumnModel().getColumn(6);
-        col_progression.setPreferredWidth(80);
-        col_progression.setMaxWidth(80);
+    private void parametrerTableEcheance() {
+        initModelTableEcheance();
+        chargerDataTableEcheance();
+        fixerColonnesTableEcheance(true);
     }
 
     private void appliquerTva() {
@@ -404,9 +456,7 @@ public class Panel extends javax.swing.JPanel {
             }
         }
     }
-    
-    
-    
+
     private boolean mustBeSaved() {
         boolean rep = false;
         //On vérifie dans la liste d'articles
@@ -431,10 +481,10 @@ public class Panel extends javax.swing.JPanel {
             if (dialogResult == JOptionPane.YES_OPTION) {
                 this.parametres.getEcouteurFacture().onEnregistre(getSortieFacture(btEnregistrer, rubEnregistrer));
                 this.ecouteurClose.onFermer();
-            }else if(dialogResult == JOptionPane.NO_OPTION){
+            } else if (dialogResult == JOptionPane.NO_OPTION) {
                 this.ecouteurClose.onFermer();
             }
-        }else{
+        } else {
             int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir fermer cette fenêtre?", "Avertissement", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 this.ecouteurClose.onFermer();
@@ -458,15 +508,15 @@ public class Panel extends javax.swing.JPanel {
                 if (rubriqueDeclencheur != null) {
                     rubriqueDeclencheur.appliquerDroitAccessDynamique(true);
                 }
-                
+
                 //On redessine les tableau afin que les couleurs se réinitialisent / Tout redevient noire
-                if(modeleListeArticles != null){
+                if (modeleListeArticles != null) {
                     modeleListeArticles.redessinerTable();
                 }
-                if(modeleListePaiement != null){
+                if (modeleListePaiement != null) {
                     modeleListePaiement.redessinerTable();
                 }
-                if(modeleListeEcheance != null){
+                if (modeleListeEcheance != null) {
                     modeleListeEcheance.redessinerTable();
                 }
             }
@@ -512,7 +562,7 @@ public class Panel extends javax.swing.JPanel {
         if (this.parametres.getEcouteurFacture() != null) {
             rubEnregistrer.setCouleur(Color.BLACK);
             btEnregistrer.setCouleur(Color.BLACK);
-            
+
             SortiesFacture sortiesFacture = getSortieFacture(btEnregistrer, rubEnregistrer);
             this.parametres.getEcouteurFacture().onEnregistre(sortiesFacture);
         }
@@ -529,13 +579,14 @@ public class Panel extends javax.swing.JPanel {
         double Trab = modeleListeArticles.getTotal_Rabais();
         double Tsolde = Util.round(Tttc - Tpaye, 2);
 
-        labTotalHT.setText(Util.getMontantFrancais(Tnet) + " " + this.parametres.getMonnaie());
-        labRemise.setText("-" + Util.getMontantFrancais(Trab) + " " + this.parametres.getMonnaie());
-        labTotalTVA.setText(Util.getMontantFrancais(Ttva) + " " + this.parametres.getMonnaie());
-        labTotalTTC.setText(Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie());
-        labTotalPaye.setText(Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie());
-        labTotalSolde.setText(Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie());
-        ecouteurClose.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").", icones.getInfos_01());
+        String monn = this.parametres.getMonnaie().getCode();
+        labTotalHT.setText(Util.getMontantFrancais(Tnet) + " " + monn);
+        labRemise.setText("-" + Util.getMontantFrancais(Trab) + " " + monn);
+        labTotalTVA.setText(Util.getMontantFrancais(Ttva) + " " + monn);
+        labTotalTTC.setText(Util.getMontantFrancais(Tttc) + " " + monn);
+        labTotalPaye.setText(Util.getMontantFrancais(Tpaye) + " " + monn);
+        labTotalSolde.setText(Util.getMontantFrancais(Tsolde) + " " + monn);
+        //ecouteurClose.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").", icones.getInfos_01());
     }
 
     private void supprimer() {
@@ -781,26 +832,6 @@ public class Panel extends javax.swing.JPanel {
                     menuContextuel.afficher(scrollListeEcheances, evt.getX(), evt.getY());
                     break;
             }
-        }
-        switch (tab) {
-            case 0:
-                InterfaceArticle artcl = modeleListeArticles.getArticle(tableListeArticle.getSelectedRow());
-                if (artcl != null) {
-                    this.ecouteurClose.onActualiser(artcl.getNom() + ", " + artcl.getQte() + " " + artcl.getUnite() + ", Total TTC : " + Util.getMontantFrancais(artcl.getTotalTTC()) + " " + this.parametres.getMonnaie(), icones.getTaxes_01());
-                }
-                break;
-            case 1:
-                InterfacePaiement paiment = modeleListePaiement.getPaiement(tableListePaiement.getSelectedRow());
-                if (paiment != null) {
-                    this.ecouteurClose.onActualiser(Util.getDateFrancais(paiment.getDate()) + ", ref.: " + paiment.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(paiment.getMontant()) + " " + this.parametres.getMonnaie() + " pour " + paiment.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(paiment.getIdArticle())) + " " + this.parametres.getMonnaie() + ").", icones.getClient_01());
-                }
-                break;
-            default:
-                InterfaceEcheance echeance = modeleListeEcheance.getEcheance_row(tableListeEcheance.getSelectedRow());
-                if (echeance != null) {
-                    this.ecouteurClose.onActualiser("Entre " + Util.getDateFrancais(echeance.getDateInitiale()) + " et " + Util.getDateFrancais(echeance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(echeance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie(), icones.getCalendrier_01());
-                }
-                break;
         }
     }
 

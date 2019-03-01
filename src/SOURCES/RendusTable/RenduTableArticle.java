@@ -6,6 +6,7 @@
 package SOURCES.RendusTable;
 
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.Util;
@@ -22,12 +23,12 @@ import javax.swing.table.TableCellRenderer;
 
 public class RenduTableArticle implements TableCellRenderer {
     
-    private String monnaie;
+    private InterfaceMonnaie monnaie;
     private ImageIcon iconeEdition;
     private Vector<InterfaceArticle> listeArticles;
     private ModeleListeArticles modeleListeArticles;
 
-    public RenduTableArticle(String monnaie, Vector<InterfaceArticle> listeArticles, ModeleListeArticles modeleListeArticles, ImageIcon iconeEdition) {
+    public RenduTableArticle(InterfaceMonnaie monnaie, Vector<InterfaceArticle> listeArticles, ModeleListeArticles modeleListeArticles, ImageIcon iconeEdition) {
         this.monnaie = monnaie;
         this.iconeEdition = iconeEdition;
         this.listeArticles = listeArticles;
@@ -64,11 +65,11 @@ public class RenduTableArticle implements TableCellRenderer {
             case 6:
             case 7:
                 String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
-                cellule = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                cellule = new CelluleSimpleTableau(" " + mont + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
                 break;
             case 4:
                 String mont01 = Util.getMontantFrancais(Double.parseDouble(value+""));
-                cellule = new CelluleSimpleTableau(" " + mont01 + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                cellule = new CelluleSimpleTableau(" " + mont01 + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
                 break;
             case 8:
                 cellule = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, iconeEdition);

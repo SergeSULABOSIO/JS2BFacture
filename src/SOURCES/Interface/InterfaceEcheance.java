@@ -22,7 +22,7 @@ public interface InterfaceEcheance {
     public abstract String getNumeroFacture();
     public abstract double getMontantPaye();
     public abstract double getMontantDu();
-    public abstract String getMonnaie();
+    public abstract int getIdMonnaie();
     
     //les setters
     public abstract void setId(int id);
@@ -33,5 +33,5 @@ public interface InterfaceEcheance {
     public abstract void setMontantPaye(double montant);
     public abstract void setMontantDu(double montant);
     public abstract void setIdFacture(int idFacture);
-    public abstract void setMonnaie(String monnaie);
+    public abstract void setIdMonnaie(int idMonnaie);
 }

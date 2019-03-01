@@ -11,28 +11,38 @@ import SOURCES.Interface.InterfaceArticle;
  *
  * @author HP Pavilion
  */
-public class XX_Article implements InterfaceArticle{
-    
+public class XX_Article implements InterfaceArticle {
+
     public int id;
     public String nom;
     public double qte;
     public String unite;
+    public int idMonnaie;
     public double tvaprc;
     public double prixUht;
     public double rabais;
     public int tranches;
     public int beta;
 
-    public XX_Article(int id, String nom, double qte, String unite, double tvaprc, double prixUht, double rabais, int tranches, int beta) {
+    public XX_Article(int id, String nom, double qte, String unite, int idMonnaie, double tvaprc, double prixUht, double rabais, int tranches, int beta) {
         this.id = id;
         this.nom = nom;
         this.qte = qte;
         this.unite = unite;
+        this.idMonnaie = idMonnaie;
         this.tvaprc = tvaprc;
         this.prixUht = prixUht;
         this.rabais = rabais;
         this.tranches = tranches;
         this.beta = beta;
+    }
+
+    public int getIdMonnaie() {
+        return idMonnaie;
+    }
+
+    public void setIdMonnaie(int dMonnaie) {
+        this.idMonnaie = dMonnaie;
     }
 
     public int getBeta() {
@@ -42,7 +52,6 @@ public class XX_Article implements InterfaceArticle{
     public void setBeta(int beta) {
         this.beta = beta;
     }
-    
 
     @Override
     public int getId() {
@@ -87,7 +96,7 @@ public class XX_Article implements InterfaceArticle{
     @Override
     public double getTvaMontant() {
         double mnt = getPrixUHT_apres_rabais() * getQte();
-        mnt = (mnt * getTvaPoucentage())/100;
+        mnt = (mnt * getTvaPoucentage()) / 100;
         return Util.round(mnt, 2);
     }
 
@@ -143,8 +152,7 @@ public class XX_Article implements InterfaceArticle{
 
     @Override
     public String toString() {
-        return "XX_Article{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + ", tranches=" + tranches + ", beta=" + beta + '}';
+        return "TEST_Article{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", idMonnaie=" + idMonnaie + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + ", tranches=" + tranches + ", beta=" + beta + '}';
     }
 
-    
 }

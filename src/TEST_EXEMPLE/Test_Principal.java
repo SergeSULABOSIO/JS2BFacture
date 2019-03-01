@@ -12,10 +12,13 @@ import SOURCES.Utilitaires.Parametres;
 import java.util.Date;
 import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceExercice;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.ExerciceFiscale;
 import SOURCES.Utilitaires.SortiesFacture;
+import SOURCES.Utilitaires.Util;
 
 /**
  *
@@ -25,6 +28,8 @@ public class Test_Principal extends javax.swing.JFrame {
 
     private Parametres parametres = null;
     private DonneesFacture donnees = null;
+    private int idUtilisateur = 1;
+    private String nomUtilisateur = "Serge SULA BOSIO";
     private TEST_Client client = new TEST_Client(12, "Elève", "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
     private TEST_Entreprise entreprise = new TEST_Entreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
     private ExerciceFiscale anneeScolaire = new ExerciceFiscale(new Date(119, 0, 1), new Date(119, 11, 31), "Année Scolaire 2018-2019");
@@ -32,14 +37,19 @@ public class Test_Principal extends javax.swing.JFrame {
     private int idMonnaie = 10;
     private double tva = 0;
     private double remise = 0;
-    private String monnaie = "USD";
     private String numeroFacture = "" + (new Date().getTime());
+    public TEST_Exercice exercice = new TEST_Exercice(12, entreprise.getId(), idUtilisateur, nomUtilisateur, new Date(), Util.getDate_AjouterAnnee(new Date(), 1), InterfaceExercice.BETA_EXISTANT);
+    public TEST_Monnaie defaultMonnaie = new TEST_Monnaie(idMonnaie, entreprise.getId(), idUtilisateur, exercice.getId(), "Dollars Américains", "$", InterfaceMonnaie.NATURE_MONNAIE_ETRANGERE, 1620, new Date().getTime(), InterfaceMonnaie.BETA_EXISTANT);
     private Vector<InterfaceArticle> typesArticles = new Vector<>();
     private Vector<InterfaceArticle> donneesArticles = new Vector<>();
     private Vector<InterfacePaiement> donneesPaiements = new Vector<>();
 
     private PanelFacture panelFacture = null;
     private DialogueFacture dialogueFacture = null;
+    
+    public TEST_Article INSCRIPTION = new TEST_Article(12, "INSCRIPTION", 1, "Année", defaultMonnaie.getId(), 0, 50, 0, 1, InterfaceArticle.BETA_EXISTANT);
+    public TEST_Article MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", defaultMonnaie.getId(), 0, 1500, 0, 3, InterfaceArticle.BETA_EXISTANT);
+    public TEST_Article TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", defaultMonnaie.getId(), 0, 10, 0, 1, InterfaceArticle.BETA_EXISTANT);
 
     /**
      * Creates new form TestPrincipal
@@ -51,12 +61,12 @@ public class Test_Principal extends javax.swing.JFrame {
     private void initParametres() {
         //On charge les types d'articles qui existent
         typesArticles.removeAllElements();
-        typesArticles.add(new TEST_Article(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1, InterfaceArticle.BETA_EXISTANT));
-        typesArticles.add(new TEST_Article(2, "MINERVALE", 1, "Année", 0, 1500, 0, 3, InterfaceArticle.BETA_EXISTANT));
-        typesArticles.add(new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", 0, 10, 0, 1, InterfaceArticle.BETA_EXISTANT));
+        typesArticles.add(INSCRIPTION);
+        typesArticles.add(MINERVALE);
+        typesArticles.add(TRAVAIL_MANUEL);
 
         //Initialisation des paramètres
-        this.parametres = new Parametres("Serge SULA BOSIO", numeroFacture, idFacture, typesArticles, client, entreprise, monnaie, idMonnaie, tva, remise, anneeScolaire);
+        this.parametres = new Parametres(nomUtilisateur, numeroFacture, idFacture, typesArticles, client, entreprise, defaultMonnaie, tva, remise, anneeScolaire);
 
         //Initialisation de l'écouteur du gestionnaire de facture
         this.parametres.setEcouteurFacture(new EcouteurFacture() {
@@ -105,11 +115,13 @@ public class Test_Principal extends javax.swing.JFrame {
 
         //On charges les articles séléctionés
         donneesArticles.removeAllElements();
-        donneesArticles.add(new TEST_Article(12, "INSCRIPTION", 1, "Année", 0, 50, 0, 1, InterfaceArticle.BETA_EXISTANT));
+        donneesArticles.add(INSCRIPTION);
+        donneesArticles.add(MINERVALE);
+        donneesArticles.add(TRAVAIL_MANUEL);
 
         //On charge les paiements déjà reçus ou  effectués par le client
         donneesPaiements.removeAllElements();
-        donneesPaiements.add(new TEST_Paiement(120, 12, 12, "Serge SULA BOSIO", "INSCRIPTION", "Serge SULA BOSIO", 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSEREDVFGFD22445", InterfacePaiement.BETA_EXISTANT));
+        donneesPaiements.add(new TEST_Paiement(120, 12, 12, "Serge SULA BOSIO", INSCRIPTION.getNom(), "Serge SULA BOSIO", 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSEREDVFGFD22445", InterfacePaiement.BETA_EXISTANT));
 
         //Initialisation des données (Articles et paiements reçus)
         donnees = new DonneesFacture(donneesArticles, donneesPaiements);

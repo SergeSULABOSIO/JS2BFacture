@@ -6,6 +6,7 @@
 package SOURCES.RendusTable;
 
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.CelluleSimpleTableau;
@@ -23,12 +24,12 @@ import javax.swing.table.TableCellRenderer;
  */
 public class RenduTablePaiement implements TableCellRenderer {
 
-    private String monnaie;
+    private InterfaceMonnaie monnaie;
     private ImageIcon iconeEdition;
     private Vector<InterfaceArticle> listeArticles;
     private ModeleListePaiement modeleListePaiement;
 
-    public RenduTablePaiement(String monnaie, ImageIcon iconeEdition, Vector<InterfaceArticle> listeArticles, ModeleListePaiement modeleListePaiement) {
+    public RenduTablePaiement(InterfaceMonnaie monnaie, ImageIcon iconeEdition, Vector<InterfaceArticle> listeArticles, ModeleListePaiement modeleListePaiement) {
         this.monnaie = monnaie;
         this.iconeEdition = iconeEdition;
         this.listeArticles = listeArticles;
@@ -81,10 +82,10 @@ public class RenduTablePaiement implements TableCellRenderer {
         } else {
             if (column == 5) {
                 String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
-                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
             } else {
                 String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
-                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
             }
         }
         celluleNum.ecouterSelection(isSelected, row, getBeta(row), hasFocus);

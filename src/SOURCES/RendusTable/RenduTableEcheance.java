@@ -6,6 +6,7 @@
 package SOURCES.RendusTable;
 
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.UI.CelluleProgressionTableau;
 import SOURCES.UI.CelluleSimpleTableau;
@@ -22,11 +23,11 @@ import javax.swing.table.TableCellRenderer;
  */
 public class RenduTableEcheance implements TableCellRenderer {
 
-    private String monnaie;
+    private InterfaceMonnaie monnaie;
     private ImageIcon iconeEdition, iconeProgression;
     private ModeleListeEcheance modeleListeEcheance;
 
-    public RenduTableEcheance(String monnaie, ImageIcon iconeEdition, ImageIcon iconeProgression, ModeleListeEcheance modeleListeEcheance) {
+    public RenduTableEcheance(InterfaceMonnaie monnaie, ImageIcon iconeEdition, ImageIcon iconeProgression, ModeleListeEcheance modeleListeEcheance) {
         this.monnaie = monnaie;
         this.iconeEdition = iconeEdition;
         this.iconeProgression = iconeProgression;
@@ -60,13 +61,13 @@ public class RenduTableEcheance implements TableCellRenderer {
                 return celluleNum;
             case 5:
                 String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
-                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
                 celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 6:
                 double valeur = Double.parseDouble(value+"");
                 double montDu = modeleListeEcheance.getEcheance_row(row).getMontantDu();
-                CelluleProgressionTableau celluleProgress = new CelluleProgressionTableau(monnaie, valeur, montDu, iconeProgression);
+                CelluleProgressionTableau celluleProgress = new CelluleProgressionTableau(monnaie.getCode(), valeur, montDu, iconeProgression);
                 celluleProgress.ecouterSelection(isSelected, row, hasFocus);
                 return celluleProgress;
             default:
