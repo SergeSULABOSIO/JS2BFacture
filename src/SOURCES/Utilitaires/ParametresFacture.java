@@ -5,8 +5,6 @@
  */
 package SOURCES.Utilitaires;
 
-import java.util.Vector;
-import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;

@@ -244,7 +244,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void initModelTableArticle() {
-        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, btEnregistrer, rubEnregistrer, this.parametres.getTva(), this.parametres.getListArticles(), new EcouteurValeursChangees() {
+        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, btEnregistrer, rubEnregistrer, 0, this.donneesFacture.getArticles(), new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 //Actualisation des listes de base
@@ -254,14 +254,14 @@ public class Panel extends javax.swing.JPanel {
                 actualiserTotaux();
             }
         });
-        this.editeurArticle = new EditeurArticle(this.parametres.getListArticles(), modeleListePaiement);
+        this.editeurArticle = new EditeurArticle(this.donneesFacture.getArticles(), modeleListePaiement);
         this.tableListeArticle.setModel(this.modeleListeArticles);
     }
 
     private void chargerDataTableArticle() {
         //On charge les données s'il y en a
-        if (this.parametres.getDonnees() != null) {
-            this.modeleListeArticles.setListeArticles(this.parametres.getDonnees().getArticles());
+        if (this.donneesFacture != null) {
+            this.modeleListeArticles.setListeArticles(this.donneesFacture.getArticles());
         }
     }
 
@@ -278,7 +278,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void fixerColonnesTableArticles(boolean resizeTable) {
         //Parametrage du rendu de la table
-        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaie(), this.parametres.getListArticles(), this.modeleListeArticles, icones.getModifier_01()));
+        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaieOutPut(), this.donneesFacture.getArticles(), this.modeleListeArticles, icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
 
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
@@ -313,7 +313,7 @@ public class Panel extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedArticle = modeleListeArticles.getArticle(ligneSelected);
             if (SelectedArticle != null) {
-                this.ecouteurClose.onActualiser(SelectedArticle.getNom() + ", " + SelectedArticle.getQte() + " " + SelectedArticle.getUnite() + ", Total TTC : " + Util.getMontantFrancais(SelectedArticle.getTotalTTC()) + " " + this.parametres.getMonnaie().getCode(), icones.getTaxes_01());
+                this.ecouteurClose.onActualiser(SelectedArticle.getNom() + ", " + SelectedArticle.getQte() + " " + SelectedArticle.getUnite() + ", Total TTC : " + Util.getMontantFrancais(SelectedArticle.getTotalTTC()) + " " + this.parametres.getMonnaieOutPut().getCode(), icones.getTaxes_01());
             }
         }
     }
@@ -323,7 +323,7 @@ public class Panel extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedPaiement = modeleListePaiement.getPaiement(ligneSelected);
             if (SelectedPaiement != null) {
-                this.ecouteurClose.onActualiser(Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + this.parametres.getMonnaie().getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle())) + " " + this.parametres.getMonnaie().getCode() + ").", icones.getClient_01());
+                this.ecouteurClose.onActualiser(Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + this.parametres.getMonnaieOutPut().getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle())) + " " + this.parametres.getMonnaieOutPut().getCode() + ").", icones.getClient_01());
             }
         }
         chargerPaiementsSeletced();
@@ -334,7 +334,7 @@ public class Panel extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedEcheance = modeleListeEcheance.getEcheance_row(ligneSelected);
             if (SelectedEcheance != null) {
-                this.ecouteurClose.onActualiser("Entre " + Util.getDateFrancais(SelectedEcheance.getDateInitiale()) + " et " + Util.getDateFrancais(SelectedEcheance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(SelectedEcheance.getMontantDu(), 2)) + " " + this.parametres.getMonnaie().getCode(), icones.getCalendrier_01());
+                this.ecouteurClose.onActualiser("Entre " + Util.getDateFrancais(SelectedEcheance.getDateInitiale()) + " et " + Util.getDateFrancais(SelectedEcheance.getDateFinale()) + ", il faut payer " + Util.getMontantFrancais(Util.round(SelectedEcheance.getMontantDu(), 2)) + " " + this.parametres.getMonnaieOutPut().getCode(), icones.getCalendrier_01());
             }
         }
     }
@@ -347,25 +347,25 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void initModelTablePaiement() {
-        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.parametres, new EcouteurValeursChangees() {
+        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.donneesFacture, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
             }
         });
-        this.editeurArticle = new EditeurArticle(this.parametres.getListArticles(), modeleListePaiement);
+        this.editeurArticle = new EditeurArticle(this.donneesFacture.getArticles(), modeleListePaiement);
         this.tableListePaiement.setModel(this.modeleListePaiement);
     }
 
     private void chargerDataTablePaiement() {
-        if (this.parametres.getDonnees() != null) {
-            this.modeleListePaiement.setListePaiements(this.parametres.getDonnees().getPaiements());
+        if (this.donneesFacture.getPaiements() != null) {
+            this.modeleListePaiement.setListePaiements(this.donneesFacture.getPaiements());
         }
     }
 
     private void fixerColonnesTablePaiement(boolean resizeTable) {
         //Parametrage du rendu de la table
-        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaie(), icones.getModifier_01(), this.parametres.getListArticles(), this.modeleListePaiement));
+        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaieOutPut(), icones.getModifier_01(), this.donneesFacture.getArticles(), this.modeleListePaiement));
         this.tableListePaiement.setRowHeight(25);
 
         setTaille(this.tableListePaiement.getColumnModel().getColumn(0), 30, true, null);
@@ -399,12 +399,12 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void initModelTableEcheance() {
-        this.modeleListeEcheance = new ModeleListeEcheance(scrollListeEcheances, modeleListePaiement, modeleListeArticles, new EcouteurValeursChangees() {
+        this.modeleListeEcheance = new ModeleListeEcheance(scrollListeEcheances, modeleListePaiement, modeleListeArticles, parametres, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
             }
-        }, parametres.getNumero(), parametres.getIdFacture(), parametres.getMonnaie().getId(), parametres.getExerciceFiscale());
+        });
 
         //Parametrage du modele contenant les données de la table
         this.tableListeEcheance.setModel(this.modeleListeEcheance);
@@ -416,7 +416,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void fixerColonnesTableEcheance(boolean resizeTable) {
         //Parametrage du rendu de la table
-        this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaie(), icones.getModifier_01(), icones.getSablier_01(), modeleListeEcheance));
+        this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaieOutPut(), icones.getModifier_01(), icones.getSablier_01(), modeleListeEcheance));
         this.tableListeEcheance.setRowHeight(25);
 
         //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
@@ -451,11 +451,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void appliquerTva() {
-        if (this.parametres.getTva() == 0) {
-            combVatRule.setSelectedIndex(1);
-        } else {
-            combVatRule.setSelectedIndex(0);
-        }
+        combVatRule.setSelectedIndex(1);
     }
 
     private void genererRecu() {
@@ -509,7 +505,7 @@ public class Panel extends javax.swing.JPanel {
         if (mustBeSaved() == true) {
             int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous enregistrer les modifications et/ou ajouts apportés à ces données?", "Avertissement", JOptionPane.YES_NO_CANCEL_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
-                this.parametres.getEcouteurFacture().onEnregistre(getSortieFacture(btEnregistrer, rubEnregistrer));
+                this.ecouteurFacture.onEnregistre(getSortieFacture(btEnregistrer, rubEnregistrer));
                 this.ecouteurClose.onFermer();
             } else if (dialogResult == JOptionPane.NO_OPTION) {
                 this.ecouteurClose.onFermer();
@@ -524,10 +520,7 @@ public class Panel extends javax.swing.JPanel {
 
     private SortiesFacture getSortieFacture(Bouton boutonDeclencheur, RubriqueSimple rubriqueDeclencheur) {
         SortiesFacture sortiesFacture = new SortiesFacture(
-                this.donneesFacture.getEleve(),
-                this.modeleListeArticles.getListeData(),
                 this.modeleListePaiement.getListeData(),
-                this.modeleListeEcheance.getListeData(),
                 new EcouteurEnregistrement() {
             @Override
             public void onDone(String message) {

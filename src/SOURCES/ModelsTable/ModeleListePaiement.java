@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.ParametresFacture;
 import java.awt.Color;
 
@@ -29,14 +30,14 @@ public class ModeleListePaiement extends AbstractTableModel {
     private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
-    private ParametresFacture parametres;
+    private DonneesFacture donneesFacture;
     private Bouton btEnreg;
     private RubriqueSimple mEnreg;
 
-    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, ParametresFacture parametres, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, DonneesFacture donneesFacture, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
-        this.parametres = parametres;
+        this.donneesFacture = donneesFacture;
         this.mEnreg = mEnreg;
         this.btEnreg = btEnreg;
     }
@@ -126,8 +127,8 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     private double getMontantTotalPayable(int idArticle) {
         double tot = 0;
-        if (parametres != null) {
-            for (InterfaceArticle articleApayer : parametres.getListArticles()) {
+        if (donneesFacture != null) {
+            for (InterfaceArticle articleApayer : donneesFacture.getArticles()) {
                 if (idArticle == articleApayer.getId()) {
                     tot = tot + articleApayer.getTotalTTC();
                 }
@@ -234,8 +235,8 @@ public class ModeleListePaiement extends AbstractTableModel {
     }
     
     private void updateArticle(InterfacePaiement newPaiement) {
-        if (newPaiement != null && parametres != null) {
-            for (InterfaceArticle Iarticle : parametres.getListArticles()) {
+        if (newPaiement != null && donneesFacture != null) {
+            for (InterfaceArticle Iarticle : donneesFacture.getArticles()) {
                 if (Iarticle.getId() == newPaiement.getIdArticle()) {
                     //System.out.println("Article: " + Iarticle.getNom());
                     newPaiement.setNomArticle(Iarticle.getNom());

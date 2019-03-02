@@ -33,8 +33,8 @@ import javax.swing.JOptionPane;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEntreprise;
-import SOURCES.Interface.InterfaceClient;
 import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Interface.InterfaceEleve;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.Utilitaires.SortiesFacture;
 
@@ -105,12 +105,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             writer.setPageEvent(new MarqueS2B());
             this.document.open();
             this.setDonneesBibliographiques();
-            String RubriqueNomClient = "Nom du Client";
-            if (this.gestionnaireFacture != null) {
-                RubriqueNomClient = this.gestionnaireFacture.getRubriqueNomClient();
-            }
-            this.setContenuDeLaPage(RubriqueNomClient);
-
+            this.setContenuDeLaPage("Elève");
             this.document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,7 +184,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
         if (this.gestionnaireFacture != null) {
             preface.add(getParagraphe("Date: " + Util.getDateFrancais(this.gestionnaireFacture.getDateFacture()), Font_Titre3, Element.ALIGN_RIGHT));
-            preface.add(getParagraphe(titre + " n°" + this.gestionnaireFacture.getNumeroFacture(), Font_Titre1, Element.ALIGN_CENTER));
+            preface.add(getParagraphe(titre + " n°" + this.gestionnaireFacture.getParametres().getNumero(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
             preface.add(getParagraphe("Date: " + Util.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
@@ -200,7 +195,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     private void setSignataire() throws Exception {
         if (this.gestionnaireFacture != null) {
             this.document.add(getParagraphe(""
-                    + "Produit par " + this.gestionnaireFacture.getNomUtilisateur() + "\n"
+                    + "Produit par " + this.gestionnaireFacture.getParametres().getNomUtilisateur() + "\n"
                     + "Validé par :..............................................\n\n"
                     + "Signature", Font_TexteSimple, Element.ALIGN_RIGHT));
         } else {
@@ -214,7 +209,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setBasDePage() throws Exception {
         if (this.gestionnaireFacture != null) {
-            InterfaceEntreprise entreprise = this.gestionnaireFacture.getEntreprise();
+            InterfaceEntreprise entreprise = this.gestionnaireFacture.getParametres().getEntreprise();
             if (entreprise != null) {
                 this.document.add(getParagraphe(entreprise.getNom() + "\n" + entreprise.getAdresse() + " | " + entreprise.getTelephone() + " | " + entreprise.getEmail() + " | " + entreprise.getSiteWeb(), Font_TexteSimple, Element.ALIGN_CENTER));
             } else {
@@ -254,7 +249,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             PdfPCell celluleLogoEntreprise = null;
             String logo = "";
             if (this.gestionnaireFacture != null) {
-                logo = this.gestionnaireFacture.getEntreprise().getLogo();
+                logo = this.gestionnaireFacture.getParametres().getEntreprise().getLogo();
             }
             File ficLogo = new File(logo);
             if (ficLogo.exists() == true) {
@@ -281,7 +276,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             celluleDetailsEntreprise.setHorizontalAlignment(Element.ALIGN_TOP);
 
             if (this.gestionnaireFacture != null) {
-                InterfaceEntreprise entreprise = this.gestionnaireFacture.getEntreprise();
+                InterfaceEntreprise entreprise = this.gestionnaireFacture.getParametres().getEntreprise();
                 if (entreprise != null) {
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getNom(), Font_Titre2, Element.ALIGN_LEFT));
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getAdresse(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
@@ -321,9 +316,9 @@ public class DocumentPDF extends PdfPageEventHelper {
             celluleDonnees.setPadding(2);
             celluleDonnees.setBorderWidth(0);
             if (this.gestionnaireFacture != null) {
-                InterfaceClient client = this.gestionnaireFacture.getClient();
-                if (client != null) {
-                    celluleDonnees.addElement(getParagraphe(client.getNom() + "\n" + client.getTelephone() + "\n" + this.gestionnaireFacture.getParametres().getExerciceFiscale().getNom() + ", " + client.getAutresInfos(), Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+                InterfaceEleve eleve = this.gestionnaireFacture.getDonneesFacture().getEleve();
+                if (eleve != null) {
+                    celluleDonnees.addElement(getParagraphe(eleve.getNom() + "\n" + eleve.getTelephonesParents()+ "\n" + this.gestionnaireFacture.getParametres().getExercice().getNom(), Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 } else {
                     celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 }
@@ -369,7 +364,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                 setDerniereLigneTabReleve(tableReleve, totPaye, totReste);
             }
             document.add(tableReleve);
-            String monnaie = gestionnaireFacture.getParametres().getMonnaie().getNom();
+            String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getNom();
             document.add(getParagraphe("En lettre : " + (Util.getMontantLettres(totPaye, monnaie)), Font_TexteSimple_petit_Gras, Element.ALIGN_RIGHT));
             
         } catch (Exception e) {
@@ -431,7 +426,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                     double Tttc = mfacture.getTotal_TTC();
                     double Trab = mfacture.getTotal_Rabais();
                     double Tsolde = Util.round(Tttc - Tpaye, 2);
-                    setLignesTabSynthese(tableSynthese, 0, this.gestionnaireFacture.getParametres().getMonnaie().getCode(), Trab, Tnet, Ttva, Tttc, Tpaye, Tsolde);
+                    setLignesTabSynthese(tableSynthese, 0, this.gestionnaireFacture.getParametres().getMonnaieOutPut().getCode(), Trab, Tnet, Ttva, Tttc, Tpaye, Tsolde);
                 }
             } else {
                 setLignesTabSynthese(tableSynthese, 0, "$", 100, 1000, 160, 1160, 60, 1100);
@@ -501,7 +496,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     }
 
     private void setLigneTabArticle(PdfPTable tableDetailsArticles, String NomArticle, int i, double qt, double punit1, double rabais, double punit2, double mntTva, double totalTTC) {
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie().getCode();
+        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
         tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(qt) + "", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
@@ -513,7 +508,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     }
 
     private void setLigneTabReleve(PdfPTable tableDetailsArticles, String date, String NomArticle, String reference, int mode, int i, double montant, double reste) {
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie().getCode();
+        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
         tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(date, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
@@ -529,7 +524,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setLigneTabEcheance(PdfPTable tableEchances, String nomEcheance, String dateDebut, String dateFin, String progression, int i, double montantDu, double montantPaye) {
         //new String[]{"N°", "Tranche", "Début", "Echéance", "Progession", "Montant dû", "Montant payé"},
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie().getCode();
+        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
         tableEchances.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableEchances.addCell(getCelluleTableau(nomEcheance, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
         tableEchances.addCell(getCelluleTableau(dateDebut, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
@@ -541,7 +536,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setDerniereLigneTabEcheance(PdfPTable tableEchances, double totalDu, double totalPaye) {
         //{"N°", "Tranche", "Début", "Echéance", "Progession", "Montant dû", "Montant reçu"},
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie().getCode();
+        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
         tableEchances.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableEchances.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableEchances.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
@@ -578,7 +573,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     private void setDetailsBanque(PdfPTable tableau, float borderwidth) {
         if (this.gestionnaireFacture != null) {
-            InterfaceEntreprise entreprise = this.gestionnaireFacture.getEntreprise();
+            InterfaceEntreprise entreprise = this.gestionnaireFacture.getParametres().getEntreprise();
             if (entreprise != null) {
                 if (entreprise.getBanque().trim().length() != 0) {
                     tableau.addCell(getCelluleTableau("Banque :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
@@ -624,7 +619,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     }
 
     private void setDerniereLigneTabArticle(PdfPTable tableDetailsArticles, double punit1, double rabais, double punit2, double mntTva, double totalTTC) {
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie().getCode();
+        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
@@ -636,7 +631,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     }
 
     private void setDerniereLigneTabReleve(PdfPTable tableDetailsArticles, double montant, double reste) {
-        String monnaie = gestionnaireFacture.getParametres().getMonnaie().getCode();
+        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));

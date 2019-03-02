@@ -16,8 +16,7 @@ import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
-import SOURCES.Interface.InterfaceMonnaie;
-import SOURCES.Utilitaires.ANNEE_SCOLAIRE;
+import SOURCES.Utilitaires.ParametresFacture;
 
 /**
  *
@@ -31,22 +30,15 @@ public class ModeleListeEcheance extends AbstractTableModel {
     private EcouteurValeursChangees ecouteurModele;
     private ModeleListePaiement modeleListePaiement;
     private ModeleListeArticles modeleListeArticles;
-    private int idMonnaie;
-    private String numeroFacture;
-    private int idFacture;
-
-    private ANNEE_SCOLAIRE exerciceFiscale;
+    private ParametresFacture parametresFacture;
     public int nombreTranches = 1;
 
-    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele, String numeroFacture, int idFacture, int idMonnaie, ANNEE_SCOLAIRE exerciceFiscale) {
+    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, ParametresFacture parametresFacture, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.modeleListePaiement = modeleListePaiement;
         this.modeleListeArticles = modeleListeArticles;
-        this.numeroFacture = numeroFacture;
-        this.idFacture = idFacture;
-        this.idMonnaie = idMonnaie;
-        this.exerciceFiscale = exerciceFiscale;
+        this.parametresFacture = parametresFacture;
 
         this.param_tranches_creer();
         this.param_tranches_init_dates();
@@ -231,29 +223,32 @@ public class ModeleListeEcheance extends AbstractTableModel {
     }
 
     private void param_tranches_creer() {
-        this.listeData.removeAllElements();
-        int nombre = getNbTranches();
-        for (int i = 0; i < nombre; i++) {
-            String nomTranche = "1ère Tranche";
-            if ((i + 1) > 1) {
-                nomTranche = (i + 1) + "ème Tranche";
+        if (parametresFacture != null) {
+            this.listeData.removeAllElements();
+            int nombre = getNbTranches();
+            for (int i = 0; i < nombre; i++) {
+                String nomTranche = "1ère Tranche";
+                if ((i + 1) > 1) {
+                    nomTranche = (i + 1) + "ème Tranche";
+                }
+                Date debut = parametresFacture.getExercice().getDebut();
+                Date fin = parametresFacture.getExercice().getFin();
+                XX_Echeance trancheTempo = new XX_Echeance(-1, nomTranche, parametresFacture.getIdFacture(), debut, fin, parametresFacture.getNumero(), 0, 0, parametresFacture.getMonnaieOutPut().getId());
+                this.listeData.add(trancheTempo);
             }
-            XX_Echeance trancheTempo = new XX_Echeance(-1, nomTranche, idFacture, this.exerciceFiscale.getDebut(), exerciceFiscale.getFin(), numeroFacture, 0, 0, idMonnaie);
-
-            this.listeData.add(trancheTempo);
         }
     }
 
     private void param_tranches_init_dates() {
         nombreTranches = getNbTranches();
-        double daysExercice = Util.getNombre_jours(exerciceFiscale.getFin(), exerciceFiscale.getDebut());
+        double daysExercice = Util.getNombre_jours(parametresFacture.getExercice().getFin(), parametresFacture.getExercice().getDebut());
         double nbDaysParTranche = daysExercice / nombreTranches;
         long nbDaysParTrancheLong = (long) ((nbDaysParTranche) * 1000 * 60 * 60 * 24);
         long cumulDays = 0;
         if (!this.listeData.isEmpty()) {
             for (int i = 0; i < nombreTranches; i++) {
                 InterfaceEcheance echeEncours = listeData.elementAt(i);
-                echeEncours.setDateInitiale(new Date(exerciceFiscale.getDebut().getTime() + cumulDays));
+                echeEncours.setDateInitiale(new Date(parametresFacture.getExercice().getDebut().getTime() + cumulDays));
                 echeEncours.setDateFinale(new Date(echeEncours.getDateInitiale().getTime() + nbDaysParTrancheLong));
                 cumulDays = cumulDays + nbDaysParTrancheLong;
             }

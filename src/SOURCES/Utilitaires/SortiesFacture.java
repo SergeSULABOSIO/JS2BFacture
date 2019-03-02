@@ -6,9 +6,6 @@
 package SOURCES.Utilitaires;
 
 import SOURCES.CallBack.EcouteurEnregistrement;
-import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfaceEcheance;
-import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfacePaiement;
 import java.util.Vector;
 
@@ -17,35 +14,15 @@ import java.util.Vector;
  * @author user
  */
 public class SortiesFacture {
-    private InterfaceEleve eleve;
-    private Vector<InterfaceArticle> articles;
     private Vector<InterfacePaiement> paiements;
-    private Vector<InterfaceEcheance> echeances;
     private EcouteurEnregistrement ecouteurEnregistrement;
 
-    public SortiesFacture(InterfaceEleve eleve, Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeances, EcouteurEnregistrement ecouteurEnregistrement) {
-        this.eleve = eleve;
-        this.articles = articles;
+    public SortiesFacture(Vector<InterfacePaiement> paiements, EcouteurEnregistrement ecouteurEnregistrement) {
         this.paiements = paiements;
-        this.echeances = echeances;
         this.ecouteurEnregistrement = ecouteurEnregistrement;
     }
 
-    public InterfaceClient getClient() {
-        return client;
-    }
-
-    public void setClient(InterfaceClient client) {
-        this.client = client;
-    }
-
-    public Vector<InterfaceArticle> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(Vector<InterfaceArticle> articles) {
-        this.articles = articles;
-    }
+    
 
     public Vector<InterfacePaiement> getPaiements() {
         return paiements;
@@ -53,14 +30,6 @@ public class SortiesFacture {
 
     public void setPaiements(Vector<InterfacePaiement> paiements) {
         this.paiements = paiements;
-    }
-
-    public Vector<InterfaceEcheance> getEcheances() {
-        return echeances;
-    }
-
-    public void setEcheances(Vector<InterfaceEcheance> echeances) {
-        this.echeances = echeances;
     }
 
     public EcouteurEnregistrement getEcouteurEnregistrement() {
