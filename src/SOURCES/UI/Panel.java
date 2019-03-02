@@ -278,19 +278,19 @@ public class Panel extends javax.swing.JPanel {
 
     private void fixerColonnesTableArticles(boolean resizeTable) {
         //Parametrage du rendu de la table
-        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.parametres.getMonnaieOutPut(), this.donneesFacture.getArticles(), this.modeleListeArticles, icones.getModifier_01()));
+        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.donneesFacture, this.parametres,this.modeleListeArticles, icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
 
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         setTaille(this.tableListeArticle.getColumnModel().getColumn(0), 30, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 260, false, editeurArticle);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 200, false, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(2), 80, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(3), 100, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(4), 100, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(5), 100, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(6), 120, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(7), 120, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(8), 110, true, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(8), 90, true, null);
 
         //On écoute les sélction
         this.tableListeArticle.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -365,7 +365,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void fixerColonnesTablePaiement(boolean resizeTable) {
         //Parametrage du rendu de la table
-        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.parametres.getMonnaieOutPut(), icones.getModifier_01(), this.donneesFacture.getArticles(), this.modeleListePaiement));
+        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.donneesFacture, this.parametres, this.modeleListePaiement, icones.getModifier_01()));
         this.tableListePaiement.setRowHeight(25);
 
         setTaille(this.tableListePaiement.getColumnModel().getColumn(0), 30, true, null);
@@ -868,7 +868,7 @@ public class Panel extends javax.swing.JPanel {
 
     public void activerBoutons(int selectedTab) {
         this.indexTabSelected = selectedTab;
-        if (selectedTab == 2) {
+        if (selectedTab == 2 || selectedTab == 0) {
             activeAjoutEtSuppresion(false);
         } else {
             activeAjoutEtSuppresion(true);
@@ -1140,7 +1140,7 @@ public class Panel extends javax.swing.JPanel {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(chTva, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(combVatRule, 0, 1, Short.MAX_VALUE))
+                                .addComponent(combVatRule, 0, 389, Short.MAX_VALUE))
                             .addComponent(labTelephone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(labAdresseClient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
@@ -1594,7 +1594,10 @@ public class Panel extends javax.swing.JPanel {
                 .addGap(5, 5, 5)
                 .addComponent(panContacts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(isReleverCompte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(isPlanPaiement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(isReleverCompte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
@@ -1607,9 +1610,6 @@ public class Panel extends javax.swing.JPanel {
             .addComponent(barreOutilsArticles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jSeparator4)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(isPlanPaiement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(216, 216, 216))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1626,12 +1626,12 @@ public class Panel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(tabPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(isReleverCompte)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(isPlanPaiement))
-                    .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(isPlanPaiement)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)

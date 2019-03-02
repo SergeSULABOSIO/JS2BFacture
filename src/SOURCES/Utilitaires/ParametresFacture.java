@@ -8,6 +8,7 @@ package SOURCES.Utilitaires;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;
+import java.util.Vector;
 
 /**
  *
@@ -21,8 +22,9 @@ public class ParametresFacture {
     private InterfaceEntreprise entreprise;
     private InterfaceExercice exercice;
     private InterfaceMonnaie monnaieOutPut;
+    private Vector<InterfaceMonnaie> listeMonnaies;
 
-    public ParametresFacture(int idFacture, String numero, int idUtilisateur, String nomUtilisateur, InterfaceEntreprise entreprise, InterfaceExercice exercice, InterfaceMonnaie monnaieOutPut) {
+    public ParametresFacture(int idFacture, String numero, int idUtilisateur, String nomUtilisateur, InterfaceEntreprise entreprise, InterfaceExercice exercice, InterfaceMonnaie monnaieOutPut, Vector<InterfaceMonnaie> listeMonnaies) {
         this.idFacture = idFacture;
         this.numero = numero;
         this.idUtilisateur = idUtilisateur;
@@ -30,6 +32,15 @@ public class ParametresFacture {
         this.entreprise = entreprise;
         this.exercice = exercice;
         this.monnaieOutPut = monnaieOutPut;
+        this.listeMonnaies = listeMonnaies;
+    }
+
+    public Vector<InterfaceMonnaie> getListeMonnaies() {
+        return listeMonnaies;
+    }
+
+    public void setListeMonnaies(Vector<InterfaceMonnaie> listeMonnaies) {
+        this.listeMonnaies = listeMonnaies;
     }
     
     public InterfaceExercice getExercice() {

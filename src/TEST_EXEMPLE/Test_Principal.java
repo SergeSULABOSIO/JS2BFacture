@@ -37,7 +37,7 @@ public class Test_Principal extends javax.swing.JFrame {
 
     
     public TEST_Entreprise entreprise = new TEST_Entreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
-    public TEST_Exercice exercice = new TEST_Exercice(12, entreprise.getId(), idUtilisateur, nomUtilisateur, new Date(), Util.getDate_AjouterAnnee(new Date(), 1), InterfaceExercice.BETA_EXISTANT);
+    public TEST_Exercice exercice = new TEST_Exercice(12, entreprise.getId(), idUtilisateur, "Année Scolaire 2019-2020", new Date(), Util.getDate_AjouterAnnee(new Date(), 1), InterfaceExercice.BETA_EXISTANT);
     public TEST_Eleve eleve = new TEST_Eleve(120, entreprise.getId(), idUtilisateur, exercice.getId(), idClasse, (new Date().getTime()+45), "CM2", "167B, Av. ITAGA, C. LINGWALA", "+24382-87-27-706", "TONGO", "BATANGILA", "CHRISTIAN", InterfaceEleve.STATUS_ACTIF, InterfaceEleve.SEXE_MASCULIN, new Date(), InterfaceEleve.BETA_EXISTANT);
     //Types de monnaies
     public TEST_Monnaie MONNAIE_USD = new TEST_Monnaie(20, entreprise.getId(), idUtilisateur, exercice.getId(), "Dollars Américains", "$", InterfaceMonnaie.NATURE_MONNAIE_ETRANGERE, 1620, new Date().getTime(), InterfaceMonnaie.BETA_EXISTANT);
@@ -62,7 +62,10 @@ public class Test_Principal extends javax.swing.JFrame {
 
     private ParametresFacture getParametres() {
         //On charge les paramètres
-        return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD);
+        Vector<InterfaceMonnaie> listeMonnaies = new Vector();
+        listeMonnaies.addElement(MONNAIE_USD);
+        listeMonnaies.addElement(MONNAIE_CDF);
+        return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD, listeMonnaies);
     }
     
     private DonneesFacture getDonnees(){
@@ -75,7 +78,7 @@ public class Test_Principal extends javax.swing.JFrame {
         
         
         Vector<InterfacePaiement> donneesPaiements = new Vector<>();
-        donneesPaiements.add(new TEST_Paiement(120, eleve.getId(), INSCRIPTION.getId(), eleve.getNom(), INSCRIPTION.getNom(), eleve.getNom(), 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSER22445", InterfacePaiement.BETA_EXISTANT));
+        donneesPaiements.add(new TEST_Paiement(120, eleve.getId(), INSCRIPTION.getId(), eleve.getNom(), INSCRIPTION.getNom(), eleve.getNom(), 5000, new Date(), InterfacePaiement.MODE_CAISSE, "DSER22445", InterfacePaiement.BETA_EXISTANT));
         
         return new DonneesFacture(eleve, donneesArticles, donneesPaiements);
     }

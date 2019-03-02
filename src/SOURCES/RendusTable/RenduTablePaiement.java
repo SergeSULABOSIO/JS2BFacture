@@ -10,10 +10,11 @@ import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.CelluleSimpleTableau;
+import SOURCES.Utilitaires.DonneesFacture;
+import SOURCES.Utilitaires.ParametresFacture;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;
 import java.util.Date;
-import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -24,25 +25,60 @@ import javax.swing.table.TableCellRenderer;
  */
 public class RenduTablePaiement implements TableCellRenderer {
 
-    private InterfaceMonnaie monnaie;
     private ImageIcon iconeEdition;
-    private Vector<InterfaceArticle> listeArticles;
     private ModeleListePaiement modeleListePaiement;
+    private ParametresFacture parametresFacture;
+    private DonneesFacture donneesFacture;
 
-    public RenduTablePaiement(InterfaceMonnaie monnaie, ImageIcon iconeEdition, Vector<InterfaceArticle> listeArticles, ModeleListePaiement modeleListePaiement) {
-        this.monnaie = monnaie;
+    public RenduTablePaiement(DonneesFacture donneesFacture, ParametresFacture parametresFacture, ModeleListePaiement modeleListePaiement, ImageIcon iconeEdition) {
         this.iconeEdition = iconeEdition;
-        this.listeArticles = listeArticles;
         this.modeleListePaiement = modeleListePaiement;
+        this.donneesFacture = donneesFacture;
+        this.parametresFacture = parametresFacture;
     }
-    
-    private String getArticle(int id) {
-        for (InterfaceArticle articleRech : this.listeArticles) {
-            if (id == articleRech.getId()) {
-                return articleRech.getNom();
+
+    private String getCodeMonnaie(int row) {
+        InterfaceArticle article = getArticle_(modeleListePaiement.getPaiement(row).getIdArticle());
+        if (article != null) {
+            for (InterfaceMonnaie Imonnaie : parametresFacture.getListeMonnaies()) {
+                if (article.getIdMonnaie() == Imonnaie.getId()) {
+                    return Imonnaie.getCode();
+                }
             }
         }
         return "";
+    }
+
+    private String getArticle(int id) {
+        InterfaceArticle Iart = getArticle_(id);
+        if (Iart != null) {
+            return Iart.getNom();
+        }
+        return "";
+    }
+
+    private InterfaceArticle getArticle_(int id) {
+        for (InterfaceArticle articleRech : this.donneesFacture.getArticles()) {
+            if (id == articleRech.getId()) {
+                return articleRech;
+            }
+        }
+        return null;
+    }
+
+    private String getMode(Object value) {
+        String mode = "Null";
+        try {
+            int Imode = Integer.parseInt(value + "");
+            if (Imode == InterfacePaiement.MODE_BANQUE) {
+                mode = "BANQUE";
+            } else if (Imode == InterfacePaiement.MODE_CAISSE) {
+                mode = "CAISSE";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mode;
     }
 
     @Override
@@ -55,25 +91,13 @@ public class RenduTablePaiement implements TableCellRenderer {
                     celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
                     break;
                 case 1:
-                    celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date)value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 case 2:
-                    String nomArticle = getArticle(Integer.parseInt(value+""));
-                    celluleNum = new CelluleSimpleTableau(" " + nomArticle + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleSimpleTableau(" " + getArticle(Integer.parseInt(value + "")) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 case 4:
-                    String mode = "Null";
-                    try{
-                        int Imode = Integer.parseInt(value+"");
-                        if(Imode == InterfacePaiement.MODE_BANQUE){
-                            mode = "BANQUE";
-                        }else if(Imode == InterfacePaiement.MODE_CAISSE){
-                            mode = "CAISSE";
-                        }
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-                    celluleNum = new CelluleSimpleTableau(" " + mode + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleSimpleTableau(" " + getMode(value) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 default:
                     celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
@@ -81,17 +105,15 @@ public class RenduTablePaiement implements TableCellRenderer {
             }
         } else {
             if (column == 5) {
-                String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
-                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                celluleNum = new CelluleSimpleTableau(" " + Util.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
             } else {
-                String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
-                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                celluleNum = new CelluleSimpleTableau(" " + Util.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
             }
         }
         celluleNum.ecouterSelection(isSelected, row, getBeta(row), hasFocus);
         return celluleNum;
     }
-    
+
     private int getBeta(int row) {
         if (this.modeleListePaiement != null) {
             InterfacePaiement Ipaiement = this.modeleListePaiement.getPaiement(row);
