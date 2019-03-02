@@ -297,6 +297,7 @@ public class Panel extends javax.swing.JPanel {
                 this.ecouteurClose.onActualiser(Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + this.parametres.getMonnaie().getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle())) + " " + this.parametres.getMonnaie().getCode() + ").", icones.getClient_01());
             }
         }
+        chargerPaiementsSeletced();
     }
 
     private void ecouterEcheanceSelectionne() {
@@ -317,7 +318,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void initModelTablePaiement() {
-        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.modeleListeArticles, new EcouteurValeursChangees() {
+        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.parametres, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
@@ -871,12 +872,12 @@ public class Panel extends javax.swing.JPanel {
         }
     }
 
-    private void ecouterSelectionPaiement() {
+    private void chargerPaiementsSeletced() {
         paiementsSelected.removeAllElements();
         int[] indexPaiements = tableListePaiement.getSelectedRows();
         if (indexPaiements != null) {
             for (int i = 0; i < indexPaiements.length; i++) {
-                paiementsSelected.addElement(modeleListePaiement.getListeData().elementAt(i));
+                paiementsSelected.addElement(modeleListePaiement.getPaiement(indexPaiements[i]));
             }
             activerRecu(true);
         } else {
@@ -1664,7 +1665,7 @@ public class Panel extends javax.swing.JPanel {
     private void tableListePaiementMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseClicked
         // TODO add your handling code here:
         ecouterMenContA(evt, 1);
-        ecouterSelectionPaiement();
+        
     }//GEN-LAST:event_tableListePaiementMouseClicked
 
     private void scrollListeReleveCompteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseClicked
@@ -1684,7 +1685,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void tableListePaiementKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableListePaiementKeyReleased
         // TODO add your handling code here:
-        ecouterSelectionPaiement();
+        
     }//GEN-LAST:event_tableListePaiementKeyReleased
 
     private void scrollListeReleveCompteMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseDragged
@@ -1694,7 +1695,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void tableListePaiementMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseDragged
         // TODO add your handling code here:
-        ecouterSelectionPaiement();
+        
     }//GEN-LAST:event_tableListePaiementMouseDragged
 
 

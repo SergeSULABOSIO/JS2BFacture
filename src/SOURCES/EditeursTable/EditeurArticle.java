@@ -54,8 +54,9 @@ public class EditeurArticle extends AbstractCellEditor implements TableCellEdito
 
     private int getIdArticle(String nom) {
         for (InterfaceArticle articleRech : this.listeArticles) {
-            String id_nom = articleRech.getNom();
-            if (id_nom.trim().equals(nom.trim())) {
+            String nomA = articleRech.getNom();
+            if (nomA.trim().equals(nom.trim())) {
+                //System.out.println("Selection USER: " + articleRech.getId());
                 return articleRech.getId();
             }
         }
@@ -81,10 +82,9 @@ public class EditeurArticle extends AbstractCellEditor implements TableCellEdito
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         //Pendant édition de l'utilisateur
         initCombo();
-        String nomArticle = getArticle(Integer.parseInt(value + ""));
-        if(nomArticle.trim().length() != 0){
-            this.champEditionCombo.setSelectedItem(nomArticle);
-        }
+        System.out.println("valeur: " + value);
+        String defaultSelection = getArticle(Integer.parseInt(value+""));
+        champEditionCombo.setSelectedItem(defaultSelection);
         return champEditionCombo;
     }
 

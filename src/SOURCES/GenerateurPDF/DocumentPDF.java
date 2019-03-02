@@ -343,6 +343,7 @@ public class DocumentPDF extends PdfPageEventHelper {
     }
 
     private void setTableauDetailsPaiementsRecus(Vector<InterfacePaiement> listePaiement) {
+        System.out.println("listePaiement: " + listePaiement.size());
         try {
             document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
             PdfPTable tableReleve = getTableau(
@@ -352,7 +353,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                     Element.ALIGN_CENTER,
                     0.2f
             );
-            double totPaye = 0;
+            double totPaye = 0, totReste = 0;
             if (this.gestionnaireFacture != null) {
                 ModeleListePaiement modelPaiement = this.gestionnaireFacture.getModeleListePaiement();
                 //Vector<InterfacePaiement> listePaiement = modelPaiement.getListeData();
@@ -361,16 +362,11 @@ public class DocumentPDF extends PdfPageEventHelper {
                 for (InterfacePaiement paiement : listePaiement) {
                     //cumuls
                     totPaye += paiement.getMontant();
-                    String nomA = "" + (paiement.getNomArticle().contains("_") ? paiement.getNomArticle().split("_")[1] : paiement.getNomArticle());
-                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), nomA, paiement.getReferenceTransaction(), paiement.getMode(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
+                    totReste += modelPaiement.getReste(paiement.getIdArticle());
+                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), paiement.getNomArticle(), paiement.getReferenceTransaction(), paiement.getMode(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
                     i++;
                 }
-                setDerniereLigneTabReleve(tableReleve, totPaye, modelPaiement.getTotalReste(this.gestionnaireFacture.getModeleListeArticles()));
-            } else {
-                for (int i = 0; i < 10; i++) {
-                    setLigneTabReleve(tableReleve, Util.getDateFrancais(new Date()), "INSCRIPTION", "REFDCE001440021", InterfacePaiement.MODE_BANQUE, i, 35, 5);
-                }
-                setDerniereLigneTabReleve(tableReleve, 1500, 350);
+                setDerniereLigneTabReleve(tableReleve, totPaye, totReste);
             }
             document.add(tableReleve);
             String monnaie = gestionnaireFacture.getParametres().getMonnaie().getNom();

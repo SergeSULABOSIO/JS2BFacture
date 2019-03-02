@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Utilitaires.Parametres;
 import java.awt.Color;
 
 /**
@@ -28,14 +29,14 @@ public class ModeleListePaiement extends AbstractTableModel {
     private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
-    private ModeleListeArticles modeleListeArticles;
+    private Parametres parametres;
     private Bouton btEnreg;
     private RubriqueSimple mEnreg;
 
-    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, Parametres parametres, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
-        this.modeleListeArticles = modeleListeArticles;
+        this.parametres = parametres;
         this.mEnreg = mEnreg;
         this.btEnreg = btEnreg;
     }
@@ -125,8 +126,8 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     private double getMontantTotalPayable(int idArticle) {
         double tot = 0;
-        if (modeleListeArticles != null) {
-            for (InterfaceArticle articleApayer : modeleListeArticles.getListeData()) {
+        if (parametres != null) {
+            for (InterfaceArticle articleApayer : parametres.getListArticles()) {
                 if (idArticle == articleApayer.getId()) {
                     tot = tot + articleApayer.getTotalTTC();
                 }
@@ -232,12 +233,13 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
     }
     
-    private void updateArticle(InterfacePaiement newArticle) {
-        if (newArticle != null && modeleListeArticles != null) {
-            for (InterfaceArticle Iarticle : modeleListeArticles.getListeData()) {
-                if (Iarticle.getId() == newArticle.getId()) {
-                    newArticle.setNomArticle(Iarticle.getNom());
-                    newArticle.setMontant(0);
+    private void updateArticle(InterfacePaiement newPaiement) {
+        if (newPaiement != null && parametres != null) {
+            for (InterfaceArticle Iarticle : parametres.getListArticles()) {
+                if (Iarticle.getId() == newPaiement.getIdArticle()) {
+                    //System.out.println("Article: " + Iarticle.getNom());
+                    newPaiement.setNomArticle(Iarticle.getNom());
+                    newPaiement.setMontant(0);
                     return;
                 }
             }
