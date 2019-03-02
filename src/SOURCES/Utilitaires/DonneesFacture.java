@@ -7,22 +7,24 @@ package SOURCES.Utilitaires;
 
 import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfacePaiement;
-import SOURCES.Interface.InterfaceEcheance;
 
 /**
  *
  * @author HP Pavilion
  */
 public class DonneesFacture {
+    private InterfaceEleve eleve;
     private Vector<InterfaceArticle> articles;
     private Vector<InterfacePaiement> paiements;
     
-    public DonneesFacture(Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements) {
+    public DonneesFacture(InterfaceEleve eleve, Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements) {
+        this.eleve = eleve;
         this.articles = articles;
         this.paiements = paiements;
     }
-
+    
     public Vector<InterfaceArticle> getArticles() {
         return articles;
     }
@@ -39,10 +41,16 @@ public class DonneesFacture {
         this.paiements = paiements;
     }
 
+    public InterfaceEleve getEleve() {
+        return eleve;
+    }
+
+    public void setEleve(InterfaceEleve eleve) {
+        this.eleve = eleve;
+    }
+
     @Override
     public String toString() {
-        return "Donnees{" + "articles=" + articles + ", paiements=" + paiements + '}';
+        return "DonneesFacture{" + "eleve=" + eleve + ", articles=" + articles + ", paiements=" + paiements + '}';
     }
-    
-    
 }

@@ -14,11 +14,11 @@ import SOURCES.Interface.InterfacePaiement;
  */
 public class TEST_Paiement implements InterfacePaiement{
     public int id;
-    public int idClient;
+    public int idEleve;
     public int idArticle;
     public int mode;
     public String reference;
-    public String nomClient;
+    public String nomEleve;
     public String nomArticle;
     public String nomDepositaire;
     public double montant;
@@ -28,11 +28,11 @@ public class TEST_Paiement implements InterfacePaiement{
     public TEST_Paiement() {
     }
 
-    public TEST_Paiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference, int beta) {
+    public TEST_Paiement(int id, int idEleve, int idArticle, String nomEleve, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference, int beta) {
         this.id = id;
-        this.idClient = idClient;
+        this.idEleve = idEleve;
         this.idArticle = idArticle;
-        this.nomClient = nomClient;
+        this.nomEleve = nomEleve;
         this.nomArticle = nomArticle;
         this.nomDepositaire = nomDepositaire;
         this.montant = montant;
@@ -59,12 +59,12 @@ public class TEST_Paiement implements InterfacePaiement{
         this.id = id;
     }
 
-    public int getIdClient() {
-        return idClient;
+    public int getIdEleve() {
+        return idEleve;
     }
 
-    public void setIdClient(int idClient) {
-        this.idClient = idClient;
+    public void setIdEleve(int idEleve) {
+        this.idEleve = idEleve;
     }
 
     public int getIdArticle() {
@@ -75,12 +75,20 @@ public class TEST_Paiement implements InterfacePaiement{
         this.idArticle = idArticle;
     }
 
-    public String getNomClient() {
-        return nomClient;
+    public String getReference() {
+        return reference;
     }
 
-    public void setNomClient(String nomClient) {
-        this.nomClient = nomClient;
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getNomEleve() {
+        return nomEleve;
+    }
+
+    public void setNomEleve(String nomEleve) {
+        this.nomEleve = nomEleve;
     }
 
     public String getNomArticle() {
@@ -137,6 +145,6 @@ public class TEST_Paiement implements InterfacePaiement{
 
     @Override
     public String toString() {
-        return "TESTPaiement{" + "id=" + id + ", idClient=" + idClient + ", idArticle=" + idArticle + ", nomClient=" + nomClient + ", nomArticle=" + nomArticle + ", nomDepositaire=" + nomDepositaire + ", montant=" + montant + ", date=" + date + '}';
+        return "TEST_Paiement{" + "id=" + id + ", idEleve=" + idEleve + ", idArticle=" + idArticle + ", mode=" + mode + ", reference=" + reference + ", nomEleve=" + nomEleve + ", nomArticle=" + nomArticle + ", nomDepositaire=" + nomDepositaire + ", montant=" + montant + ", date=" + date + ", beta=" + beta + '}';
     }
 }

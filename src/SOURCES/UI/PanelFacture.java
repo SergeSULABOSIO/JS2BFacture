@@ -5,8 +5,10 @@
  */
 package SOURCES.UI;
 
+import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.CallBack.EcouteurUpdateClose;
-import SOURCES.Utilitaires.Parametres;
+import SOURCES.Utilitaires.DonneesFacture;
+import SOURCES.Utilitaires.ParametresFacture;
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 
@@ -24,15 +26,15 @@ public class PanelFacture extends javax.swing.JPanel {
     private JTabbedPane parent;
     private PanelFacture moi;
     
-    public PanelFacture(Parametres parametres, JTabbedPane parent) {
+    public PanelFacture(JTabbedPane parent, ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture) {
         initComponents();
         this.parent = parent;
-        setPanelFacture(parametres);
+        setPanelFacture(parametres, donneesFacture, ecouteurFacture);
         this.moi = this;
     }
     
-    private void setPanelFacture(Parametres parametres){
-        this.scrollContenuFacture.setViewportView(new Panel(parametres, new EcouteurUpdateClose() {
+    private void setPanelFacture(ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture){
+        this.scrollContenuFacture.setViewportView(new Panel(parametres, donneesFacture, ecouteurFacture, new EcouteurUpdateClose() {
             
             @Override
             public void onFermer() {

@@ -7,8 +7,8 @@ package SOURCES.Utilitaires;
 
 import SOURCES.CallBack.EcouteurEnregistrement;
 import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfaceClient;
 import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfacePaiement;
 import java.util.Vector;
 
@@ -17,14 +17,14 @@ import java.util.Vector;
  * @author user
  */
 public class SortiesFacture {
-    private InterfaceClient client;
+    private InterfaceEleve eleve;
     private Vector<InterfaceArticle> articles;
     private Vector<InterfacePaiement> paiements;
     private Vector<InterfaceEcheance> echeances;
     private EcouteurEnregistrement ecouteurEnregistrement;
 
-    public SortiesFacture(InterfaceClient client, Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeances, EcouteurEnregistrement ecouteurEnregistrement) {
-        this.client = client;
+    public SortiesFacture(InterfaceEleve eleve, Vector<InterfaceArticle> articles, Vector<InterfacePaiement> paiements, Vector<InterfaceEcheance> echeances, EcouteurEnregistrement ecouteurEnregistrement) {
+        this.eleve = eleve;
         this.articles = articles;
         this.paiements = paiements;
         this.echeances = echeances;

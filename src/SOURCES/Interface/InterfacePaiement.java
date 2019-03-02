@@ -21,9 +21,9 @@ public interface InterfacePaiement {
     public static int MODE_BANQUE = 1;
     
     public abstract int getId();
-    public abstract int getIdClient();
+    public abstract int getIdEleve();
     public abstract int getIdArticle();
-    public abstract String getNomClient();
+    public abstract String getNomEleve();
     public abstract String getNomArticle();
     public abstract double getMontant();
     public abstract Date getDate();
@@ -33,9 +33,9 @@ public interface InterfacePaiement {
     
     
     public abstract void setId(int id);
-    public abstract void setIdClient(int idClient);
+    public abstract void setIdEleve(int idEleve);
     public abstract void setIdArticle(int idArticle);
-    public abstract void setNomClient(String nomClient);
+    public abstract void setNomEleve(String nomEleve);
     public abstract void setNomArticle(String nomArticle);
     public abstract void setMontant(double montant);
     public abstract void setDate(Date date);

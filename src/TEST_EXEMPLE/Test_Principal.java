@@ -5,20 +5,20 @@
  */
 package TEST_EXEMPLE;
 
-import SOURCES.UI.DialogueFacture;
 import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.UI.PanelFacture;
-import SOURCES.Utilitaires.Parametres;
+import SOURCES.Utilitaires.ParametresFacture;
 import java.util.Date;
 import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Utilitaires.DonneesFacture;
-import SOURCES.Utilitaires.ExerciceFiscale;
 import SOURCES.Utilitaires.SortiesFacture;
 import SOURCES.Utilitaires.Util;
+import static java.lang.Thread.sleep;
 
 /**
  *
@@ -26,108 +26,58 @@ import SOURCES.Utilitaires.Util;
  */
 public class Test_Principal extends javax.swing.JFrame {
 
-    private Parametres parametres = null;
-    private DonneesFacture donnees = null;
-    private int idUtilisateur = 1;
-    private String nomUtilisateur = "Serge SULA BOSIO";
-    private TEST_Client client = new TEST_Client(12, "Elève", "Christian MUTA KANKUNGWALA", "(+243)84 480 35 14", "cmuta@aib-brokers.com", "RAS");
-    private TEST_Entreprise entreprise = new TEST_Entreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
-    private ExerciceFiscale anneeScolaire = new ExerciceFiscale(new Date(119, 0, 1), new Date(119, 11, 31), "Année Scolaire 2018-2019");
-    private int idFacture = 20;
-    private int idMonnaie = 10;
-    private double tva = 0;
-    private double remise = 0;
-    private String numeroFacture = "" + (new Date().getTime());
-    public TEST_Exercice exercice = new TEST_Exercice(12, entreprise.getId(), idUtilisateur, nomUtilisateur, new Date(), Util.getDate_AjouterAnnee(new Date(), 1), InterfaceExercice.BETA_EXISTANT);
-    public TEST_Monnaie defaultMonnaie = new TEST_Monnaie(idMonnaie, entreprise.getId(), idUtilisateur, exercice.getId(), "Dollars Américains", "$", InterfaceMonnaie.NATURE_MONNAIE_ETRANGERE, 1620, new Date().getTime(), InterfaceMonnaie.BETA_EXISTANT);
-    private Vector<InterfaceArticle> typesArticles = new Vector<>();
-    private Vector<InterfaceArticle> donneesArticles = new Vector<>();
-    private Vector<InterfacePaiement> donneesPaiements = new Vector<>();
-
-    private PanelFacture panelFacture = null;
-    private DialogueFacture dialogueFacture = null;
     
-    public TEST_Article INSCRIPTION = new TEST_Article(12, "INSCRIPTION", 1, "Année", defaultMonnaie.getId(), 0, 50, 0, 1, InterfaceArticle.BETA_EXISTANT);
-    public TEST_Article MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", defaultMonnaie.getId(), 0, 1500, 0, 3, InterfaceArticle.BETA_EXISTANT);
-    public TEST_Article TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", defaultMonnaie.getId(), 0, 10, 0, 1, InterfaceArticle.BETA_EXISTANT);
+    public int idUtilisateur = 1;
+    public String nomUtilisateur = "Serge SULA BOSIO";
+    public int idFacture = 20;
+    public int idClasse = 6;
+    public double tva = 0;
+    public double remise = 0;
+    public String numeroFacture = "" + (new Date().getTime());
+
+    
+    public TEST_Entreprise entreprise = new TEST_Entreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
+    public TEST_Exercice exercice = new TEST_Exercice(12, entreprise.getId(), idUtilisateur, nomUtilisateur, new Date(), Util.getDate_AjouterAnnee(new Date(), 1), InterfaceExercice.BETA_EXISTANT);
+    public TEST_Eleve eleve = new TEST_Eleve(120, entreprise.getId(), idUtilisateur, exercice.getId(), idClasse, (new Date().getTime()+45), "CM2", "167B, Av. ITAGA, C. LINGWALA", "+24382-87-27-706", "TONGO", "BATANGILA", "CHRISTIAN", InterfaceEleve.STATUS_ACTIF, InterfaceEleve.SEXE_MASCULIN, new Date(), InterfaceEleve.BETA_EXISTANT);
+    //Types de monnaies
+    public TEST_Monnaie MONNAIE_USD = new TEST_Monnaie(20, entreprise.getId(), idUtilisateur, exercice.getId(), "Dollars Américains", "$", InterfaceMonnaie.NATURE_MONNAIE_ETRANGERE, 1620, new Date().getTime(), InterfaceMonnaie.BETA_EXISTANT);
+    public TEST_Monnaie MONNAIE_CDF = new TEST_Monnaie(21, entreprise.getId(), idUtilisateur, exercice.getId(), "Francs Congolais", "Fc", InterfaceMonnaie.NATURE_MONNAIE_LOCALE, 1, new Date().getTime() + 1, InterfaceMonnaie.BETA_EXISTANT);
+    //Types de Frais existants
+    public TEST_Article INSCRIPTION = new TEST_Article(12, "INSCRIPTION", 1, "Année", MONNAIE_CDF.getId(), tva, 10000, remise, 1, InterfaceArticle.BETA_EXISTANT);
+    public TEST_Article MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", MONNAIE_USD.getId(), tva, 1500, remise, 3, InterfaceArticle.BETA_EXISTANT);
+    public TEST_Article TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", MONNAIE_USD.getId(), tva, 10, remise, 1, InterfaceArticle.BETA_EXISTANT);
+
+   
+    public Vector<InterfaceArticle> donneesArticles = new Vector<>();
+    public PanelFacture panelFacture = null;
 
     /**
      * Creates new form TestPrincipal
      */
     public Test_Principal() {
         initComponents();
+        
+        
     }
 
-    private void initParametres() {
-        //On charge les types d'articles qui existent
-        typesArticles.removeAllElements();
-        typesArticles.add(INSCRIPTION);
-        typesArticles.add(MINERVALE);
-        typesArticles.add(TRAVAIL_MANUEL);
-
-        //Initialisation des paramètres
-        this.parametres = new Parametres(nomUtilisateur, numeroFacture, idFacture, typesArticles, client, entreprise, defaultMonnaie, tva, remise, anneeScolaire);
-
-        //Initialisation de l'écouteur du gestionnaire de facture
-        this.parametres.setEcouteurFacture(new EcouteurFacture() {
-            @Override
-            public void onEnregistre(SortiesFacture sortiesFacture) {
-
-                Thread th = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            /**/
-                            if (sortiesFacture != null) {
-                                sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
-                                sleep(1000);
-                                
-                                for (InterfaceArticle article : sortiesFacture.getArticles()) {
-                                    if(article.getBeta() == InterfaceArticle.BETA_MODIFIE || article.getBeta() == InterfaceArticle.BETA_NOUVEAU){
-                                        System.out.println(" * Article: " + article.toString());
-                                        
-                                        //Après enregistrement
-                                        article.setBeta(InterfaceArticle.BETA_EXISTANT);
-                                    }
-                                }
-                                
-                                for (InterfacePaiement paiement : sortiesFacture.getPaiements()) {
-                                    if(paiement.getBeta() == InterfacePaiement.BETA_MODIFIE || paiement.getBeta() == InterfacePaiement.BETA_NOUVEAU){
-                                        System.out.println(" * Paiement: " + paiement.toString());
-                                        
-                                        //Après enregistrement
-                                        paiement.setBeta(InterfacePaiement.BETA_EXISTANT);
-                                    }
-                                }
-                                
-                                sortiesFacture.getEcouteurEnregistrement().onDone("Enregistré!");
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-                th.start();
-
-            }
-        });
-
-        //On charges les articles séléctionés
-        donneesArticles.removeAllElements();
+    private ParametresFacture getParametres() {
+        //On charge les paramètres
+        return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD);
+    }
+    
+    private DonneesFacture getDonnees(){
+        //On charge les données
+        
+        Vector<InterfaceArticle> donneesArticles = new Vector<>();
         donneesArticles.add(INSCRIPTION);
         donneesArticles.add(MINERVALE);
         donneesArticles.add(TRAVAIL_MANUEL);
-
-        //On charge les paiements déjà reçus ou  effectués par le client
-        donneesPaiements.removeAllElements();
-        donneesPaiements.add(new TEST_Paiement(120, 12, 12, "Serge SULA BOSIO", INSCRIPTION.getNom(), "Serge SULA BOSIO", 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSEREDVFGFD22445", InterfacePaiement.BETA_EXISTANT));
-
-        //Initialisation des données (Articles et paiements reçus)
-        donnees = new DonneesFacture(donneesArticles, donneesPaiements);
-
-        //Chargement des données (articles & paiements reçus)
-        this.parametres.setDonnees(donnees);
+        
+        
+        Vector<InterfacePaiement> donneesPaiements = new Vector<>();
+        donneesPaiements.add(new TEST_Paiement(120, eleve.getId(), INSCRIPTION.getId(), eleve.getNom(), INSCRIPTION.getNom(), eleve.getNom(), 5, new Date(), InterfacePaiement.MODE_CAISSE, "DSER22445", InterfacePaiement.BETA_EXISTANT));
+        
+        return new DonneesFacture(eleve, donneesArticles, donneesPaiements);
     }
 
     /**
@@ -139,18 +89,10 @@ public class Test_Principal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jButton1.setText("Tester Dialog");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         jButton2.setText("Tester Tab");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -163,21 +105,17 @@ public class Test_Principal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
-                .addContainerGap(501, Short.MAX_VALUE))
-            .addComponent(jTabbedPane1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE))
         );
@@ -185,28 +123,42 @@ public class Test_Principal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-
-        //Initialisation des données
-        initParametres();
-
-        //Initialisation du gestionnaire des factures sous forme de la boîte de dialogue
-        dialogueFacture = new DialogueFacture(this, true, parametres);
-
-        //On l'affiche
-        dialogueFacture.show();
-
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
 
-        //Initialisation des données
-        initParametres();
-
         //Initialisation du gestionnaire des factures
-        this.panelFacture = new PanelFacture(parametres, jTabbedPane1);
+        this.panelFacture = new PanelFacture(jTabbedPane1, getParametres(), getDonnees(), new EcouteurFacture() {
+            @Override
+            public void onEnregistre(SortiesFacture sortiesFacture) {
+
+                Thread th = new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            /**/
+                            if (sortiesFacture != null) {
+                                sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
+                                sleep(1000);
+                                
+                                for (InterfacePaiement paiement : sortiesFacture.getPaiements()) {
+                                    if (paiement.getBeta() == InterfacePaiement.BETA_MODIFIE || paiement.getBeta() == InterfacePaiement.BETA_NOUVEAU) {
+                                        System.out.println(" * Paiement: " + paiement.toString());
+                                        paiement.setBeta(InterfacePaiement.BETA_EXISTANT);
+                                    }
+                                }
+
+                                sortiesFacture.getEcouteurEnregistrement().onDone("Enregistré!");
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+                th.start();
+
+            }
+        });
 
         //Chargement du gestionnaire sur l'onglet
         jTabbedPane1.add("Facture", panelFacture);
@@ -253,7 +205,6 @@ public class Test_Principal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables

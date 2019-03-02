@@ -16,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
-import SOURCES.Utilitaires.Parametres;
+import SOURCES.Utilitaires.ParametresFacture;
 import java.awt.Color;
 
 /**
@@ -29,11 +29,11 @@ public class ModeleListePaiement extends AbstractTableModel {
     private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
-    private Parametres parametres;
+    private ParametresFacture parametres;
     private Bouton btEnreg;
     private RubriqueSimple mEnreg;
 
-    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, Parametres parametres, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, ParametresFacture parametres, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.parametres = parametres;

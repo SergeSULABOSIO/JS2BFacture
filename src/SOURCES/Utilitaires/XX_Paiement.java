@@ -14,11 +14,11 @@ import SOURCES.Interface.InterfacePaiement;
  */
 public class XX_Paiement implements InterfacePaiement{
     public int id;
-    public int idClient;
+    public int idEleve;
     public int idArticle;
     public int mode;
     public String reference;
-    public String nomClient;
+    public String nomEleve;
     public String nomArticle;
     public String nomDepositaire;
     public double montant;
@@ -28,11 +28,11 @@ public class XX_Paiement implements InterfacePaiement{
     public XX_Paiement() {
     }
 
-    public XX_Paiement(int id, int idClient, int idArticle, String nomClient, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference, int beta) {
+    public XX_Paiement(int id, int idEleve, int idArticle, String nomEleve, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference, int beta) {
         this.id = id;
-        this.idClient = idClient;
+        this.idEleve = idEleve;
         this.idArticle = idArticle;
-        this.nomClient = nomClient;
+        this.nomEleve = nomEleve;
         this.nomArticle = nomArticle;
         this.nomDepositaire = nomDepositaire;
         this.montant = montant;
@@ -57,38 +57,6 @@ public class XX_Paiement implements InterfacePaiement{
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getIdClient() {
-        return idClient;
-    }
-
-    public void setIdClient(int idClient) {
-        this.idClient = idClient;
-    }
-
-    public int getIdArticle() {
-        return idArticle;
-    }
-
-    public void setIdArticle(int idArticle) {
-        this.idArticle = idArticle;
-    }
-
-    public String getNomClient() {
-        return nomClient;
-    }
-
-    public void setNomClient(String nomClient) {
-        this.nomClient = nomClient;
-    }
-
-    public String getNomArticle() {
-        return nomArticle;
-    }
-
-    public void setNomArticle(String nomArticle) {
-        this.nomArticle = nomArticle;
     }
 
     public String getNomDepositaire() {
@@ -135,8 +103,48 @@ public class XX_Paiement implements InterfacePaiement{
         this.mode = mode;
     }
 
+    public int getIdEleve() {
+        return idEleve;
+    }
+
+    public void setIdEleve(int idEleve) {
+        this.idEleve = idEleve;
+    }
+
+    public int getIdArticle() {
+        return idArticle;
+    }
+
+    public void setIdArticle(int idArticle) {
+        this.idArticle = idArticle;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getNomEleve() {
+        return nomEleve;
+    }
+
+    public void setNomEleve(String nomEleve) {
+        this.nomEleve = nomEleve;
+    }
+
+    public String getNomArticle() {
+        return nomArticle;
+    }
+
+    public void setNomArticle(String nomArticle) {
+        this.nomArticle = nomArticle;
+    }
+
     @Override
     public String toString() {
-        return "TESTPaiement{" + "id=" + id + ", idClient=" + idClient + ", idArticle=" + idArticle + ", nomClient=" + nomClient + ", nomArticle=" + nomArticle + ", nomDepositaire=" + nomDepositaire + ", montant=" + montant + ", date=" + date + '}';
+        return "XX_Paiement{" + "id=" + id + ", idEleve=" + idEleve + ", idArticle=" + idArticle + ", mode=" + mode + ", reference=" + reference + ", nomEleve=" + nomEleve + ", nomArticle=" + nomArticle + ", nomDepositaire=" + nomDepositaire + ", montant=" + montant + ", date=" + date + ", beta=" + beta + '}';
     }
 }

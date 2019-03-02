@@ -17,7 +17,7 @@ import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceMonnaie;
-import SOURCES.Utilitaires.ExerciceFiscale;
+import SOURCES.Utilitaires.ANNEE_SCOLAIRE;
 
 /**
  *
@@ -35,10 +35,10 @@ public class ModeleListeEcheance extends AbstractTableModel {
     private String numeroFacture;
     private int idFacture;
 
-    private ExerciceFiscale exerciceFiscale;
+    private ANNEE_SCOLAIRE exerciceFiscale;
     public int nombreTranches = 1;
 
-    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele, String numeroFacture, int idFacture, int idMonnaie, ExerciceFiscale exerciceFiscale) {
+    public ModeleListeEcheance(JScrollPane parent, ModeleListePaiement modeleListePaiement, ModeleListeArticles modeleListeArticles, EcouteurValeursChangees ecouteurModele, String numeroFacture, int idFacture, int idMonnaie, ANNEE_SCOLAIRE exerciceFiscale) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.modeleListePaiement = modeleListePaiement;
