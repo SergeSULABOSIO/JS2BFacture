@@ -5,6 +5,7 @@
  */
 package SOURCES.Utilitaires;
 
+import SOURCES.Interface.InterfaceMonnaie;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -16,6 +17,30 @@ import java.util.Date;
  */
 public class Util {
 
+    public static InterfaceMonnaie getMonnaie(ParametresFacture parametresFacture, int idMonnaie){
+        for(InterfaceMonnaie Imonnaie: parametresFacture.getListeMonnaies()){
+            if(Imonnaie.getId() == idMonnaie){
+                return Imonnaie;
+            }
+        }
+        return null;
+    }
+    
+    public static double getMontantOutPut(ParametresFacture parametresFacture, int idMonnaieInput, double montant) {
+        InterfaceMonnaie monnaieOutPut = getMonnaie(parametresFacture, parametresFacture.getMonnaieOutPut().getId());
+        InterfaceMonnaie monnaieInPut = getMonnaie(parametresFacture, idMonnaieInput);
+        
+        if (monnaieOutPut != null && monnaieInPut != null) {
+            if (parametresFacture.getMonnaieOutPut().getId() == idMonnaieInput) {
+                return montant;
+            } else {
+                return (montant * monnaieInPut.getTauxMonnaieLocale() / monnaieOutPut.getTauxMonnaieLocale());
+            }
+        }else{
+            return 0;
+        }
+    }
+    
     public static double round(double value, int places) {
         if (places < 0) {
             throw new IllegalArgumentException();

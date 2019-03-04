@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Utilitaires.DonneesFacture;
+import SOURCES.Utilitaires.ParametresFacture;
 import java.awt.Color;
 
 /**
@@ -24,19 +26,18 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     private String[] titreColonnes = {"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
     private Vector<InterfaceArticle> listeData = new Vector<>();
-    private Vector<InterfaceArticle> listeTypeArticle;
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
-    //private boolean canPayVAT;
-    private double pourcTVA = 16;
+    private ParametresFacture parametresFacture;
+    private DonneesFacture donneesFacture;
     private Bouton btEnreg;
     private RubriqueSimple mEnreg;
 
-    public ModeleListeArticles(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, double pourcTVA, Vector<InterfaceArticle> listeTypeArticle, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListeArticles(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, ParametresFacture parametresFacture, DonneesFacture donneesFacture, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
+        this.parametresFacture = parametresFacture;
+        this.donneesFacture = donneesFacture;
         this.ecouteurModele = ecouteurModele;
-        this.pourcTVA = pourcTVA;
-        this.listeTypeArticle = listeTypeArticle;
         this.mEnreg = mEnreg;
         this.btEnreg = btEnreg;
         appliquerAssigetissementTVA();
@@ -77,19 +78,13 @@ public class ModeleListeArticles extends AbstractTableModel {
         return listeData;
     }
 
-    public void setVat(double pourc) {
-        this.pourcTVA = pourc;
-        appliquerAssigetissementTVA();
-        redessinerTable();
-    }
-
     private void appliquerAssigetissementTVA() {
         changeVat();
     }
 
     private void changeVat() {
         listeData.forEach((art) -> {
-            art.setTvaPoucentage(pourcTVA);
+            art.setTvaPoucentage(0);
         });
     }
 
@@ -153,7 +148,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     public double getTotal_TTC() {
         double a = 0;
         for (InterfaceArticle art : listeData) {
-            a = a + art.getTotalTTC();
+            a = a + Util.getMontantOutPut(parametresFacture, art.getIdMonnaie(), art.getTotalTTC());
         }
         return Util.round(a, 2);
     }
@@ -249,8 +244,8 @@ public class ModeleListeArticles extends AbstractTableModel {
     }
 
     private void updateArticle(InterfaceArticle newArticle) {
-        if (newArticle != null && listeTypeArticle != null) {
-            for (InterfaceArticle Iarticle : listeTypeArticle) {
+        if (newArticle != null && donneesFacture != null) {
+            for (InterfaceArticle Iarticle : donneesFacture.getArticles()) {
                 if (Iarticle.getId() == newArticle.getId()) {
                     newArticle.setNom(Iarticle.getNom());
                     newArticle.setPrixUHT_avant_rabais(Iarticle.getPrixUHT_avant_rabais());

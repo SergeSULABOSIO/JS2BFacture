@@ -114,9 +114,7 @@ public class Panel extends javax.swing.JPanel {
         this.tabPrincipal.setIconAt(1, icones.getClient_01());  //Relevé de compte
         this.tabPrincipal.setIconAt(2, icones.getCalendrier_01()); //Revenu
         this.dateFacture.setDate(new Date());
-        this.chTva.setText("0");
-        
-        setTypeFacture();
+        this.setTypeFacture();
         
         InterfaceEleve eleve = donneesFacture.getEleve();
         InterfaceExercice exercice = parametres.getExercice();
@@ -128,17 +126,6 @@ public class Panel extends javax.swing.JPanel {
         }
 
         this.ecouteurAjout = new EcouteurAjout() {
-            /*
-            @Override
-            public void setAjoutArticle(ModeleListeArticles modeleListeArticles) {
-                double tvaPrc = 16;
-                double punit = 0;
-                double rabais = 0;
-                int nbTranches = 1;
-                modeleListeArticles.AjouterArticle(new XX_Article(-1, "", 1, "Pièce", monnaie.getId(), tvaPrc, punit, rabais, nbTranches, InterfaceArticle.BETA_NOUVEAU));
-            }
-             */
-
             @Override
             public void setAjoutPaiement(ModeleListePaiement modeleListePaiement) {
                 double montant = 0;
@@ -244,7 +231,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void initModelTableArticle() {
-        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, btEnregistrer, rubEnregistrer, 0, this.donneesFacture.getArticles(), new EcouteurValeursChangees() {
+        this.modeleListeArticles = new ModeleListeArticles(this.scrollListeArticles, btEnregistrer, rubEnregistrer, this.parametres, this.donneesFacture, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 //Actualisation des listes de base
@@ -343,7 +330,6 @@ public class Panel extends javax.swing.JPanel {
         initModelTableArticle();
         chargerDataTableArticle();
         fixerColonnesTableArticles(true);
-        appliquerTva();
     }
 
     private void initModelTablePaiement() {
@@ -416,7 +402,7 @@ public class Panel extends javax.swing.JPanel {
 
     private void fixerColonnesTableEcheance(boolean resizeTable) {
         //Parametrage du rendu de la table
-        this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres.getMonnaieOutPut(), icones.getModifier_01(), icones.getSablier_01(), modeleListeEcheance));
+        this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(this.parametres, modeleListeEcheance, icones.getSablier_01()));
         this.tableListeEcheance.setRowHeight(25);
 
         //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
@@ -425,7 +411,7 @@ public class Panel extends javax.swing.JPanel {
         setTaille(this.tableListeEcheance.getColumnModel().getColumn(2), 130, true, null);
         setTaille(this.tableListeEcheance.getColumnModel().getColumn(3), 130, true, null);
         setTaille(this.tableListeEcheance.getColumnModel().getColumn(4), 150, true, null);
-        setTaille(this.tableListeEcheance.getColumnModel().getColumn(5), 150, true, null);
+        setTaille(this.tableListeEcheance.getColumnModel().getColumn(5), 120, true, null);
         setTaille(this.tableListeEcheance.getColumnModel().getColumn(6), 150, true, null);
 
         //On écoute les sélction
@@ -448,10 +434,6 @@ public class Panel extends javax.swing.JPanel {
         initModelTableEcheance();
         chargerDataTableEcheance();
         fixerColonnesTableEcheance(true);
-    }
-
-    private void appliquerTva() {
-        combVatRule.setSelectedIndex(1);
     }
 
     private void genererRecu() {
@@ -851,21 +833,6 @@ public class Panel extends javax.swing.JPanel {
         labTypeFacture.setText(comboTypeFacture.getSelectedItem() + " n°" + this.parametres.getNumero());
     }
 
-    private void changeVatRule() {
-        if (combVatRule.getSelectedIndex() == 0) {//Ce client paie la TVA
-            try {
-                chTva.setEditable(true);
-                double pourcTva = Double.parseDouble(chTva.getText().trim());
-                modeleListeArticles.setVat(pourcTva);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {//Ce client ne paie pas la TVA
-            chTva.setEditable(false);
-            modeleListeArticles.setVat(0);
-        }
-    }
-
     public void activerBoutons(int selectedTab) {
         this.indexTabSelected = selectedTab;
         if (selectedTab == 2 || selectedTab == 0) {
@@ -937,9 +904,6 @@ public class Panel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         labNomClient = new javax.swing.JLabel();
         labTelephone = new javax.swing.JLabel();
-        chTva = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        combVatRule = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         labAdresseClient = new javax.swing.JLabel();
         labLogo = new javax.swing.JLabel();
@@ -1093,24 +1057,6 @@ public class Panel extends javax.swing.JPanel {
         labTelephone.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
         labTelephone.setText("(+243) 84 480 35 14, (+243) 82 87 27 706");
 
-        chTva.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        chTva.setText("16");
-        chTva.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                chTvaKeyReleased(evt);
-            }
-        });
-
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("Tva (%) :");
-
-        combVatRule.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ce client n’est pas exonéré de la Taxe sur la Valeur Ajoutée.", "Ce client est exonéré de la Taxe sur la Valeur Ajoutée." }));
-        combVatRule.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                combVatRuleItemStateChanged(evt);
-            }
-        });
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel4.setText("Adresse :");
@@ -1133,16 +1079,11 @@ public class Panel extends javax.swing.JPanel {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(chTva, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(combVatRule, 0, 389, Short.MAX_VALUE))
                             .addComponent(labTelephone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labAdresseClient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(labAdresseClient, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1160,11 +1101,6 @@ public class Panel extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(labAdresseClient))
-                .addGap(0, 0, 0)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(chTva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(combVatRule, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1658,16 +1594,6 @@ public class Panel extends javax.swing.JPanel {
         ecouterMenContA(evt, 0);
     }//GEN-LAST:event_tableListeArticleMouseClicked
 
-    private void combVatRuleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_combVatRuleItemStateChanged
-        // TODO add your handling code here:
-        changeVatRule();
-    }//GEN-LAST:event_combVatRuleItemStateChanged
-
-    private void chTvaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_chTvaKeyReleased
-        // TODO add your handling code here:
-        changeVatRule();
-    }//GEN-LAST:event_chTvaKeyReleased
-
     private void tabPrincipalStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPrincipalStateChanged
         // TODO add your handling code here:
 
@@ -1714,8 +1640,6 @@ public class Panel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barreOutilsArticles;
-    private javax.swing.JTextField chTva;
-    private javax.swing.JComboBox<String> combVatRule;
     private javax.swing.JComboBox<String> comboTypeFacture;
     private com.toedter.calendar.JDateChooser dateFacture;
     private javax.swing.JCheckBox isPlanPaiement;
@@ -1727,7 +1651,6 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel28;

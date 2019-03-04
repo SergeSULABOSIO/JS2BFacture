@@ -260,18 +260,12 @@
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="jLabel3" pref="87" max="32767" attributes="0"/>
-                              <Component id="jLabel2" max="32767" attributes="0"/>
                               <Component id="jLabel4" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="chTva" min="-2" pref="50" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="combVatRule" pref="389" max="32767" attributes="0"/>
-                              </Group>
                               <Component id="labTelephone" max="32767" attributes="0"/>
-                              <Component id="labAdresseClient" max="32767" attributes="0"/>
+                              <Component id="labAdresseClient" pref="446" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -296,12 +290,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="labAdresseClient" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="chTva" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="combVatRule" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -348,37 +336,6 @@
             </Property>
             <Property name="text" type="java.lang.String" value="(+243) 84 480 35 14, (+243) 82 87 27 706"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="chTva">
-          <Properties>
-            <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="text" type="java.lang.String" value="16"/>
-          </Properties>
-          <Events>
-            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="chTvaKeyReleased"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
-          <Properties>
-            <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="text" type="java.lang.String" value="Tva (%) :"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JComboBox" name="combVatRule">
-          <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="2">
-                <StringItem index="0" value="Ce client n&#x2019;est pas exon&#xe9;r&#xe9; de la Taxe sur la Valeur Ajout&#xe9;e."/>
-                <StringItem index="1" value="Ce client est exon&#xe9;r&#xe9; de la Taxe sur la Valeur Ajout&#xe9;e."/>
-              </StringArray>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="combVatRuleItemStateChanged"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>

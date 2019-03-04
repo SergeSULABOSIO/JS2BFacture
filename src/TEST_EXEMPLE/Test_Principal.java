@@ -44,8 +44,8 @@ public class Test_Principal extends javax.swing.JFrame {
     public TEST_Monnaie MONNAIE_CDF = new TEST_Monnaie(21, entreprise.getId(), idUtilisateur, exercice.getId(), "Francs Congolais", "Fc", InterfaceMonnaie.NATURE_MONNAIE_LOCALE, 1, new Date().getTime() + 1, InterfaceMonnaie.BETA_EXISTANT);
     //Types de Frais existants
     public TEST_Article INSCRIPTION = new TEST_Article(12, "INSCRIPTION", 1, "Année", MONNAIE_CDF.getId(), tva, 10000, remise, 1, InterfaceArticle.BETA_EXISTANT);
-    public TEST_Article MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", MONNAIE_USD.getId(), tva, 1500, remise, 3, InterfaceArticle.BETA_EXISTANT);
-    public TEST_Article TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", MONNAIE_USD.getId(), tva, 10, remise, 1, InterfaceArticle.BETA_EXISTANT);
+    public TEST_Article MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", MONNAIE_USD.getId(), tva, 1500, remise, 5, InterfaceArticle.BETA_EXISTANT);
+    public TEST_Article TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", MONNAIE_USD.getId(), tva, 10, remise, 2, InterfaceArticle.BETA_EXISTANT);
 
    
     public Vector<InterfaceArticle> donneesArticles = new Vector<>();
@@ -56,8 +56,6 @@ public class Test_Principal extends javax.swing.JFrame {
      */
     public Test_Principal() {
         initComponents();
-        
-        
     }
 
     private ParametresFacture getParametres() {
@@ -78,7 +76,7 @@ public class Test_Principal extends javax.swing.JFrame {
         
         
         Vector<InterfacePaiement> donneesPaiements = new Vector<>();
-        donneesPaiements.add(new TEST_Paiement(120, eleve.getId(), INSCRIPTION.getId(), eleve.getNom(), INSCRIPTION.getNom(), eleve.getNom(), 5000, new Date(), InterfacePaiement.MODE_CAISSE, "DSER22445", InterfacePaiement.BETA_EXISTANT));
+        //donneesPaiements.add(new TEST_Paiement(120, eleve.getId(), INSCRIPTION.getId(), eleve.getNom(), INSCRIPTION.getNom(), eleve.getNom(), 5000, new Date(), InterfacePaiement.MODE_CAISSE, "DSER22445", InterfacePaiement.BETA_EXISTANT));
         
         return new DonneesFacture(eleve, donneesArticles, donneesPaiements);
     }

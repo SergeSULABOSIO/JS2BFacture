@@ -6,10 +6,10 @@
 package SOURCES.RendusTable;
 
 import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.UI.CelluleProgressionTableau;
 import SOURCES.UI.CelluleSimpleTableau;
+import SOURCES.Utilitaires.ParametresFacture;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;
 import java.util.Date;
@@ -23,17 +23,16 @@ import javax.swing.table.TableCellRenderer;
  */
 public class RenduTableEcheance implements TableCellRenderer {
 
-    private InterfaceMonnaie monnaie;
-    private ImageIcon iconeEdition, iconeProgression;
+    private ImageIcon iconeProgression;
     private ModeleListeEcheance modeleListeEcheance;
+    private ParametresFacture parametresFacture;
 
-    public RenduTableEcheance(InterfaceMonnaie monnaie, ImageIcon iconeEdition, ImageIcon iconeProgression, ModeleListeEcheance modeleListeEcheance) {
-        this.monnaie = monnaie;
-        this.iconeEdition = iconeEdition;
+    public RenduTableEcheance(ParametresFacture parametresFacture, ModeleListeEcheance modeleListeEcheance, ImageIcon iconeProgression) {
         this.iconeProgression = iconeProgression;
         this.modeleListeEcheance = modeleListeEcheance;
+        this.parametresFacture = parametresFacture;
     }
-
+    
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
@@ -61,13 +60,13 @@ public class RenduTableEcheance implements TableCellRenderer {
                 return celluleNum;
             case 5:
                 String mont = Util.getMontantFrancais(Double.parseDouble(value+""));
-                celluleNum = new CelluleSimpleTableau(" " + mont + " " + monnaie.getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                celluleNum = new CelluleSimpleTableau(" " + mont + " " + parametresFacture.getMonnaieOutPut().getCode() + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
                 celluleNum.ecouterSelection(isSelected, row, InterfaceArticle.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 6:
                 double valeur = Double.parseDouble(value+"");
                 double montDu = modeleListeEcheance.getEcheance_row(row).getMontantDu();
-                CelluleProgressionTableau celluleProgress = new CelluleProgressionTableau(monnaie.getCode(), valeur, montDu, iconeProgression);
+                CelluleProgressionTableau celluleProgress = new CelluleProgressionTableau(parametresFacture.getMonnaieOutPut().getCode(), valeur, montDu, iconeProgression);
                 celluleProgress.ecouterSelection(isSelected, row, hasFocus);
                 return celluleProgress;
             default:
