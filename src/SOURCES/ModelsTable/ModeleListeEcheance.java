@@ -40,15 +40,13 @@ public class ModeleListeEcheance extends AbstractTableModel {
         this.modeleListeArticles = modeleListeArticles;
         this.parametresFacture = parametresFacture;
 
-        this.param_tranches_creer();
-        this.param_tranches_init_dates();
+        Util.param_tranches_creer(modeleListeArticles.getListeData(), listeData, parametresFacture.getExercice(), parametresFacture.getMonnaieOutPut().getId());
         this.param_tranche_init_montant_du();
         this.param_tranche_init_montant_paye();
     }
 
     public void actualiser() {
-        this.param_tranches_creer();
-        this.param_tranches_init_dates();
+        Util.param_tranches_creer(modeleListeArticles.getListeData(), listeData, parametresFacture.getExercice(), parametresFacture.getMonnaieOutPut().getId());
         this.param_tranche_init_montant_du();
         this.param_tranche_init_montant_paye();
         redessinerTable();
@@ -200,82 +198,18 @@ public class ModeleListeEcheance extends AbstractTableModel {
         }
     }
 
-    private int getNbTranchesMax() {
-        this.nombreTranches = 0;
-        if (this.modeleListeArticles.getListeData() != null) {
-            if (!this.modeleListeArticles.getListeData().isEmpty()) {
-                for (InterfaceArticle article : this.modeleListeArticles.getListeData()) {
-                    //System.out.println(" * " + article.toString() + ", tranches = " + article.getTranches());
-                    //Si et seulement si le rabais reste strictement inférieur au prix unitaire avant remise
-                    if (article.getPrixUHT_avant_rabais() > article.getRabais()) {
-                        if (article.getTranches() > nombreTranches) {
-                            nombreTranches = article.getTranches();
-                        }
-                    }
-                }
-            } else {
-                this.nombreTranches = 0;
-            }
-        }
-        return this.nombreTranches;
-    }
-
-    private void param_tranches_creer() {
-        if (parametresFacture != null) {
-            this.listeData.removeAllElements();
-            int nombreMax = getNbTranchesMax();
-            for (int i = 0; i < nombreMax; i++) {
-                String nomTranche = "1ère Tranche";
-                if ((i + 1) > 1) {
-                    nomTranche = (i + 1) + "ème Tranche";
-                }
-                Date debut = parametresFacture.getExercice().getDebut();
-                Date fin = parametresFacture.getExercice().getFin();
-                XX_Echeance trancheTempo = new XX_Echeance(-1, nomTranche, parametresFacture.getIdFacture(), debut, fin, parametresFacture.getNumero(), 0, 0, parametresFacture.getMonnaieOutPut().getId());
-                this.listeData.add(trancheTempo);
-            }
-        }
-    }
-
-    private void param_tranches_init_dates() {
-        nombreTranches = getNbTranchesMax();
-        double daysExercice = Util.getNombre_jours(parametresFacture.getExercice().getFin(), parametresFacture.getExercice().getDebut());
-        double nbDaysParTranche = daysExercice / nombreTranches;
-        long nbDaysParTrancheLong = (long) ((nbDaysParTranche) * 1000 * 60 * 60 * 24);
-        long cumulDays = 0;
-        if (!this.listeData.isEmpty()) {
-            for (int i = 0; i < nombreTranches; i++) {
-                InterfaceEcheance echeEncours = listeData.elementAt(i);
-                echeEncours.setDateInitiale(new Date(parametresFacture.getExercice().getDebut().getTime() + cumulDays));
-                echeEncours.setDateFinale(new Date(echeEncours.getDateInitiale().getTime() + nbDaysParTrancheLong));
-                cumulDays = cumulDays + nbDaysParTrancheLong;
-            }
-        }
-    }
+    
 
     private void param_tranche_init_montant_du() {
-        nombreTranches = getNbTranchesMax();
+        nombreTranches = Util.getNbTranchesMax(modeleListeArticles.getListeData());
         if (!this.listeData.isEmpty()) {
             for (int indexTranche = 0; indexTranche < nombreTranches; indexTranche++) {
                 InterfaceEcheance echeEncours = listeData.elementAt(indexTranche);
                 double mont = 0;
                 for (InterfaceArticle Iart : modeleListeArticles.getListeData()) {
-                    if (indexTranche == 0) {
-                        if (Iart.getTranches() == 1) {
-                            System.out.println("A");
-                            mont += Util.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Iart.getTotalTTC());
-                        } else {
-                            System.out.println("B");
-                            mont += Util.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Iart.getTotalTTC()) / Iart.getTranches();
-                        }
-                    } else if (indexTranche != 0 && Iart.getTranches() != 1) {
-                        if (indexTranche + 1 <= Iart.getTranches()) {
-                            System.out.println("C");
-                            mont += Util.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Iart.getTotalTTC()) / Iart.getTranches();
-                        } else {
-                            System.out.println("D");
-                            mont += 0;
-                        }
+                    if (indexTranche + 1 <= Iart.getTranches()) {
+                        System.out.println("C");
+                        mont += Util.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Iart.getTotalTTC()) / Iart.getTranches();
                     }
                 }
                 echeEncours.setMontantDu(mont);
@@ -284,7 +218,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
     }
 
     private void param_tranche_init_montant_paye() {
-        nombreTranches = getNbTranchesMax();
+        nombreTranches = Util.getNbTranchesMax(modeleListeArticles.getListeData());
         //On calcul les montants déjà payés pour cette tranche
         if (!this.listeData.isEmpty()) {
             for (int i = 0; i < nombreTranches; i++) {
