@@ -6,7 +6,6 @@
 package SOURCES.ModelsTable;
 
 import SOURCES.CallBack.EcouteurValeursChangees;
-import SOURCES.Utilitaires.XX_Echeance;
 import SOURCES.Utilitaires.Util;
 import java.util.Date;
 import java.util.Vector;
