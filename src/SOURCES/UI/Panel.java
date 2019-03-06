@@ -43,11 +43,9 @@ import SOURCES.Interface.InterfaceExercice;
 import SOURCES.RendusTable.RenduTableEcheance;
 import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.SortiesFacture;
-import SOURCES.Utilitaires.XX_Article;
 import SOURCES.Utilitaires.XX_Echeance;
 import SOURCES.Utilitaires.XX_Paiement;
 import java.awt.Color;
-import java.awt.event.ItemEvent;
 import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -87,6 +85,7 @@ public class Panel extends javax.swing.JPanel {
 
     public ParametresFacture parametres;
     public DonneesFacture donneesFacture;
+    private Date dateFacture = null;
 
     public Panel(ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture, EcouteurUpdateClose ecouteurClose) {
         initComponents();
@@ -104,6 +103,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void init() {
+        dateFacture = new Date();
         this.icones = new Icones();
         this.moi = this;
         setContactEtBanques();
@@ -113,7 +113,10 @@ public class Panel extends javax.swing.JPanel {
         this.tabPrincipal.setIconAt(0, icones.getTaxes_01());   //Frais
         this.tabPrincipal.setIconAt(1, icones.getClient_01());  //Relevé de compte
         this.tabPrincipal.setIconAt(2, icones.getCalendrier_01()); //Revenu
-        this.dateFacture.setDate(new Date());
+        this.labReference.setIcon(icones.getFacture_01());
+        this.labReference.setText(parametres.getNumero());
+        this.labDateFacture.setIcon(icones.getCalendrier_01());
+        this.labDateFacture.setText(Util.getDateFrancais(dateFacture));
         this.setTypeFacture();
         
         InterfaceEleve eleve = donneesFacture.getEleve();
@@ -165,7 +168,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     public Date getDateFacture() {
-        return dateFacture.getDate();
+        return dateFacture;
     }
 
     public int getIndexTabSelected() {
@@ -190,14 +193,6 @@ public class Panel extends javax.swing.JPanel {
 
     public String getNomfichierPreuve() {
         return "FactureS2B.pdf";
-    }
-
-    public String getTitreDoc() {
-        return "" + comboTypeFacture.getSelectedItem();
-    }
-
-    public int getTitreDoc_() {
-        return comboTypeFacture.getSelectedIndex();
     }
 
     public boolean isImprimerRelever() {
@@ -828,7 +823,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void setTypeFacture() {
-        labTypeFacture.setText(comboTypeFacture.getSelectedItem() + " n°" + this.parametres.getNumero());
+        labReference.setText(this.parametres.getNumero());
     }
 
     public void activerBoutons(int selectedTab) {
@@ -888,15 +883,6 @@ public class Panel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        labNomEse = new javax.swing.JLabel();
-        labAdresseEse = new javax.swing.JLabel();
-        labTelephoneEse = new javax.swing.JLabel();
-        labEmailEse = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        labTypeFacture = new javax.swing.JLabel();
-        comboTypeFacture = new javax.swing.JComboBox<>();
-        dateFacture = new com.toedter.calendar.JDateChooser();
         jPanel3 = new javax.swing.JPanel();
         labTypeClient = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -904,7 +890,10 @@ public class Panel extends javax.swing.JPanel {
         labTelephone = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         labAdresseClient = new javax.swing.JLabel();
-        labLogo = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        labReference = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        labDateFacture = new javax.swing.JLabel();
         panSynthese = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         labTotalHT = new javax.swing.JLabel();
@@ -953,89 +942,6 @@ public class Panel extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        labNomEse.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        labNomEse.setText("UAP RDC Sarl");
-
-        labAdresseEse.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labAdresseEse.setForeground(new java.awt.Color(153, 153, 153));
-        labAdresseEse.setText("167B, Itaga, Lingwala, Kinshasa/RDC");
-
-        labTelephoneEse.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labTelephoneEse.setForeground(new java.awt.Color(153, 153, 153));
-        labTelephoneEse.setText("(+243)844803514");
-
-        labEmailEse.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labEmailEse.setForeground(new java.awt.Color(153, 153, 153));
-        labEmailEse.setText("Info@aib-brokers.com");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labNomEse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labAdresseEse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labTelephoneEse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labEmailEse, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(labNomEse)
-                .addGap(0, 0, 0)
-                .addComponent(labAdresseEse)
-                .addGap(0, 0, 0)
-                .addComponent(labTelephoneEse)
-                .addGap(0, 0, 0)
-                .addComponent(labEmailEse)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-
-        labTypeFacture.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        labTypeFacture.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        labTypeFacture.setText("Facture No. 123");
-
-        comboTypeFacture.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Facture", "Facture pro forma" }));
-        comboTypeFacture.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboTypeFactureItemStateChanged(evt);
-            }
-        });
-
-        dateFacture.setDateFormatString("dd/MM/yyyy HH:mm:ss");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labTypeFacture, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dateFacture, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
-                    .addComponent(comboTypeFacture, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(labTypeFacture)
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(dateFacture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2)
-                .addComponent(comboTypeFacture, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5))
-        );
-
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
@@ -1063,6 +969,24 @@ public class Panel extends javax.swing.JPanel {
         labAdresseClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
         labAdresseClient.setText("167b, Av. ITAGA, C. LINGWALA, KINSHASA, RDC");
 
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel8.setText("Référence :");
+
+        labReference.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+        labReference.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labReference.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
+        labReference.setText("AXSDDS5SD");
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel10.setText("Date :");
+
+        labDateFacture.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+        labDateFacture.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labDateFacture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
+        labDateFacture.setText("06/03/2019");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -1077,17 +1001,21 @@ public class Panel extends javax.swing.JPanel {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labTelephone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labAdresseClient, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))))
+                            .addComponent(labAdresseClient, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
+                            .addComponent(labReference, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(labDateFacture, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
+                .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labTypeClient)
                     .addComponent(labNomClient))
@@ -1099,11 +1027,16 @@ public class Panel extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(labAdresseClient))
+                .addGap(1, 1, 1)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(labReference))
+                .addGap(1, 1, 1)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(labDateFacture))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        labLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        labLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture03.png"))); // NOI18N
 
         panSynthese.setBackground(new java.awt.Color(255, 255, 255));
         panSynthese.setBorder(javax.swing.BorderFactory.createTitledBorder("Synthèse"));
@@ -1534,12 +1467,6 @@ public class Panel extends javax.swing.JPanel {
                     .addComponent(isReleverCompte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(labLogo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(tabPrincipal)
             .addComponent(barreOutilsArticles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1548,18 +1475,12 @@ public class Panel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(barreOutilsArticles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(tabPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addComponent(tabPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -1574,13 +1495,6 @@ public class Panel extends javax.swing.JPanel {
                     .addComponent(panContacts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void comboTypeFactureItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTypeFactureItemStateChanged
-        // TODO add your handling code here:
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            setTypeFacture();
-        }
-    }//GEN-LAST:event_comboTypeFactureItemStateChanged
 
     private void scrollListeArticlesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeArticlesMouseClicked
         // TODO add your handling code here:
@@ -1638,11 +1552,10 @@ public class Panel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barreOutilsArticles;
-    private javax.swing.JComboBox<String> comboTypeFacture;
-    private com.toedter.calendar.JDateChooser dateFacture;
     private javax.swing.JCheckBox isPlanPaiement;
     private javax.swing.JCheckBox isReleverCompte;
     private javax.swing.JButton jButton5;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1657,38 +1570,33 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel labAdresseClient;
-    private javax.swing.JLabel labAdresseEse;
     private javax.swing.JLabel labContactAdresse;
     private javax.swing.JLabel labContactEmails;
     private javax.swing.JLabel labContactNom;
     private javax.swing.JLabel labContactSiteWeb;
     private javax.swing.JLabel labContactTelephone;
+    private javax.swing.JLabel labDateFacture;
     private javax.swing.JLabel labDetailBanque;
     private javax.swing.JLabel labDetailIntitule;
     private javax.swing.JLabel labDetailsIBAN;
     private javax.swing.JLabel labDetailsNumero;
     private javax.swing.JLabel labDetailsSwiftCode;
-    private javax.swing.JLabel labEmailEse;
-    private javax.swing.JLabel labLogo;
     private javax.swing.JLabel labNomClient;
-    private javax.swing.JLabel labNomEse;
+    private javax.swing.JLabel labReference;
     private javax.swing.JLabel labRemise;
     private javax.swing.JLabel labTelephone;
-    private javax.swing.JLabel labTelephoneEse;
     private javax.swing.JLabel labTotalHT;
     private javax.swing.JLabel labTotalPaye;
     private javax.swing.JLabel labTotalSolde;
     private javax.swing.JLabel labTotalTTC;
     private javax.swing.JLabel labTotalTVA;
     private javax.swing.JLabel labTypeClient;
-    private javax.swing.JLabel labTypeFacture;
     private javax.swing.JPanel panContacts;
     private javax.swing.JPanel panDetailsBancaires;
     private javax.swing.JPanel panSynthese;

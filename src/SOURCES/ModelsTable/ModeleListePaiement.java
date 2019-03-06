@@ -155,7 +155,10 @@ public class ModeleListePaiement extends AbstractTableModel {
         double tot = 0;
         for (InterfacePaiement paiement : listeData) {
             if (paiement.getIdArticle() == idArticle) {
-                tot = tot + paiement.getMontant();
+                InterfaceArticle Iart = getArticle(idArticle);
+                if(Iart != null){
+                    tot = tot + paiement.getMontant();
+                }
             }
         }
         return tot;

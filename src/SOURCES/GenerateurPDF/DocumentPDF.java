@@ -107,7 +107,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             writer.setPageEvent(new MarqueS2B());
             this.document.open();
             this.setDonneesBibliographiques();
-            this.setContenuDeLaPage("Elève");
+            this.setContenuDeLaPage();
             this.document.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,7 +181,7 @@ public class DocumentPDF extends PdfPageEventHelper {
         Paragraph preface = new Paragraph();
         String titre = "Reçu";
         if (isRecu == false) {
-            titre = this.gestionnaireFacture.getTitreDoc() + "";
+            titre = "Relevé de compte";
         }
 
         if (this.gestionnaireFacture != null) {
@@ -311,7 +311,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             PdfPCell celluleTitres = new PdfPCell();
             celluleTitres.setPadding(2);
             celluleTitres.setBorderWidth(0);
-            celluleTitres.addElement(getParagraphe("Elève :\nClasse: \nContacts :\nAnnée scolaire :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
+            celluleTitres.addElement(getParagraphe("Elève:\nClasse: \nContacts:\nAnnée scolaire:", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
 
             //Colonne des valeurs = détails sur le client
             PdfPCell celluleDonnees = new PdfPCell();
@@ -320,17 +320,13 @@ public class DocumentPDF extends PdfPageEventHelper {
             if (this.gestionnaireFacture != null) {
                 InterfaceEleve eleve = this.gestionnaireFacture.getDonneesFacture().getEleve();
                 InterfaceClasse classe = Util.getClasse(gestionnaireFacture.getParametres(), eleve.getIdClasse());
-                if (eleve != null) {
-                    String Seleve = eleve.getNom()+" " + eleve.getPostnom() + " " + eleve.getPrenom();
-                    String Sclasse = classe.getNom()+" " + classe.getNomLocal();
-                    String Scontacts = eleve.getTelephonesParents()+", " + eleve.getAdresse();
-                    String Sannee = this.gestionnaireFacture.getParametres().getExercice().getNom();
-                    celluleDonnees.addElement(getParagraphe(Seleve + "\n" + Sclasse + "\n" + Scontacts + "\n" + Sannee, Font_TexteSimple_Italique, Element.ALIGN_LEFT));
-                } else {
-                    celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
-                }
+                String Seleve = eleve.getNom() + " " + eleve.getPostnom() + " " + eleve.getPrenom();
+                String Sclasse = classe.getNom() + ", " + classe.getNomLocal();
+                String Scontacts = eleve.getTelephonesParents() + ", " + eleve.getAdresse();
+                String Sannee = this.gestionnaireFacture.getParametres().getExercice().getNom();
+                celluleDonnees.addElement(getParagraphe(Seleve + "\n" + Sclasse + "\n" + Scontacts + "\n" + Sannee, Font_TexteSimple_Italique, Element.ALIGN_LEFT));
             } else {
-                celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+                celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse: 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
             }
 
             tableDetailsClient.addCell(celluleTitres);
@@ -363,12 +359,17 @@ public class DocumentPDF extends PdfPageEventHelper {
                 totPaye = 0;
                 for (InterfacePaiement paiement : listePaiement) {
                     //cumuls
-                    totPaye += paiement.getMontant();
-                    totReste += modelPaiement.getReste(paiement.getIdArticle());
-                    setLigneTabReleve(tableReleve, Util.getDateFrancais(paiement.getDate()), paiement.getNomArticle(), paiement.getReferenceTransaction(), paiement.getMode(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
-                    i++;
+                    InterfaceArticle Iarticle = Util.getArticle(gestionnaireFacture.getDonneesFacture(), paiement.getIdArticle());
+                    InterfaceMonnaie Imonnaie = Util.getMonnaie(gestionnaireFacture.getParametres(), Iarticle.getIdMonnaie());
+                    if (Iarticle != null && Imonnaie != null) {
+                        String monnaie = Imonnaie.getCode();
+                        totPaye += Util.getMontantOutPut(gestionnaireFacture.getParametres(), Iarticle.getIdMonnaie(), paiement.getMontant());
+                        totReste += Util.getMontantOutPut(gestionnaireFacture.getParametres(), Iarticle.getIdMonnaie(), modelPaiement.getReste(paiement.getIdArticle()));
+                        setLigneTabReleve(tableReleve, monnaie, Util.getDateFrancais(paiement.getDate()), paiement.getNomArticle(), paiement.getReferenceTransaction(), paiement.getMode(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
+                        i++;
+                    }
                 }
-                setDerniereLigneTabReleve(tableReleve, totPaye, totReste);
+                setDerniereLigneTabReleve(tableReleve, gestionnaireFacture.getParametres().getMonnaieOutPut().getCode(), totPaye, totReste);
             }
             document.add(tableReleve);
             String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getNom();
@@ -517,8 +518,7 @@ public class DocumentPDF extends PdfPageEventHelper {
 
     }
 
-    private void setLigneTabReleve(PdfPTable tableDetailsArticles, String date, String NomArticle, String reference, int mode, int i, double montant, double reste) {
-        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
+    private void setLigneTabReleve(PdfPTable tableDetailsArticles, String monnaie, String date, String NomArticle, String reference, int mode, int i, double montant, double reste) {
         tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(date, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
@@ -570,15 +570,14 @@ public class DocumentPDF extends PdfPageEventHelper {
         tableau.addCell(getCelluleTableau("Montant TTC", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableau.addCell(getCelluleTableau(Util.getMontantFrancais(totalTTC) + " " + monnaie, borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
 
-        if (this.gestionnaireFacture.getTitreDoc_() == 0) {
-            if (totalPaye != 0) {
-                tableau.addCell(getCelluleTableau("Montant payé", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_LEFT, Font_TexteSimple_Italique));
-                tableau.addCell(getCelluleTableau("- " + Util.getMontantFrancais(totalPaye) + " " + monnaie, borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_RIGHT, Font_TexteSimple_Italique));
-            }
-
-            tableau.addCell(getCelluleTableau("Solde", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
-            tableau.addCell(getCelluleTableau(Util.getMontantFrancais(totalSolde) + " " + monnaie, borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+        if (totalPaye != 0) {
+            tableau.addCell(getCelluleTableau("Montant payé", borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_LEFT, Font_TexteSimple_Italique));
+            tableau.addCell(getCelluleTableau("- " + Util.getMontantFrancais(totalPaye) + " " + monnaie, borderwidth, BaseColor.WHITE, BaseColor.RED, Element.ALIGN_RIGHT, Font_TexteSimple_Italique));
         }
+
+        tableau.addCell(getCelluleTableau("Solde", borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
+        tableau.addCell(getCelluleTableau(Util.getMontantFrancais(totalSolde) + " " + monnaie, borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
+
     }
 
     private void setDetailsBanque(PdfPTable tableau, float borderwidth) {
@@ -640,8 +639,7 @@ public class DocumentPDF extends PdfPageEventHelper {
         tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(totalTTC) + " " + monnaie, 0.2f, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
     }
 
-    private void setDerniereLigneTabReleve(PdfPTable tableDetailsArticles, double montant, double reste) {
-        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
+    private void setDerniereLigneTabReleve(PdfPTable tableDetailsArticles, String monnaie, double montant, double reste) {
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple));
         tableDetailsArticles.addCell(getCelluleTableau("Total", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_LEFT, Font_TexteSimple_Gras));
         tableDetailsArticles.addCell(getCelluleTableau("", 0, BaseColor.LIGHT_GRAY, null, Element.ALIGN_RIGHT, Font_TexteSimple_Gras));
@@ -696,38 +694,38 @@ public class DocumentPDF extends PdfPageEventHelper {
     Bon de sortie du Stock
     
      */
-    private void setContenuDeLaPage(String rubriqueNomClient) throws Exception {
+    private void setContenuDeLaPage() throws Exception {
         if (sortiesFacture != null) {
             sortiesFacture.getEcouteurEnregistrement().onUploading("Construction du contenu...");
         }
-        setLogoEtDetailsEntreprise();//ok
-        setTitreEtDateDocument(isRecu);//ok
-        setDetailsEleves();//ok
+        setLogoEtDetailsEntreprise();
+        setTitreEtDateDocument(isRecu);
+        setDetailsEleves();
         if (isRecu == false) {
-            setTableauDetailsArticles();//ok
-            ajouterLigne(1);//ok
-            setTableauSynthese();//ok
-            if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerPlanPaiement() == true) {
+            setTableauDetailsArticles();
+            ajouterLigne(1);
+            setTableauSynthese();
+            if (this.gestionnaireFacture.isImprimerPlanPaiement() == true) {
                 if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
-                    setTableauDetailsPlanPaiementEchelonne();//ok
+                    setTableauDetailsPlanPaiementEchelonne();
                 }
             }
-            if (this.gestionnaireFacture.getTitreDoc_() == 0 && this.gestionnaireFacture.isImprimerRelever() == true) {
+            if (this.gestionnaireFacture.isImprimerRelever() == true) {
                 if (this.gestionnaireFacture.getModeleListePaiement().getListeData().isEmpty() == false) {
-                    setTableauDetailsPaiementsRecus(this.gestionnaireFacture.getModeleListePaiement().getListeData());//ok
+                    setTableauDetailsPaiementsRecus(this.gestionnaireFacture.getModeleListePaiement().getListeData());
                 }
             }
         } else {
             //C'est ici que les détails sur le recu seront affichés
-            setTableauDetailsPaiementsRecus(this.gestionnaireFacture.getPaiementsSelected());//ok
+            setTableauDetailsPaiementsRecus(this.gestionnaireFacture.getPaiementsSelected());
         }
 
-        ajouterLigne(1);//ok
-        setSignataire();//ok
-        setLigneSeparateur();//ok
-        setTableauDetailsBancaires();//ok
-        setLigneSeparateur();//ok
-        setBasDePage();//ok
+        ajouterLigne(1);
+        setSignataire();
+        setLigneSeparateur();
+        setTableauDetailsBancaires();
+        setLigneSeparateur();
+        setBasDePage();
         if (sortiesFacture != null) {
             sortiesFacture.getEcouteurEnregistrement().onUploading("Finalisation...");
         }

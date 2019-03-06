@@ -7,14 +7,11 @@ package SOURCES.Utilitaires;
 
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfaceClasse;
-import SOURCES.Interface.InterfaceEcheance;
-import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Vector;
 
 /**
  *
@@ -25,6 +22,15 @@ public class Util {
         for(InterfaceMonnaie Imonnaie: parametresFacture.getListeMonnaies()){
             if(Imonnaie.getId() == idMonnaie){
                 return Imonnaie;
+            }
+        }
+        return null;
+    }
+    
+    public static InterfaceArticle getArticle(DonneesFacture donneesFacture, int idArticle){
+        for(InterfaceArticle Iart: donneesFacture.getArticles()){
+            if(Iart.getId() == idArticle){
+                return Iart;
             }
         }
         return null;
