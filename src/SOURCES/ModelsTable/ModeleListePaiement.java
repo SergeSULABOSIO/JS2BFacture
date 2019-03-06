@@ -31,13 +31,15 @@ public class ModeleListePaiement extends AbstractTableModel {
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
     private DonneesFacture donneesFacture;
+    private ParametresFacture parametresFacture;
     private Bouton btEnreg;
     private RubriqueSimple mEnreg;
 
-    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, DonneesFacture donneesFacture, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListePaiement(JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, DonneesFacture donneesFacture, ParametresFacture parametresFacture, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.ecouteurModele = ecouteurModele;
         this.donneesFacture = donneesFacture;
+        this.parametresFacture = parametresFacture;
         this.mEnreg = mEnreg;
         this.btEnreg = btEnreg;
     }
@@ -94,11 +96,23 @@ public class ModeleListePaiement extends AbstractTableModel {
             }
         }
     }
+    
+    private InterfaceArticle getArticle(int idArticle){
+        for(InterfaceArticle Ia: donneesFacture.getArticles()){
+            if(idArticle == Ia.getId()){
+                return Ia;
+            }
+        }
+        return null;
+    }
 
     public double getTotalMontant() {
         double mnt = 0;
-        for (InterfacePaiement art : listeData) {
-            mnt = mnt + art.getMontant();
+        for (InterfacePaiement paiem : listeData) {
+            InterfaceArticle Ia = getArticle(paiem.getIdArticle());
+            if(Ia != null){
+                mnt = mnt + Util.getMontantOutPut(parametresFacture, Ia.getIdMonnaie(), paiem.getMontant());
+            }
         }
         return Util.round(mnt, 2);
     }

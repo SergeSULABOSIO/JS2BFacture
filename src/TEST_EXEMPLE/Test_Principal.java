@@ -63,6 +63,8 @@ public class Test_Principal extends javax.swing.JFrame {
         Vector<InterfaceMonnaie> listeMonnaies = new Vector();
         listeMonnaies.addElement(MONNAIE_USD);
         listeMonnaies.addElement(MONNAIE_CDF);
+        
+        Vector<Interface> listeMonnaies = new Vector();
         return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD, listeMonnaies);
     }
     

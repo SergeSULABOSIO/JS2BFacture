@@ -333,7 +333,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void initModelTablePaiement() {
-        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.donneesFacture, new EcouteurValeursChangees() {
+        this.modeleListePaiement = new ModeleListePaiement(this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.donneesFacture, this.parametres, new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
@@ -589,7 +589,6 @@ public class Panel extends javax.swing.JPanel {
         labTotalTTC.setText(Util.getMontantFrancais(Tttc) + " " + monn);
         labTotalPaye.setText(Util.getMontantFrancais(Tpaye) + " " + monn);
         labTotalSolde.setText(Util.getMontantFrancais(Tsolde) + " " + monn);
-        //ecouteurClose.onActualiser("Mnt TTC (" + Util.getMontantFrancais(Tttc) + " " + this.parametres.getMonnaie() + "), Mnt payé (" + Util.getMontantFrancais(Tpaye) + " " + this.parametres.getMonnaie() + "), Solde (" + Util.getMontantFrancais(Tsolde) + " " + this.parametres.getMonnaie() + ").", icones.getInfos_01());
     }
 
     private void supprimer() {

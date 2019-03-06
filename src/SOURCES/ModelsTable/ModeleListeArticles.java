@@ -115,8 +115,8 @@ public class ModeleListeArticles extends AbstractTableModel {
         double mntTva = 0;
         double mntTTC = 0;
         for (InterfaceArticle art : listeData) {
-            mntTva = mntTva + art.getTvaMontant();
-            mntTTC = mntTTC + art.getTotalTTC();
+            mntTva = mntTva + Util.getMontantOutPut(parametresFacture, art.getIdMonnaie(), art.getTvaMontant());
+            mntTTC = mntTTC + Util.getMontantOutPut(parametresFacture, art.getIdMonnaie(), art.getTotalTTC());
         }
         return Util.round((mntTTC - mntTva), 2);
     }
@@ -124,7 +124,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     public double getTotal_Net_AvantRabais() {
         double mnt = 0;
         for (InterfaceArticle art : listeData) {
-            mnt = mnt + art.getPrixUHT_avant_rabais();
+            mnt = mnt + Util.getMontantOutPut(parametresFacture, art.getIdMonnaie(), art.getPrixUHT_avant_rabais());
         }
         return Util.round((mnt), 2);
     }
@@ -132,7 +132,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     public double getTotal_TVA() {
         double a = 0;
         for (InterfaceArticle art : listeData) {
-            a = a + art.getTvaMontant();
+            a = a + Util.getMontantOutPut(parametresFacture, art.getIdMonnaie(), art.getTvaMontant());
         }
         return Util.round(a, 2);
     }
@@ -140,7 +140,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     public double getTotal_Rabais() {
         double a = 0;
         for (InterfaceArticle art : listeData) {
-            a = a + art.getRabais();
+            a = a + Util.getMontantOutPut(parametresFacture, art.getIdMonnaie(), art.getRabais());
         }
         return Util.round(a, 2);
     }

@@ -35,6 +35,7 @@ import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceEleve;
+import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.Utilitaires.SortiesFacture;
 
@@ -298,7 +299,7 @@ public class DocumentPDF extends PdfPageEventHelper {
         }
     }
 
-    private void setClientEtSesCoordonnees(String rubriqueNomClient) {
+    private void setDetailsEleves() {
         try {
             PdfPTable tableDetailsClient = new PdfPTable(2);
             int[] dimensionsWidthHeight = {320, 1460};
@@ -309,7 +310,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             PdfPCell celluleTitres = new PdfPCell();
             celluleTitres.setPadding(2);
             celluleTitres.setBorderWidth(0);
-            celluleTitres.addElement(getParagraphe(rubriqueNomClient + " :\nContacts :\nAutres :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
+            celluleTitres.addElement(getParagraphe("Elève :\nClasse: \nContacts :\nAnnée scolaire :", Font_TexteSimple_Gras, Element.ALIGN_RIGHT));
 
             //Colonne des valeurs = détails sur le client
             PdfPCell celluleDonnees = new PdfPCell();
@@ -318,7 +319,11 @@ public class DocumentPDF extends PdfPageEventHelper {
             if (this.gestionnaireFacture != null) {
                 InterfaceEleve eleve = this.gestionnaireFacture.getDonneesFacture().getEleve();
                 if (eleve != null) {
-                    celluleDonnees.addElement(getParagraphe(eleve.getNom() + "\n" + eleve.getTelephonesParents()+ "\n" + this.gestionnaireFacture.getParametres().getExercice().getNom(), Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+                    String Snom = eleve.getNom()+" " + eleve.getPostnom() + " " + eleve.getPrenom();
+                    String Sclasse = eleve.getIdClasse();
+                    String Scontacts = eleve.getTelephonesParents()+", " + eleve.getAdresse();
+                    String Sannee = this.gestionnaireFacture.getParametres().getExercice().getNom();
+                    celluleDonnees.addElement(getParagraphe(Snom + "\n" + Scontacts + "\n" + Sannee, Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 } else {
                     celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 }
@@ -366,7 +371,7 @@ public class DocumentPDF extends PdfPageEventHelper {
             document.add(tableReleve);
             String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getNom();
             document.add(getParagraphe("En lettre : " + (Util.getMontantLettres(totPaye, monnaie)), Font_TexteSimple_petit_Gras, Element.ALIGN_RIGHT));
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -453,14 +458,13 @@ public class DocumentPDF extends PdfPageEventHelper {
                 Vector<InterfaceArticle> listeArticles = modelArticle.getListeData();
                 int i = 0;
                 for (InterfaceArticle article : listeArticles) {
-                    String nomA = "" + (article.getNom().contains("_") ? article.getNom().split("_")[1] : article.getNom());
-                    setLigneTabArticle(tableDetailsArticles, nomA, i, article.getQte(), article.getPrixUHT_avant_rabais(), article.getRabais(), article.getPrixUHT_apres_rabais(), article.getTvaMontant(), article.getTotalTTC());
+                    setLigneTabArticle(tableDetailsArticles, article, i);
                     i++;
                 }
                 setDerniereLigneTabArticle(tableDetailsArticles, modelArticle.getTotal_Net_AvantRabais(), modelArticle.getTotal_Rabais(), modelArticle.getTotal_Net(), modelArticle.getTotal_TVA(), modelArticle.getTotal_TTC());
             } else {
                 for (int i = 0; i < 5; i++) {
-                    setLigneTabArticle(tableDetailsArticles, "INSCRIPTION ET MINERVALE", i, 1, 120, 20, 100, 16, 116);
+                    setLigneTabArticle(tableDetailsArticles, null, i);
                 }
                 setDerniereLigneTabArticle(tableDetailsArticles, 2400, 400, 200, 1560, 25000);
             }
@@ -495,16 +499,20 @@ public class DocumentPDF extends PdfPageEventHelper {
         }
     }
 
-    private void setLigneTabArticle(PdfPTable tableDetailsArticles, String NomArticle, int i, double qt, double punit1, double rabais, double punit2, double mntTva, double totalTTC) {
-        String monnaie = gestionnaireFacture.getParametres().getMonnaieOutPut().getCode();
-        tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(NomArticle, 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(qt) + "", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(punit1) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(rabais) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(punit2) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(mntTva) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
-        tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(totalTTC) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+    private void setLigneTabArticle(PdfPTable tableDetailsArticles, InterfaceArticle article, int i) {
+        InterfaceMonnaie Im = Util.getMonnaie(gestionnaireFacture.parametres, article.getIdMonnaie());
+        if (Im != null) {
+            String monnaie = Im.getCode();
+            tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+            tableDetailsArticles.addCell(getCelluleTableau(article.getNom(), 0.2f, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple));
+            tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(article.getQte()) + "", 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+            tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(article.getPrixUHT_avant_rabais()) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+            tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(article.getRabais()) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+            tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(article.getPrixUHT_apres_rabais()) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+            tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(article.getTvaMontant()) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+            tableDetailsArticles.addCell(getCelluleTableau(Util.getMontantFrancais(article.getTotalTTC()) + " " + monnaie, 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
+        }
+
     }
 
     private void setLigneTabReleve(PdfPTable tableDetailsArticles, String date, String NomArticle, String reference, int mode, int i, double montant, double reste) {
@@ -692,7 +700,7 @@ public class DocumentPDF extends PdfPageEventHelper {
         }
         setLogoEtDetailsEntreprise();//ok
         setTitreEtDateDocument(isRecu);//ok
-        setClientEtSesCoordonnees(rubriqueNomClient);//ok
+        setDetailsEleves();//ok
         if (isRecu == false) {
             setTableauDetailsArticles();//ok
             ajouterLigne(1);//ok
