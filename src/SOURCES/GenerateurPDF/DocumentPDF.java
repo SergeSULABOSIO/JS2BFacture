@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceClasse;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
@@ -318,12 +319,13 @@ public class DocumentPDF extends PdfPageEventHelper {
             celluleDonnees.setBorderWidth(0);
             if (this.gestionnaireFacture != null) {
                 InterfaceEleve eleve = this.gestionnaireFacture.getDonneesFacture().getEleve();
+                InterfaceClasse classe = Util.getClasse(gestionnaireFacture.getParametres(), eleve.getIdClasse());
                 if (eleve != null) {
-                    String Snom = eleve.getNom()+" " + eleve.getPostnom() + " " + eleve.getPrenom();
-                    String Sclasse = eleve.getIdClasse();
+                    String Seleve = eleve.getNom()+" " + eleve.getPostnom() + " " + eleve.getPrenom();
+                    String Sclasse = classe.getNom()+" " + classe.getNomLocal();
                     String Scontacts = eleve.getTelephonesParents()+", " + eleve.getAdresse();
                     String Sannee = this.gestionnaireFacture.getParametres().getExercice().getNom();
-                    celluleDonnees.addElement(getParagraphe(Snom + "\n" + Scontacts + "\n" + Sannee, Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+                    celluleDonnees.addElement(getParagraphe(Seleve + "\n" + Sclasse + "\n" + Scontacts + "\n" + Sannee, Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 } else {
                     celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse : 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
                 }

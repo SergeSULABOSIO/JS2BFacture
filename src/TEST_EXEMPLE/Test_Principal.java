@@ -11,6 +11,7 @@ import SOURCES.Utilitaires.ParametresFacture;
 import java.util.Date;
 import java.util.Vector;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceClasse;
 import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;
@@ -18,6 +19,7 @@ import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.SortiesFacture;
 import SOURCES.Utilitaires.Util;
+import SOURCES.Utilitaires.XX_Classe;
 import static java.lang.Thread.sleep;
 
 /**
@@ -30,7 +32,7 @@ public class Test_Principal extends javax.swing.JFrame {
     public int idUtilisateur = 1;
     public String nomUtilisateur = "Serge SULA BOSIO";
     public int idFacture = 20;
-    public int idClasse = 6;
+    public int idClasse = 3;
     public double tva = 0;
     public double remise = 0;
     public String numeroFacture = "" + (new Date().getTime());
@@ -64,8 +66,12 @@ public class Test_Principal extends javax.swing.JFrame {
         listeMonnaies.addElement(MONNAIE_USD);
         listeMonnaies.addElement(MONNAIE_CDF);
         
-        Vector<Interface> listeMonnaies = new Vector();
-        return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD, listeMonnaies);
+        Vector<InterfaceClasse> listeClasse = new Vector<>();
+        listeClasse.addElement(new XX_Classe(1, idUtilisateur, entreprise.getId(), exercice.getId(), "CM1", 50, "Local 01", (new Date().getTime()+12)));
+        listeClasse.addElement(new XX_Classe(2, idUtilisateur, entreprise.getId(), exercice.getId(), "CM2", 50, "Local 02", (new Date().getTime()+13)));
+        listeClasse.addElement(new XX_Classe(3, idUtilisateur, entreprise.getId(), exercice.getId(), "CE1", 50, "Local 03", (new Date().getTime()+14)));
+        
+        return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD, listeMonnaies, listeClasse);
     }
     
     private DonneesFacture getDonnees(){

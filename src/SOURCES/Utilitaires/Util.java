@@ -6,6 +6,7 @@
 package SOURCES.Utilitaires;
 
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfaceClasse;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;
@@ -24,6 +25,15 @@ public class Util {
         for(InterfaceMonnaie Imonnaie: parametresFacture.getListeMonnaies()){
             if(Imonnaie.getId() == idMonnaie){
                 return Imonnaie;
+            }
+        }
+        return null;
+    }
+    
+    public static InterfaceClasse getClasse(ParametresFacture parametresFacture, int idClasse){
+        for(InterfaceClasse Iclasse: parametresFacture.getListeClasse()){
+            if(Iclasse.getId() == idClasse){
+                return Iclasse;
             }
         }
         return null;
