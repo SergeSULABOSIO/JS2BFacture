@@ -20,61 +20,6 @@ import java.util.Vector;
  * @author user
  */
 public class Util {
-    
-    private static void param_tranches_init_dates(Vector<InterfaceArticle> listeArticles, Vector<InterfaceEcheance> listeEcheances, InterfaceExercice exercice) {
-        int nombreTranches = Util.getNbTranchesMax(listeArticles);
-        double daysExercice = Util.getNombre_jours(exercice.getFin(), exercice.getDebut());
-        double nbDaysParTranche = daysExercice / nombreTranches;
-        long nbDaysParTrancheLong = (long) ((nbDaysParTranche) * 1000 * 60 * 60 * 24);
-        long cumulDays = 0;
-        if (!listeEcheances.isEmpty()) {
-            for (int i = 0; i < nombreTranches; i++) {
-                InterfaceEcheance echeEncours = listeEcheances.elementAt(i);
-                echeEncours.setDateInitiale(new Date(exercice.getDebut().getTime() + cumulDays));
-                echeEncours.setDateFinale(new Date(echeEncours.getDateInitiale().getTime() + nbDaysParTrancheLong));
-                cumulDays = cumulDays + nbDaysParTrancheLong;
-            }
-        }
-    }
-    
-    
-    public static void param_tranches_creer(Vector<InterfaceArticle> listeArticles, Vector<InterfaceEcheance> listeEcheances, InterfaceExercice exercice, int idMonnaieOutput) {
-        if (listeEcheances != null) {
-            listeEcheances.removeAllElements();
-            int nombreMax = Util.getNbTranchesMax(listeArticles);
-            for (int i = 0; i < nombreMax; i++) {
-                String nomTranche = "1ère Tranche";
-                if ((i + 1) > 1) {
-                    nomTranche = (i + 1) + "ème Tranche";
-                }
-                //Date debut = exercice.getDebut();
-                //Date fin = exercice.getFin();
-                XX_Echeance trancheTempo = new XX_Echeance(-1, nomTranche, -1, null, null, "", 0, 0, idMonnaieOutput);
-                listeEcheances.add(trancheTempo);
-            }
-            param_tranches_init_dates(listeArticles, listeEcheances, exercice);
-        }
-    }
-    
-    
-    public static int getNbTranchesMax(Vector<InterfaceArticle> listeArticles) {
-        int nombreTranches = 0;
-        if (listeArticles != null) {
-            if (!listeArticles.isEmpty()) {
-                for (InterfaceArticle article : listeArticles) {
-                    //System.out.println(" * " + article.toString() + ", tranches = " + article.getTranches());
-                    //Si et seulement si le rabais reste strictement inférieur au prix unitaire avant remise
-                    if (article.getPrixUHT_avant_rabais() > article.getRabais()) {
-                        if (article.getTranches() > nombreTranches) {
-                            nombreTranches = article.getTranches();
-                        }
-                    }
-                }
-            }
-        }
-        return nombreTranches;
-    }
-
     public static InterfaceMonnaie getMonnaie(ParametresFacture parametresFacture, int idMonnaie){
         for(InterfaceMonnaie Imonnaie: parametresFacture.getListeMonnaies()){
             if(Imonnaie.getId() == idMonnaie){

@@ -16,6 +16,7 @@ import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
+import SOURCES.Utilitaires.GestionLitiges;
 import SOURCES.Utilitaires.ParametresFacture;
 
 /**
@@ -39,22 +40,12 @@ public class ModeleListeEcheance extends AbstractTableModel {
         this.modeleListePaiement = modeleListePaiement;
         this.modeleListeArticles = modeleListeArticles;
         this.parametresFacture = parametresFacture;
-
-        Util.param_tranches_creer(modeleListeArticles.getListeData(), listeData, parametresFacture.getExercice(), parametresFacture.getMonnaieOutPut().getId());
-        this.param_tranche_init_montant_du();
-        this.param_tranche_init_montant_paye();
+        
+        listeData = GestionLitiges.getEcheances(modeleListeArticles.getListeData(), modeleListePaiement, parametresFacture);
     }
 
     public void actualiser() {
-        Util.param_tranches_creer(modeleListeArticles.getListeData(), listeData, parametresFacture.getExercice(), parametresFacture.getMonnaieOutPut().getId());
-        this.param_tranche_init_montant_du();
-        this.param_tranche_init_montant_paye();
-        redessinerTable();
-    }
-
-    public void actualiser_dates_montantDu_montantPaye() {
-        this.param_tranche_init_montant_du();
-        this.param_tranche_init_montant_paye();
+        listeData = GestionLitiges.getEcheances(modeleListeArticles.getListeData(), modeleListePaiement, parametresFacture);
         redessinerTable();
     }
 
@@ -198,50 +189,10 @@ public class ModeleListeEcheance extends AbstractTableModel {
         }
     }
 
-    
-
-    private void param_tranche_init_montant_du() {
-        nombreTranches = Util.getNbTranchesMax(modeleListeArticles.getListeData());
-        if (!this.listeData.isEmpty()) {
-            for (int indexTranche = 0; indexTranche < nombreTranches; indexTranche++) {
-                InterfaceEcheance echeEncours = listeData.elementAt(indexTranche);
-                double mont = 0;
-                for (InterfaceArticle Iart : modeleListeArticles.getListeData()) {
-                    if (indexTranche + 1 <= Iart.getTranches()) {
-                        System.out.println("C");
-                        mont += Util.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Iart.getTotalTTC()) / Iart.getTranches();
-                    }
-                }
-                echeEncours.setMontantDu(mont);
-            }
-        }
-    }
-
-    private void param_tranche_init_montant_paye() {
-        nombreTranches = Util.getNbTranchesMax(modeleListeArticles.getListeData());
-        //On calcul les montants déjà payés pour cette tranche
-        if (!this.listeData.isEmpty()) {
-            for (int i = 0; i < nombreTranches; i++) {
-                InterfaceEcheance echeEncours = listeData.elementAt(i);
-                double montPaye = 0;
-                for (InterfacePaiement paiement : modeleListePaiement.getListeData()) {
-                    if (paiement.getDate().compareTo(echeEncours.getDateInitiale()) > 0 && paiement.getDate().compareTo(echeEncours.getDateFinale()) <= 0) {
-                        InterfaceArticle Iart = modeleListeArticles.getArticle_id(paiement.getIdArticle());
-                        if (Iart != null) {
-                            montPaye = montPaye + Util.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), paiement.getMontant());
-                        }
-                    }
-                }
-                echeEncours.setMontantPaye(montPaye);
-            }
-        }
-    }
-
     public double getMontantDu(int row) {
         if (row <= this.listeData.size()) {
             InterfaceEcheance eche = listeData.elementAt(row);
             if (eche != null) {
-                param_tranche_init_montant_du();
                 return Util.round(eche.getMontantDu(), 2);
             } else {
                 return -1;
@@ -255,7 +206,6 @@ public class ModeleListeEcheance extends AbstractTableModel {
         if (row <= this.listeData.size()) {
             InterfaceEcheance eche = listeData.elementAt(row);
             if (eche != null) {
-                param_tranche_init_montant_paye();
                 return Util.round(listeData.elementAt(row).getMontantPaye(), 2);
             } else {
                 return -1;

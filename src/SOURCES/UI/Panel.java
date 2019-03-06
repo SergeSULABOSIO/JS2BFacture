@@ -391,7 +391,6 @@ public class Panel extends javax.swing.JPanel {
                 actualiserTotaux();
             }
         });
-
         //Parametrage du modele contenant les données de la table
         this.tableListeEcheance.setModel(this.modeleListeEcheance);
     }

@@ -236,11 +236,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 1 || columnIndex == 2 || columnIndex == 4 || columnIndex == 8) {
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     private void updateArticle(InterfaceArticle newArticle) {
