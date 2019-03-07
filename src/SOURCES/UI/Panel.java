@@ -106,7 +106,6 @@ public class Panel extends javax.swing.JPanel {
         dateFacture = new Date();
         this.icones = new Icones();
         this.moi = this;
-        setContactEtBanques();
         this.labTelephone.setIcon(icones.getTéléphone_01());
         this.labNomClient.setIcon(icones.getClient_01());
         this.labAdresseClient.setIcon(icones.getAdresse_01());
@@ -205,24 +204,6 @@ public class Panel extends javax.swing.JPanel {
 
     public DonneesFacture getDonneesFacture() {
         return donneesFacture;
-    }
-
-
-    private void setContactEtBanques() {
-        if (this.parametres.getEntreprise() != null) {
-            InterfaceEntreprise entreprise = this.parametres.getEntreprise();
-            labContactNom.setText(entreprise.getNom());
-            labContactAdresse.setText(entreprise.getAdresse());
-            labContactEmails.setText(entreprise.getEmail());
-            labContactSiteWeb.setText(entreprise.getSiteWeb());
-            labContactTelephone.setText(entreprise.getTelephone());
-
-            labDetailBanque.setText(entreprise.getBanque());
-            labDetailIntitule.setText(entreprise.getIntituleCompte());
-            labDetailsIBAN.setText(entreprise.getIBAN());
-            labDetailsNumero.setText(entreprise.getNumeroCompte());
-            labDetailsSwiftCode.setText(entreprise.getCodeSwift());
-        }
     }
 
     private void initModelTableArticle() {
@@ -911,26 +892,6 @@ public class Panel extends javax.swing.JPanel {
         isReleverCompte = new javax.swing.JCheckBox();
         barreOutilsArticles = new javax.swing.JToolBar();
         jButton5 = new javax.swing.JButton();
-        panDetailsBancaires = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        labDetailBanque = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        labDetailIntitule = new javax.swing.JLabel();
-        jLabel23 = new javax.swing.JLabel();
-        labDetailsNumero = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
-        labDetailsIBAN = new javax.swing.JLabel();
-        jLabel28 = new javax.swing.JLabel();
-        labDetailsSwiftCode = new javax.swing.JLabel();
-        jSeparator4 = new javax.swing.JSeparator();
-        panContacts = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
-        labContactNom = new javax.swing.JLabel();
-        labContactTelephone = new javax.swing.JLabel();
-        labContactEmails = new javax.swing.JLabel();
-        labContactSiteWeb = new javax.swing.JLabel();
-        labContactAdresse = new javax.swing.JLabel();
         tabPrincipal = new javax.swing.JTabbedPane();
         scrollListeArticles = new javax.swing.JScrollPane();
         tableListeArticle = new javax.swing.JTable();
@@ -1166,169 +1127,6 @@ public class Panel extends javax.swing.JPanel {
         jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barreOutilsArticles.add(jButton5);
 
-        panDetailsBancaires.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel11.setText("Détails bancaires");
-
-        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel13.setText("Banque :");
-
-        labDetailBanque.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labDetailBanque.setForeground(new java.awt.Color(153, 153, 153));
-        labDetailBanque.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labDetailBanque.setText("Equity Bank Congo SA");
-
-        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel15.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel15.setText("Intitulé :");
-
-        labDetailIntitule.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labDetailIntitule.setForeground(new java.awt.Color(153, 153, 153));
-        labDetailIntitule.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labDetailIntitule.setText("UAP RDC Sarl");
-
-        jLabel23.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel23.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel23.setText("Numéro :");
-
-        labDetailsNumero.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labDetailsNumero.setForeground(new java.awt.Color(153, 153, 153));
-        labDetailsNumero.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labDetailsNumero.setText("00018000010267415120011");
-
-        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel25.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel25.setText("IBAN :");
-
-        labDetailsIBAN.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labDetailsIBAN.setForeground(new java.awt.Color(153, 153, 153));
-        labDetailsIBAN.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labDetailsIBAN.setText("PRCBCDKI");
-
-        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel28.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel28.setText("Code Swift :");
-
-        labDetailsSwiftCode.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labDetailsSwiftCode.setForeground(new java.awt.Color(153, 153, 153));
-        labDetailsSwiftCode.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labDetailsSwiftCode.setText("PRCBCDKI");
-
-        javax.swing.GroupLayout panDetailsBancairesLayout = new javax.swing.GroupLayout(panDetailsBancaires);
-        panDetailsBancaires.setLayout(panDetailsBancairesLayout);
-        panDetailsBancairesLayout.setHorizontalGroup(
-            panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panDetailsBancairesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(panDetailsBancairesLayout.createSequentialGroup()
-                        .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel25, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel28, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE))
-                        .addGap(5, 5, 5)
-                        .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labDetailBanque, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labDetailIntitule, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labDetailsNumero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labDetailsIBAN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labDetailsSwiftCode, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-        );
-        panDetailsBancairesLayout.setVerticalGroup(
-            panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panDetailsBancairesLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jLabel11)
-                .addGap(0, 0, 0)
-                .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(labDetailBanque))
-                .addGap(0, 0, 0)
-                .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(labDetailIntitule))
-                .addGap(0, 0, 0)
-                .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel23)
-                    .addComponent(labDetailsNumero))
-                .addGap(0, 0, 0)
-                .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel25)
-                    .addComponent(labDetailsIBAN))
-                .addGap(0, 0, 0)
-                .addGroup(panDetailsBancairesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel28)
-                    .addComponent(labDetailsSwiftCode))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        panContacts.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel12.setText("Contact");
-
-        labContactNom.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labContactNom.setForeground(new java.awt.Color(153, 153, 153));
-        labContactNom.setText("UAP RDC Sarl");
-
-        labContactTelephone.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labContactTelephone.setForeground(new java.awt.Color(153, 153, 153));
-        labContactTelephone.setText("(+243)84 480 35 14, (+243)82 87 27 706");
-
-        labContactEmails.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labContactEmails.setForeground(new java.awt.Color(153, 153, 153));
-        labContactEmails.setText("ssula@s2b-simple.com; sulabosiog@gmail.com");
-
-        labContactSiteWeb.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labContactSiteWeb.setForeground(new java.awt.Color(153, 153, 153));
-        labContactSiteWeb.setText("www.s2b-simple.com");
-
-        labContactAdresse.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labContactAdresse.setForeground(new java.awt.Color(153, 153, 153));
-        labContactAdresse.setText("167b, Av. ITAGA, C. LINGWALA, KINSHASA");
-
-        javax.swing.GroupLayout panContactsLayout = new javax.swing.GroupLayout(panContacts);
-        panContacts.setLayout(panContactsLayout);
-        panContactsLayout.setHorizontalGroup(
-            panContactsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panContactsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panContactsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labContactNom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labContactTelephone, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labContactEmails, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labContactSiteWeb, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(labContactAdresse, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
-        panContactsLayout.setVerticalGroup(
-            panContactsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panContactsLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jLabel12)
-                .addGap(0, 0, 0)
-                .addComponent(labContactNom)
-                .addGap(0, 0, 0)
-                .addComponent(labContactAdresse)
-                .addGap(0, 0, 0)
-                .addComponent(labContactTelephone)
-                .addGap(0, 0, 0)
-                .addComponent(labContactEmails)
-                .addGap(0, 0, 0)
-                .addComponent(labContactSiteWeb)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         tabPrincipal.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabPrincipalStateChanged(evt);
@@ -1457,10 +1255,6 @@ public class Panel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(panDetailsBancaires, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(5, 5, 5)
-                .addComponent(panContacts, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(isPlanPaiement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1470,7 +1264,6 @@ public class Panel extends javax.swing.JPanel {
             .addComponent(tabPrincipal)
             .addComponent(barreOutilsArticles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSeparator4)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1480,19 +1273,15 @@ public class Panel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(barreOutilsArticles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(tabPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addComponent(tabPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(isReleverCompte)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(isPlanPaiement)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panDetailsBancaires, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panContacts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(5, 5, 5))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1556,15 +1345,8 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JCheckBox isReleverCompte;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1574,19 +1356,8 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel labAdresseClient;
-    private javax.swing.JLabel labContactAdresse;
-    private javax.swing.JLabel labContactEmails;
-    private javax.swing.JLabel labContactNom;
-    private javax.swing.JLabel labContactSiteWeb;
-    private javax.swing.JLabel labContactTelephone;
     private javax.swing.JLabel labDateFacture;
-    private javax.swing.JLabel labDetailBanque;
-    private javax.swing.JLabel labDetailIntitule;
-    private javax.swing.JLabel labDetailsIBAN;
-    private javax.swing.JLabel labDetailsNumero;
-    private javax.swing.JLabel labDetailsSwiftCode;
     private javax.swing.JLabel labNomClient;
     private javax.swing.JLabel labReference;
     private javax.swing.JLabel labRemise;
@@ -1597,8 +1368,6 @@ public class Panel extends javax.swing.JPanel {
     private javax.swing.JLabel labTotalTTC;
     private javax.swing.JLabel labTotalTVA;
     private javax.swing.JLabel labTypeClient;
-    private javax.swing.JPanel panContacts;
-    private javax.swing.JPanel panDetailsBancaires;
     private javax.swing.JPanel panSynthese;
     private javax.swing.JScrollPane scrollListeArticles;
     private javax.swing.JScrollPane scrollListeEcheances;

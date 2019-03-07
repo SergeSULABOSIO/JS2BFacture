@@ -39,11 +39,11 @@ public class ModeleListeEcheance extends AbstractTableModel {
         this.modeleListePaiement = modeleListePaiement;
         this.modeleListeArticles = modeleListeArticles;
         this.parametresFacture = parametresFacture;
-        listeData = GestionLitiges.getEcheances(modeleListeArticles.getListeData(), modeleListePaiement, parametresFacture);
+        this.listeData = GestionLitiges.getEcheances(modeleListeArticles.getListeData(), modeleListePaiement, parametresFacture);
     }
 
     public void actualiser() {
-        listeData = GestionLitiges.getEcheances(modeleListeArticles.getListeData(), modeleListePaiement, parametresFacture);
+        this.listeData = GestionLitiges.getEcheances(modeleListeArticles.getListeData(), modeleListePaiement, parametresFacture);
         redessinerTable();
     }
 
