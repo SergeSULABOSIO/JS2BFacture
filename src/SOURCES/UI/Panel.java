@@ -100,6 +100,7 @@ public class Panel extends javax.swing.JPanel {
         parametrerTableEcheance();
         actualiserTotaux();
         activerBoutons(tabPrincipal.getSelectedIndex());
+        
     }
 
     private void init() {
