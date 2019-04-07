@@ -9,6 +9,7 @@ import SOURCES.Interface.InterfaceClasse;
 import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;
+import SOURCES.Interface.InterfacePeriode;
 import java.util.Vector;
 
 /**
@@ -25,8 +26,9 @@ public class ParametresFacture {
     private InterfaceMonnaie monnaieOutPut;
     private Vector<InterfaceMonnaie> listeMonnaies;
     private Vector<InterfaceClasse> listeClasse;
+    private Vector<InterfacePeriode> listePeriodes;
 
-    public ParametresFacture(int idFacture, String numero, int idUtilisateur, String nomUtilisateur, InterfaceEntreprise entreprise, InterfaceExercice exercice, InterfaceMonnaie monnaieOutPut, Vector<InterfaceMonnaie> listeMonnaies, Vector<InterfaceClasse> listeClasse) {
+    public ParametresFacture(int idFacture, String numero, int idUtilisateur, String nomUtilisateur, InterfaceEntreprise entreprise, InterfaceExercice exercice, InterfaceMonnaie monnaieOutPut, Vector<InterfaceMonnaie> listeMonnaies, Vector<InterfaceClasse> listeClasse, Vector<InterfacePeriode> listePeriodes) {
         this.idFacture = idFacture;
         this.numero = numero;
         this.idUtilisateur = idUtilisateur;
@@ -36,7 +38,18 @@ public class ParametresFacture {
         this.monnaieOutPut = monnaieOutPut;
         this.listeMonnaies = listeMonnaies;
         this.listeClasse = listeClasse;
+        this.listePeriodes = listePeriodes;
     }
+
+    public Vector<InterfacePeriode> getListePeriodes() {
+        return listePeriodes;
+    }
+
+    public void setListePeriodes(Vector<InterfacePeriode> listePeriodes) {
+        this.listePeriodes = listePeriodes;
+    }
+    
+    
 
     public Vector<InterfaceClasse> getListeClasse() {
         return listeClasse;

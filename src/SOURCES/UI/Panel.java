@@ -20,6 +20,7 @@ import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.EditeursTable.EditeurArticle;
 import SOURCES.EditeursTable.EditeurDate;
 import SOURCES.EditeursTable.EditeurMode;
+import SOURCES.EditeursTable.EditeurPeriode;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.Utilitaires.ParametresFacture;
@@ -135,7 +136,7 @@ public class Panel extends javax.swing.JPanel {
                 Date newDate = new Date();
                 InterfaceEleve eleveQuiPaie = donneesFacture.getEleve();
                 if (eleveQuiPaie != null) {
-                    modeleListePaiement.AjouterPaiement(new XX_Paiement(-1, eleveQuiPaie.getId(), -1, eleveQuiPaie.getNom(), "", eleveQuiPaie.getNom(), montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime() + "", InterfacePaiement.BETA_NOUVEAU));
+                    modeleListePaiement.AjouterPaiement(new XX_Paiement(-1, eleveQuiPaie.getId(), -1, -1, eleveQuiPaie.getNom(), "", eleveQuiPaie.getNom(), montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime() + "", InterfacePaiement.BETA_NOUVEAU));
                 }
             }
 
@@ -241,6 +242,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void fixerColonnesTableArticles(boolean resizeTable) {
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
         //Parametrage du rendu de la table
         this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.donneesFacture, this.parametres,this.modeleListeArticles, icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
@@ -254,7 +256,6 @@ public class Panel extends javax.swing.JPanel {
         setTaille(this.tableListeArticle.getColumnModel().getColumn(5), 100, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(6), 120, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(7), 120, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(8), 90, true, null);
 
         //On écoute les sélction
         this.tableListeArticle.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -327,6 +328,7 @@ public class Panel extends javax.swing.JPanel {
     }
 
     private void fixerColonnesTablePaiement(boolean resizeTable) {
+        //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
         //Parametrage du rendu de la table
         this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(this.donneesFacture, this.parametres, this.modeleListePaiement, icones.getModifier_01()));
         this.tableListePaiement.setRowHeight(25);
@@ -336,8 +338,9 @@ public class Panel extends javax.swing.JPanel {
         setTaille(this.tableListePaiement.getColumnModel().getColumn(2), 200, false, editeurArticle);
         setTaille(this.tableListePaiement.getColumnModel().getColumn(3), 200, true, null);
         setTaille(this.tableListePaiement.getColumnModel().getColumn(4), 150, true, new EditeurMode());
-        setTaille(this.tableListePaiement.getColumnModel().getColumn(5), 120, true, null);
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(5), 150, true, new EditeurPeriode(parametres.getListePeriodes()));
         setTaille(this.tableListePaiement.getColumnModel().getColumn(6), 120, true, null);
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(7), 120, true, null);
 
         //On écoute les sélction
         this.tableListePaiement.getSelectionModel().addListSelectionListener(new ListSelectionListener() {

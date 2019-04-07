@@ -24,7 +24,7 @@ import java.awt.Color;
  */
 public class ModeleListeArticles extends AbstractTableModel {
 
-    private String[] titreColonnes = {"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+    private String[] titreColonnes = {"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
     private Vector<InterfaceArticle> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -183,7 +183,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
         switch (columnIndex) {
             case 0:
                 return (rowIndex + 1) + "";
@@ -202,13 +202,13 @@ public class ModeleListeArticles extends AbstractTableModel {
             case 7:
                 return listeData.elementAt(rowIndex).getTotalTTC();
             default:
-                return listeData.elementAt(rowIndex).getTranches();
+                return null;
         }
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
         switch (columnIndex) {
             case 0:
                 return String.class;//N°
@@ -226,8 +226,6 @@ public class ModeleListeArticles extends AbstractTableModel {
                 return Double.class;//Mnt Tva
             case 7:
                 return Double.class;//Mnt TTC
-            case 8:
-                return Integer.class;//Tranches
             default:
                 return Object.class;
         }
@@ -246,7 +244,6 @@ public class ModeleListeArticles extends AbstractTableModel {
                     newArticle.setNom(Iarticle.getNom());
                     newArticle.setPrixUHT_avant_rabais(Iarticle.getPrixUHT_avant_rabais());
                     newArticle.setUnite(Iarticle.getUnite());
-                    newArticle.setTranches(Iarticle.getTranches());
                     return;
                 }
             }
@@ -256,7 +253,7 @@ public class ModeleListeArticles extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC""};
         InterfaceArticle article = listeData.get(rowIndex);
         String avant = article.toString();
         switch (columnIndex) {
@@ -269,9 +266,6 @@ public class ModeleListeArticles extends AbstractTableModel {
                 break;
             case 4:
                 article.setRabais(Double.parseDouble(aValue + ""));
-                break;
-            case 8:
-                article.setTranches(Integer.parseInt(aValue + ""));
                 break;
             default:
                 break;

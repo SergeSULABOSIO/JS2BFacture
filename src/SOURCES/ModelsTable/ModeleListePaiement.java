@@ -26,7 +26,7 @@ import java.awt.Color;
  */
 public class ModeleListePaiement extends AbstractTableModel {
 
-    private String[] titreColonnes = {"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
+    private String[] titreColonnes = {"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
     private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
@@ -96,10 +96,10 @@ public class ModeleListePaiement extends AbstractTableModel {
             }
         }
     }
-    
-    private InterfaceArticle getArticle(int idArticle){
-        for(InterfaceArticle Ia: donneesFacture.getArticles()){
-            if(idArticle == Ia.getId()){
+
+    private InterfaceArticle getArticle(int idArticle) {
+        for (InterfaceArticle Ia : donneesFacture.getArticles()) {
+            if (idArticle == Ia.getId()) {
                 return Ia;
             }
         }
@@ -110,7 +110,7 @@ public class ModeleListePaiement extends AbstractTableModel {
         double mnt = 0;
         for (InterfacePaiement paiem : listeData) {
             InterfaceArticle Ia = getArticle(paiem.getIdArticle());
-            if(Ia != null){
+            if (Ia != null) {
                 mnt = mnt + Util.getMontantOutPut(parametresFacture, Ia.getIdMonnaie(), paiem.getMontant());
             }
         }
@@ -156,7 +156,7 @@ public class ModeleListePaiement extends AbstractTableModel {
         for (InterfacePaiement paiement : listeData) {
             if (paiement.getIdArticle() == idArticle) {
                 InterfaceArticle Iart = getArticle(idArticle);
-                if(Iart != null){
+                if (Iart != null) {
                     tot = tot + paiement.getMontant();
                 }
             }
@@ -196,7 +196,7 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
+        //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
         switch (columnIndex) {
             case 0:
                 return (rowIndex + 1) + "";
@@ -209,8 +209,10 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 4:
                 return listeData.elementAt(rowIndex).getMode();
             case 5:
-                return listeData.elementAt(rowIndex).getMontant();
+                return listeData.elementAt(rowIndex).getIdPeriode();
             case 6:
+                return listeData.elementAt(rowIndex).getMontant();
+            case 7:
                 return getReste(listeData.elementAt(rowIndex).getIdArticle());
             default:
                 return null;
@@ -219,7 +221,7 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
+        //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
         switch (columnIndex) {
             case 0:
                 return String.class;//N°
@@ -232,8 +234,10 @@ public class ModeleListePaiement extends AbstractTableModel {
             case 4:
                 return Integer.class;//Mode
             case 5:
-                return Double.class;//Montant
+                return Integer.class;//Période
             case 6:
+                return Double.class;//Montant
+            case 7:
                 return Double.class;//Reste
             default:
                 return Object.class;
@@ -243,14 +247,14 @@ public class ModeleListePaiement extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
-        if (columnIndex == 0 || columnIndex == 6) {
+        //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
+        if (columnIndex == 0 || columnIndex == 7) {
             return false;
         } else {
             return true;
         }
     }
-    
+
     private void updateArticle(InterfacePaiement newPaiement) {
         if (newPaiement != null && donneesFacture != null) {
             for (InterfaceArticle Iarticle : donneesFacture.getArticles()) {
@@ -265,11 +269,9 @@ public class ModeleListePaiement extends AbstractTableModel {
         redessinerTable();
     }
 
-    
-    
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
+        //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
         InterfacePaiement Ipaiement = listeData.get(rowIndex);
         String avant = Ipaiement.toString();
         switch (columnIndex) {
@@ -277,7 +279,7 @@ public class ModeleListePaiement extends AbstractTableModel {
                 Ipaiement.setDate((Date) aValue);
                 break;
             case 2:
-                Ipaiement.setIdArticle(Integer.parseInt(aValue+""));
+                Ipaiement.setIdArticle(Integer.parseInt(aValue + ""));
                 updateArticle(Ipaiement);
                 break;
             case 3:
@@ -287,14 +289,17 @@ public class ModeleListePaiement extends AbstractTableModel {
                 Ipaiement.setMode(Integer.parseInt(aValue + ""));
                 break;
             case 5:
+                Ipaiement.setIdPeriode(Integer.parseInt(aValue + ""));
+                break;
+            case 6:
                 Ipaiement.setMontant(Double.parseDouble(aValue + ""));
                 break;
             default:
                 break;
         }
         String apres = Ipaiement.toString();
-        if(!avant.equals(apres)){
-            if(Ipaiement.getBeta() == InterfacePaiement.BETA_EXISTANT){
+        if (!avant.equals(apres)) {
+            if (Ipaiement.getBeta() == InterfacePaiement.BETA_EXISTANT) {
                 Ipaiement.setBeta(InterfacePaiement.BETA_MODIFIE);
                 mEnreg.setCouleur(Color.blue);
                 btEnreg.setCouleur(Color.blue);

@@ -8,6 +8,7 @@ package SOURCES.RendusTable;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfacePeriode;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.DonneesFacture;
@@ -81,11 +82,23 @@ public class RenduTablePaiement implements TableCellRenderer {
         return mode;
     }
 
+    private String getPeriode(Object value) {
+        String periode = "Null";
+        int idPeriode = Integer.parseInt(value + "");
+        for (InterfacePeriode Iperiode : parametresFacture.getListePeriodes()) {
+            if(Iperiode.getId() == idPeriode){
+                periode = Iperiode.getNom();
+                break;
+            }
+        }
+        return periode;
+    }
+
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        //{"N°", "Date", "Article", "Référence", "Mode", "Montant reçu", "Reste"};
+        //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
         CelluleSimpleTableau celluleNum = null;
-        if (column == 0 || column == 1 || column == 2 || column == 3 || column == 4) {
+        if (column == 0 || column == 1 || column == 2 || column == 3 || column == 4 || column == 5) {
             switch (column) {
                 case 0:
                     celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
@@ -99,12 +112,15 @@ public class RenduTablePaiement implements TableCellRenderer {
                 case 4:
                     celluleNum = new CelluleSimpleTableau(" " + getMode(value) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
                     break;
+                case 5:
+                    celluleNum = new CelluleSimpleTableau(" " + getPeriode(value) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    break;
                 default:
                     celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
                     break;
             }
         } else {
-            if (column == 5) {
+            if (column == 6) {
                 celluleNum = new CelluleSimpleTableau(" " + Util.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
             } else {
                 celluleNum = new CelluleSimpleTableau(" " + Util.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);

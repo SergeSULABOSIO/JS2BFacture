@@ -16,7 +16,9 @@ import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfaceExercice;
 import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfacePeriode;
 import SOURCES.Utilitaires.DonneesFacture;
+import SOURCES.Utilitaires.LiaisonPeriodeFrais;
 import SOURCES.Utilitaires.SortiesFacture;
 import SOURCES.Utilitaires.Util;
 import SOURCES.Utilitaires.XX_Classe;
@@ -28,7 +30,6 @@ import static java.lang.Thread.sleep;
  */
 public class Test_Principal extends javax.swing.JFrame {
 
-    
     public int idUtilisateur = 1;
     public String nomUtilisateur = "Serge SULA BOSIO";
     public int idFacture = 20;
@@ -37,19 +38,27 @@ public class Test_Principal extends javax.swing.JFrame {
     public double remise = 0;
     public String numeroFacture = "" + (new Date().getTime());
 
-    
     public TEST_Entreprise entreprise = new TEST_Entreprise(-1, "S2B, Simple.Intuitif", "167B, Av. ITAGA, C./LINGWALA, KINSHASA - RDC", "+243844803514", "info@s2b-simple.com", "www.s2b-simple.com", "EquityBank Congo", "S2B", "000000002114545", "0012554", "CDKIS0012", "logo.png", "RCCM/CD/KIN45-59", "IDNAT000124", "IMP1213");
     public TEST_Exercice exercice = new TEST_Exercice(12, entreprise.getId(), idUtilisateur, "Année Scolaire 2019-2020", new Date(), Util.getDate_AjouterAnnee(new Date(), 1), InterfaceExercice.BETA_EXISTANT);
-    public TEST_Eleve eleve = new TEST_Eleve(120, entreprise.getId(), idUtilisateur, exercice.getId(), idClasse, (new Date().getTime()+45), "CM2", "167B, Av. ITAGA, C. LINGWALA", "+24382-87-27-706", "TONGO", "BATANGILA", "CHRISTIAN", InterfaceEleve.STATUS_ACTIF, InterfaceEleve.SEXE_MASCULIN, new Date(), InterfaceEleve.BETA_EXISTANT);
+    public TEST_Eleve eleve = new TEST_Eleve(120, entreprise.getId(), idUtilisateur, exercice.getId(), idClasse, (new Date().getTime() + 45), "CM2", "167B, Av. ITAGA, C. LINGWALA", "+24382-87-27-706", "TONGO", "BATANGILA", "CHRISTIAN", InterfaceEleve.STATUS_ACTIF, InterfaceEleve.SEXE_MASCULIN, new Date(), InterfaceEleve.BETA_EXISTANT);
     //Types de monnaies
     public TEST_Monnaie MONNAIE_USD = new TEST_Monnaie(20, entreprise.getId(), idUtilisateur, exercice.getId(), "Dollars Américains", "$", InterfaceMonnaie.NATURE_MONNAIE_ETRANGERE, 1620, new Date().getTime(), InterfaceMonnaie.BETA_EXISTANT);
     public TEST_Monnaie MONNAIE_CDF = new TEST_Monnaie(21, entreprise.getId(), idUtilisateur, exercice.getId(), "Francs Congolais", "Fc", InterfaceMonnaie.NATURE_MONNAIE_LOCALE, 1, new Date().getTime() + 1, InterfaceMonnaie.BETA_EXISTANT);
-    //Types de Frais existants
-    public TEST_Article INSCRIPTION = new TEST_Article(12, "INSCRIPTION", 1, "Année", MONNAIE_CDF.getId(), tva, 10000, remise, 1, InterfaceArticle.BETA_EXISTANT);
-    public TEST_Article MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", MONNAIE_USD.getId(), tva, 1500, remise, 5, InterfaceArticle.BETA_EXISTANT);
-    public TEST_Article TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", MONNAIE_USD.getId(), tva, 10, remise, 2, InterfaceArticle.BETA_EXISTANT);
 
-   
+    //Type des périodes
+    public TEST_Periode Trimestre01 = new TEST_Periode(1, entreprise.getId(), idUtilisateur, exercice.getId(), "1er Trimestre", exercice.getDebut(), exercice.getFin(), (new Date().getTime()), InterfacePeriode.BETA_EXISTANT);
+    public TEST_Periode Trimestre02 = new TEST_Periode(2, entreprise.getId(), idUtilisateur, exercice.getId(), "2ème Trimestre", exercice.getDebut(), exercice.getFin(), (new Date().getTime()), InterfacePeriode.BETA_EXISTANT);
+    public TEST_Periode Trimestre03 = new TEST_Periode(3, entreprise.getId(), idUtilisateur, exercice.getId(), "3ème Trimestre", exercice.getDebut(), exercice.getFin(), (new Date().getTime()), InterfacePeriode.BETA_EXISTANT);
+
+    public Vector<LiaisonPeriodeFrais> liaisonInsription = new Vector<>();
+    public Vector<LiaisonPeriodeFrais> liaisonMinervale = new Vector<>();
+    public Vector<LiaisonPeriodeFrais> liaisonTravManuel = new Vector<>();
+
+    //Types de Frais existants
+    public TEST_Article INSCRIPTION = null;
+    public TEST_Article MINERVALE = null;
+    public TEST_Article TRAVAIL_MANUEL = null;
+
     public Vector<InterfaceArticle> donneesArticles = new Vector<>();
     public PanelFacture panelFacture = null;
 
@@ -65,27 +74,48 @@ public class Test_Principal extends javax.swing.JFrame {
         Vector<InterfaceMonnaie> listeMonnaies = new Vector();
         listeMonnaies.addElement(MONNAIE_USD);
         listeMonnaies.addElement(MONNAIE_CDF);
-        
+
         Vector<InterfaceClasse> listeClasse = new Vector<>();
-        listeClasse.addElement(new XX_Classe(1, idUtilisateur, entreprise.getId(), exercice.getId(), "CM1", 50, "Local 01", (new Date().getTime()+12)));
-        listeClasse.addElement(new XX_Classe(2, idUtilisateur, entreprise.getId(), exercice.getId(), "CM2", 50, "Local 02", (new Date().getTime()+13)));
-        listeClasse.addElement(new XX_Classe(3, idUtilisateur, entreprise.getId(), exercice.getId(), "CE1", 50, "Local 03", (new Date().getTime()+14)));
-        
-        return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD, listeMonnaies, listeClasse);
+        listeClasse.addElement(new XX_Classe(1, idUtilisateur, entreprise.getId(), exercice.getId(), "CM1", 50, "Local 01", (new Date().getTime() + 12)));
+        listeClasse.addElement(new XX_Classe(2, idUtilisateur, entreprise.getId(), exercice.getId(), "CM2", 50, "Local 02", (new Date().getTime() + 13)));
+        listeClasse.addElement(new XX_Classe(3, idUtilisateur, entreprise.getId(), exercice.getId(), "CE1", 50, "Local 03", (new Date().getTime() + 14)));
+
+        Vector<InterfacePeriode> listePeriodes = new Vector<>();
+        listePeriodes.add(Trimestre01);
+        listePeriodes.add(Trimestre02);
+        listePeriodes.add(Trimestre03);
+
+        return new ParametresFacture(idFacture, numeroFacture, idUtilisateur, nomUtilisateur, entreprise, exercice, MONNAIE_USD, listeMonnaies, listeClasse, listePeriodes);
     }
-    
-    private DonneesFacture getDonnees(){
+
+    private DonneesFacture getDonnees() {
         //On charge les données
-        
+
         Vector<InterfaceArticle> donneesArticles = new Vector<>();
+
+        liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 10));
+        liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 0));
+        liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 0));
+
+        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 300));
+        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 300));
+        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 300));
+        
+        liaisonTravManuel.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 5));
+        liaisonTravManuel.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 5));
+        liaisonTravManuel.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 2));
+
+        INSCRIPTION = new TEST_Article(12, "INSCRIPTION", 1, "Année", MONNAIE_CDF.getId(), tva, 10000, remise, liaisonInsription, InterfaceArticle.BETA_EXISTANT);
+        MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", MONNAIE_USD.getId(), tva, 1500, remise, liaisonMinervale, InterfaceArticle.BETA_EXISTANT);
+        TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", MONNAIE_USD.getId(), tva, 10, remise, liaisonTravManuel, InterfaceArticle.BETA_EXISTANT);
+
         donneesArticles.add(INSCRIPTION);
         donneesArticles.add(MINERVALE);
         donneesArticles.add(TRAVAIL_MANUEL);
-        
-        
+
         Vector<InterfacePaiement> donneesPaiements = new Vector<>();
         //donneesPaiements.add(new TEST_Paiement(120, eleve.getId(), INSCRIPTION.getId(), eleve.getNom(), INSCRIPTION.getNom(), eleve.getNom(), 5000, new Date(), InterfacePaiement.MODE_CAISSE, "DSER22445", InterfacePaiement.BETA_EXISTANT));
-        
+
         return new DonneesFacture(eleve, donneesArticles, donneesPaiements);
     }
 
@@ -148,7 +178,7 @@ public class Test_Principal extends javax.swing.JFrame {
                             if (sortiesFacture != null) {
                                 sortiesFacture.getEcouteurEnregistrement().onUploading("Chargement...");
                                 sleep(1000);
-                                
+
                                 for (InterfacePaiement paiement : sortiesFacture.getPaiements()) {
                                     if (paiement.getBeta() == InterfacePaiement.BETA_MODIFIE || paiement.getBeta() == InterfacePaiement.BETA_NOUVEAU) {
                                         System.out.println(" * Paiement: " + paiement.toString());

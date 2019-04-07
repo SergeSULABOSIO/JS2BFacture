@@ -7,6 +7,8 @@ package TEST_EXEMPLE;
 
 import SOURCES.Utilitaires.*;
 import SOURCES.Interface.InterfaceArticle;
+import SOURCES.Interface.InterfacePeriode;
+import java.util.Vector;
 
 /**
  *
@@ -22,10 +24,10 @@ public class TEST_Article implements InterfaceArticle {
     public double tvaprc;
     public double prixUht;
     public double rabais;
-    public int tranches;
+    public Vector<LiaisonPeriodeFrais> liaisonsPeriodes = new Vector<LiaisonPeriodeFrais>();
     public int beta;
 
-    public TEST_Article(int id, String nom, double qte, String unite, int idMonnaie, double tvaprc, double prixUht, double rabais, int tranches, int beta) {
+    public TEST_Article(int id, String nom, double qte, String unite, int idMonnaie, double tvaprc, double prixUht, double rabais, Vector<LiaisonPeriodeFrais> liaisonsPeriodes, int beta) {
         this.id = id;
         this.nom = nom;
         this.qte = qte;
@@ -34,7 +36,7 @@ public class TEST_Article implements InterfaceArticle {
         this.tvaprc = tvaprc;
         this.prixUht = prixUht;
         this.rabais = rabais;
-        this.tranches = tranches;
+        this.liaisonsPeriodes = liaisonsPeriodes;
         this.beta = beta;
     }
 
@@ -45,7 +47,7 @@ public class TEST_Article implements InterfaceArticle {
     public void setIdMonnaie(int dMonnaie) {
         this.idMonnaie = dMonnaie;
     }
-    
+
     public int getBeta() {
         return beta;
     }
@@ -143,17 +145,44 @@ public class TEST_Article implements InterfaceArticle {
         this.tvaprc = tvapourc;
     }
 
-    public int getTranches() {
-        return tranches;
+    public double getTvaprc() {
+        return tvaprc;
     }
 
-    public void setTranches(int tranches) {
-        this.tranches = tranches;
+    public void setTvaprc(double tvaprc) {
+        this.tvaprc = tvaprc;
+    }
+
+    public double getPrixUht() {
+        return prixUht;
+    }
+
+    public void setPrixUht(double prixUht) {
+        this.prixUht = prixUht;
+    }
+
+
+    public Vector<LiaisonPeriodeFrais> getLiaisonsPeriodes() {
+        return liaisonsPeriodes;
+    }
+
+    public void setLiaisonsPeriodes(Vector<LiaisonPeriodeFrais> liaisonsPeriodes) {
+        this.liaisonsPeriodes = liaisonsPeriodes;
+    }
+
+
+    @Override
+    public LiaisonPeriodeFrais getLiaisonPeriodes(InterfacePeriode periode) {
+        for (LiaisonPeriodeFrais liaisonPeriodeFrais : liaisonsPeriodes) {
+            if (liaisonPeriodeFrais.getIdPeriode() == periode.getId() && liaisonPeriodeFrais.getNomPeriode().equals(periode.getNom())) {
+                return liaisonPeriodeFrais;
+            }
+        }
+        return null;
     }
 
     @Override
     public String toString() {
-        return "TEST_Article{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", idMonnaie=" + idMonnaie + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + ", tranches=" + tranches + ", beta=" + beta + '}';
+        return "TEST_Article{" + "id=" + id + ", nom=" + nom + ", qte=" + qte + ", unite=" + unite + ", idMonnaie=" + idMonnaie + ", tvaprc=" + tvaprc + ", prixUht=" + prixUht + ", rabais=" + rabais + ", liaisonsPeriodes=" + liaisonsPeriodes + ", beta=" + beta + '}';
     }
-
 }

@@ -16,6 +16,7 @@ public class TEST_Paiement implements InterfacePaiement{
     public int id;
     public int idEleve;
     public int idArticle;
+    public int idPeriode;
     public int mode;
     public String reference;
     public String nomEleve;
@@ -28,10 +29,11 @@ public class TEST_Paiement implements InterfacePaiement{
     public TEST_Paiement() {
     }
 
-    public TEST_Paiement(int id, int idEleve, int idArticle, String nomEleve, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference, int beta) {
+    public TEST_Paiement(int id, int idEleve, int idArticle, int idPeriode, String nomEleve, String nomArticle, String nomDepositaire, double montant, Date date, int mode, String reference, int beta) {
         this.id = id;
         this.idEleve = idEleve;
         this.idArticle = idArticle;
+        this.idPeriode = idPeriode;
         this.nomEleve = nomEleve;
         this.nomArticle = nomArticle;
         this.nomDepositaire = nomDepositaire;
@@ -42,6 +44,14 @@ public class TEST_Paiement implements InterfacePaiement{
         this.beta = beta;
     }
 
+    public int getIdPeriode() {
+        return idPeriode;
+    }
+
+    public void setIdPeriode(int idPeriode) {
+        this.idPeriode = idPeriode;
+    }
+    
     public int getBeta() {
         return beta;
     }
@@ -57,46 +67,6 @@ public class TEST_Paiement implements InterfacePaiement{
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getIdEleve() {
-        return idEleve;
-    }
-
-    public void setIdEleve(int idEleve) {
-        this.idEleve = idEleve;
-    }
-
-    public int getIdArticle() {
-        return idArticle;
-    }
-
-    public void setIdArticle(int idArticle) {
-        this.idArticle = idArticle;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
-    }
-
-    public String getNomEleve() {
-        return nomEleve;
-    }
-
-    public void setNomEleve(String nomEleve) {
-        this.nomEleve = nomEleve;
-    }
-
-    public String getNomArticle() {
-        return nomArticle;
-    }
-
-    public void setNomArticle(String nomArticle) {
-        this.nomArticle = nomArticle;
     }
 
     public String getNomDepositaire() {
@@ -143,8 +113,48 @@ public class TEST_Paiement implements InterfacePaiement{
         this.mode = mode;
     }
 
+    public int getIdEleve() {
+        return idEleve;
+    }
+
+    public void setIdEleve(int idEleve) {
+        this.idEleve = idEleve;
+    }
+
+    public int getIdArticle() {
+        return idArticle;
+    }
+
+    public void setIdArticle(int idArticle) {
+        this.idArticle = idArticle;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getNomEleve() {
+        return nomEleve;
+    }
+
+    public void setNomEleve(String nomEleve) {
+        this.nomEleve = nomEleve;
+    }
+
+    public String getNomArticle() {
+        return nomArticle;
+    }
+
+    public void setNomArticle(String nomArticle) {
+        this.nomArticle = nomArticle;
+    }
+
     @Override
     public String toString() {
-        return "TEST_Paiement{" + "id=" + id + ", idEleve=" + idEleve + ", idArticle=" + idArticle + ", mode=" + mode + ", reference=" + reference + ", nomEleve=" + nomEleve + ", nomArticle=" + nomArticle + ", nomDepositaire=" + nomDepositaire + ", montant=" + montant + ", date=" + date + ", beta=" + beta + '}';
+        return "XX_Paiement{" + "id=" + id + ", idEleve=" + idEleve + ", idArticle=" + idArticle + ", idPeriode=" + idPeriode + ", mode=" + mode + ", reference=" + reference + ", nomEleve=" + nomEleve + ", nomArticle=" + nomArticle + ", nomDepositaire=" + nomDepositaire + ", montant=" + montant + ", date=" + date + ", beta=" + beta + '}';
     }
 }

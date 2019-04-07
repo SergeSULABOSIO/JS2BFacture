@@ -5,6 +5,9 @@
  */
 package SOURCES.Interface;
 
+import SOURCES.Utilitaires.LiaisonPeriodeFrais;
+import java.util.Vector;
+
 /**
  *
  * @author HP Pavilion
@@ -24,11 +27,12 @@ public interface InterfaceArticle {
     public abstract int getIdMonnaie();
     public abstract double getPrixUHT_avant_rabais();
     public abstract double getRabais();
-    public abstract int getTranches();
     public abstract double getPrixUHT_apres_rabais();
     public abstract double getTvaPoucentage();
     public abstract double getTvaMontant();
     public abstract double getTotalTTC();
+    public abstract Vector<LiaisonPeriodeFrais> getLiaisonsPeriodes();
+    public abstract LiaisonPeriodeFrais getLiaisonPeriodes(InterfacePeriode periode);
     public abstract int getBeta();  // 0 = Existant, 1 =  Modifié, 2 = Nouveau
     
     public abstract void setId(int id);
@@ -36,7 +40,6 @@ public interface InterfaceArticle {
     public abstract void setQte(double Qt);
     public abstract void setUnite(String unite);
     public abstract void setIdMonnaie(int idMonnaie);
-    public abstract void setTranches(int tranches);
     public abstract void setPrixUHT_avant_rabais(double prixUht);
     public abstract void setRabais(double rabais);
     public abstract void setTvaPoucentage(double tvapourc);

@@ -23,6 +23,7 @@ public interface InterfacePaiement {
     public abstract int getId();
     public abstract int getIdEleve();
     public abstract int getIdArticle();
+    public abstract int getIdPeriode();
     public abstract String getNomEleve();
     public abstract String getNomArticle();
     public abstract double getMontant();
@@ -35,6 +36,7 @@ public interface InterfacePaiement {
     public abstract void setId(int id);
     public abstract void setIdEleve(int idEleve);
     public abstract void setIdArticle(int idArticle);
+    public abstract void setIdPeriode(int idPeriode);
     public abstract void setNomEleve(String nomEleve);
     public abstract void setNomArticle(String nomArticle);
     public abstract void setMontant(double montant);
