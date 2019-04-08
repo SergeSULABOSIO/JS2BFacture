@@ -93,17 +93,17 @@ public class Test_Principal extends javax.swing.JFrame {
 
         Vector<InterfaceArticle> donneesArticles = new Vector<>();
 
-        liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 10));
+        liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 10000));
         liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 0));
         liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 0));
 
-        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 300));
-        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 300));
-        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 300));
+        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 500));
+        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 500));
+        liaisonMinervale.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 500));
         
         liaisonTravManuel.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 5));
         liaisonTravManuel.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 5));
-        liaisonTravManuel.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 2));
+        liaisonTravManuel.add(new LiaisonPeriodeFrais(Trimestre03.getId(), Trimestre03.getNom(), 0));
 
         INSCRIPTION = new TEST_Article(12, "INSCRIPTION", 1, "Année", MONNAIE_CDF.getId(), tva, 10000, remise, liaisonInsription, InterfaceArticle.BETA_EXISTANT);
         MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", MONNAIE_USD.getId(), tva, 1500, remise, liaisonMinervale, InterfaceArticle.BETA_EXISTANT);

@@ -27,7 +27,8 @@ public class GestionLitiges {
             for (InterfaceArticle Iarticle : listeArticles) {
                 for (LiaisonPeriodeFrais liaison : Iarticle.getLiaisonsPeriodes()) {
                     if (liaison.getIdPeriode() == Iperiode.getId() && liaison.getNomPeriode().equals(Iperiode.getNom())) {
-                        montantDu +=  liaison.getMontant(); //Il faut appliquer la conversion selon la monnaie Output définie
+                        //Il faut appliquer la conversion selon la monnaie Output définie
+                        montantDu +=  Util.getMontantOutPut(parametresFacture, Iarticle.getIdMonnaie(), liaison.getMontant());
                     }
                 }
             }
@@ -36,7 +37,9 @@ public class GestionLitiges {
             double montantPaye = 0;
             for(InterfacePaiement Ipaiement: modeleListePaiement.getListeData()){
                 if(Ipaiement.getIdPeriode() == Iperiode.getId()){
-                    montantPaye += Ipaiement.getMontant();  //Il faut appliquer la conversion selon la monnaie Output définie
+                    //Il faut appliquer la conversion selon la monnaie Output définie
+                    InterfaceArticle Iart = Util.getArticle(listeArticles, Ipaiement.getIdArticle());
+                    montantPaye += Util.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Ipaiement.getMontant()); 
                 }
             }
             listeEcheances.add(new XX_Echeance(-1, Iperiode.getNom(), -1, Iperiode.getDebut(), Iperiode.getFin(), "", montantPaye, montantDu, parametresFacture.getMonnaieOutPut().getId()));
