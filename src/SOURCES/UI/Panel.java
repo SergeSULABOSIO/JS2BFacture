@@ -37,7 +37,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.table.TableColumn;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
-import SOURCES.Interface.InterfaceEntreprise;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfaceExercice;
@@ -199,7 +198,7 @@ public class Panel extends javax.swing.JPanel {
     public boolean isImprimerRelever() {
         return isReleverCompte.isSelected();
     }
-
+    
     public boolean isImprimerPlanPaiement() {
         return isPlanPaiement.isSelected();
     }
@@ -222,14 +221,14 @@ public class Panel extends javax.swing.JPanel {
         this.editeurArticle = new EditeurArticle(this.donneesFacture.getArticles(), modeleListePaiement);
         this.tableListeArticle.setModel(this.modeleListeArticles);
     }
-
+    
     private void chargerDataTableArticle() {
         //On charge les données s'il y en a
         if (this.donneesFacture != null) {
             this.modeleListeArticles.setListeArticles(this.donneesFacture.getArticles());
         }
     }
-
+    
     private void setTaille(TableColumn column, int taille, boolean fixe, TableCellEditor editor) {
         column.setPreferredWidth(taille);
         if (fixe == true) {
@@ -240,16 +239,16 @@ public class Panel extends javax.swing.JPanel {
             column.setCellEditor(editor);
         }
     }
-
+    
     private void fixerColonnesTableArticles(boolean resizeTable) {
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
         //Parametrage du rendu de la table
         this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.donneesFacture, this.parametres,this.modeleListeArticles, icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
-
+        
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         setTaille(this.tableListeArticle.getColumnModel().getColumn(0), 30, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 200, false, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 250, false, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(2), 80, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(3), 100, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(4), 100, true, null);
@@ -288,7 +287,7 @@ public class Panel extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedPaiement = modeleListePaiement.getPaiement(ligneSelected);
             if (SelectedPaiement != null) {
-                this.ecouteurClose.onActualiser(Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + this.parametres.getMonnaieOutPut().getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle())) + " " + this.parametres.getMonnaieOutPut().getCode() + ").", icones.getClient_01());
+                this.ecouteurClose.onActualiser(Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + this.parametres.getMonnaieOutPut().getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle(), -1)) + " " + this.parametres.getMonnaieOutPut().getCode() + ").", icones.getClient_01());
             }
         }
         chargerPaiementsSeletced();

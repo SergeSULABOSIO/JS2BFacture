@@ -8,6 +8,7 @@ package SOURCES.Utilitaires;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfaceClasse;
 import SOURCES.Interface.InterfaceMonnaie;
+import SOURCES.Interface.InterfacePeriode;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -19,57 +20,71 @@ import java.util.Vector;
  * @author user
  */
 public class Util {
-    public static InterfaceMonnaie getMonnaie(ParametresFacture parametresFacture, int idMonnaie){
-        for(InterfaceMonnaie Imonnaie: parametresFacture.getListeMonnaies()){
-            if(Imonnaie.getId() == idMonnaie){
+
+    public static InterfaceMonnaie getMonnaie(ParametresFacture parametresFacture, int idMonnaie) {
+        for (InterfaceMonnaie Imonnaie : parametresFacture.getListeMonnaies()) {
+            if (Imonnaie.getId() == idMonnaie) {
                 return Imonnaie;
             }
         }
         return null;
     }
-    
-    public static InterfaceArticle getArticle(DonneesFacture donneesFacture, int idArticle){
-        for(InterfaceArticle Iart: donneesFacture.getArticles()){
-            if(Iart.getId() == idArticle){
+
+    public static InterfaceArticle getArticle(DonneesFacture donneesFacture, int idArticle) {
+        for (InterfaceArticle Iart : donneesFacture.getArticles()) {
+            if (Iart.getId() == idArticle) {
                 return Iart;
             }
         }
         return null;
     }
-    
-    public static InterfaceArticle getArticle(Vector<InterfaceArticle> listeArticles, int idArticle){
-        for(InterfaceArticle Iart: listeArticles){
-            if(Iart.getId() == idArticle){
+
+    public static InterfaceArticle getArticle(Vector<InterfaceArticle> listeArticles, int idArticle) {
+        for (InterfaceArticle Iart : listeArticles) {
+            if (Iart.getId() == idArticle) {
                 return Iart;
             }
         }
         return null;
     }
-    
-    public static InterfaceClasse getClasse(ParametresFacture parametresFacture, int idClasse){
-        for(InterfaceClasse Iclasse: parametresFacture.getListeClasse()){
-            if(Iclasse.getId() == idClasse){
+
+    public static double getPourcentagePeriode(ParametresFacture parametresFacture, int idPeriode, InterfaceArticle Iarticle) {
+        if (idPeriode != -1) {
+            for (LiaisonPeriodeFrais lien : Iarticle.getLiaisonsPeriodes()) {
+                if (lien.getIdPeriode() == idPeriode) {
+                    return lien.getPourcentage();
+                }
+            }
+        } else {
+            return 100;
+        }
+        return 0;
+    }
+
+    public static InterfaceClasse getClasse(ParametresFacture parametresFacture, int idClasse) {
+        for (InterfaceClasse Iclasse : parametresFacture.getListeClasse()) {
+            if (Iclasse.getId() == idClasse) {
                 return Iclasse;
             }
         }
         return null;
     }
-    
+
     public static double getMontantOutPut(ParametresFacture parametresFacture, int idMonnaieInput, double montant) {
         InterfaceMonnaie monnaieOutPut = getMonnaie(parametresFacture, parametresFacture.getMonnaieOutPut().getId());
         InterfaceMonnaie monnaieInPut = getMonnaie(parametresFacture, idMonnaieInput);
-        
+
         if (monnaieOutPut != null && monnaieInPut != null) {
             if (parametresFacture.getMonnaieOutPut().getId() == idMonnaieInput) {
                 return montant;
             } else {
                 return (montant * monnaieInPut.getTauxMonnaieLocale() / monnaieOutPut.getTauxMonnaieLocale());
             }
-        }else{
+        } else {
             return 0;
         }
     }
-    
+
     public static double round(double value, int places) {
         if (places < 0) {
             throw new IllegalArgumentException();
@@ -88,7 +103,7 @@ public class Util {
         }
         return texte;
     }
-    
+
     public static Date getDate_AjouterAnnee(Date dateActuelle, int nbAnnee) {
         try {
             int plus = dateActuelle.getYear() + nbAnnee;
@@ -134,7 +149,7 @@ public class Util {
 
         return dateS;
     }
-    
+
     public static String getMontantFrancais(double montant) {
         String val = "";
         int ValEntiere = (int) montant;
@@ -149,18 +164,18 @@ public class Util {
             }
             index++;
         }
-        int ValApresVirgule = (int)(round(((montant - ValEntiere)*100), 0));
+        int ValApresVirgule = (int) (round(((montant - ValEntiere) * 100), 0));
         //System.out.println("Valeur d'origine = " + montant);
         //System.out.println("Partie entière = " + ValEntiere);
         //System.out.println("Partie décimale = " + ValApresVirgule);
-        return val+"," + ValApresVirgule;
+        return val + "," + ValApresVirgule;
     }
-    
-    public static String getMontantLettres(double montant, String NomMonnaie){
+
+    public static String getMontantLettres(double montant, String NomMonnaie) {
         String texte = "";
-        try{
+        try {
             texte = Nombre.CALCULATE.getLettres(montant, NomMonnaie);
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Un problème est survenu lors de la conversion des chiffres en nombre.");
             texte = "";
         }
@@ -169,7 +184,7 @@ public class Util {
 
     public static void main(String[] args) {
         double origine = 10000.14;
-        
+
         String res = Util.getMontantFrancais(origine);
         System.out.println("Résultat = " + res);
         System.out.println("Résultat = " + Util.getMontantLettres(origine, "Dollars Américains"));

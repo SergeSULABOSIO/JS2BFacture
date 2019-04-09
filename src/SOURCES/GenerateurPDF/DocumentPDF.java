@@ -364,8 +364,8 @@ public class DocumentPDF extends PdfPageEventHelper {
                     if (Iarticle != null && Imonnaie != null) {
                         String monnaie = Imonnaie.getCode();
                         totPaye += Util.getMontantOutPut(gestionnaireFacture.getParametres(), Iarticle.getIdMonnaie(), paiement.getMontant());
-                        totReste += Util.getMontantOutPut(gestionnaireFacture.getParametres(), Iarticle.getIdMonnaie(), modelPaiement.getReste(paiement.getIdArticle()));
-                        setLigneTabReleve(tableReleve, monnaie, Util.getDateFrancais(paiement.getDate()), paiement.getNomArticle(), paiement.getReferenceTransaction(), paiement.getMode(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle()));
+                        totReste += Util.getMontantOutPut(gestionnaireFacture.getParametres(), Iarticle.getIdMonnaie(), modelPaiement.getReste(paiement.getIdArticle(), -1));
+                        setLigneTabReleve(tableReleve, monnaie, Util.getDateFrancais(paiement.getDate()), paiement.getNomArticle(), paiement.getReferenceTransaction(), paiement.getMode(), i, Util.round(paiement.getMontant(), 2), modelPaiement.getReste(paiement.getIdArticle(), -1));
                         i++;
                     }
                 }

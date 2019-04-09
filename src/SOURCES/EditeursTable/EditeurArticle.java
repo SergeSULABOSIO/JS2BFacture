@@ -39,7 +39,7 @@ public class EditeurArticle extends AbstractCellEditor implements TableCellEdito
         if (this.listeArticles != null) {
             for (InterfaceArticle article : this.listeArticles) {
                 if (this.modeleListePaiement != null) {
-                    double reste = this.modeleListePaiement.getReste(article.getId());
+                    double reste = this.modeleListePaiement.getReste(article.getId(), -1);
                     if(reste > 0){
                         //System.out.println("reste " + reste+", frais = " + article.getNom());
                         this.champEditionCombo.addItem(article.getNom());

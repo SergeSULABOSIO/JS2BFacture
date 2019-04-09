@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package SOURCES.ModelsTable;
 
 import BEAN_BARRE_OUTILS.Bouton;
@@ -16,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
+import SOURCES.Interface.InterfacePeriode;
 import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.ParametresFacture;
 import java.awt.Color;
@@ -139,12 +141,13 @@ public class ModeleListePaiement extends AbstractTableModel {
         return null;
     }
 
-    private double getMontantTotalPayable(int idArticle) {
+    private double getMontantTotalPayable(int idArticle, int idPeriode) {
         double tot = 0;
         if (donneesFacture != null) {
             for (InterfaceArticle articleApayer : donneesFacture.getArticles()) {
                 if (idArticle == articleApayer.getId()) {
-                    tot = tot + articleApayer.getTotalTTC();
+                    //On doit tenir compte du % défini dans le lien entre Frais et Période
+                    tot = tot + ((articleApayer.getTotalTTC() * Util.getPourcentagePeriode(parametresFacture, idPeriode, articleApayer))/100);
                 }
             }
         }
@@ -164,8 +167,8 @@ public class ModeleListePaiement extends AbstractTableModel {
         return tot;
     }
 
-    public double getReste(int idArticle) {
-        double reste = getMontantTotalPayable(idArticle) - getMontantTotalPaye(idArticle);
+    public double getReste(int idArticle, int idPeriode) {
+        double reste = getMontantTotalPayable(idArticle, idPeriode) - getMontantTotalPaye(idArticle);
         reste = Util.round(reste, 2);
         if (reste < 0) {
             return 0;
@@ -197,23 +200,24 @@ public class ModeleListePaiement extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
+        InterfacePaiement Ipaiement = listeData.elementAt(rowIndex);
         switch (columnIndex) {
             case 0:
                 return (rowIndex + 1) + "";
             case 1:
-                return listeData.elementAt(rowIndex).getDate();
+                return Ipaiement.getDate();
             case 2:
-                return listeData.elementAt(rowIndex).getIdArticle();
+                return Ipaiement.getIdArticle();
             case 3:
-                return listeData.elementAt(rowIndex).getReferenceTransaction();
+                return Ipaiement.getReferenceTransaction();
             case 4:
-                return listeData.elementAt(rowIndex).getMode();
+                return Ipaiement.getMode();
             case 5:
-                return listeData.elementAt(rowIndex).getIdPeriode();
+                return Ipaiement.getIdPeriode();
             case 6:
-                return listeData.elementAt(rowIndex).getMontant();
+                return Ipaiement.getMontant();
             case 7:
-                return getReste(listeData.elementAt(rowIndex).getIdArticle());
+                return getReste(Ipaiement.getIdArticle(), Ipaiement.getIdPeriode());
             default:
                 return null;
         }
@@ -268,6 +272,10 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
         redessinerTable();
     }
+    
+    private void updateMontantDuEtReste(InterfacePaiement Ipaiement){
+        
+    }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
@@ -290,6 +298,7 @@ public class ModeleListePaiement extends AbstractTableModel {
                 break;
             case 5:
                 Ipaiement.setIdPeriode(Integer.parseInt(aValue + ""));
+                updateMontantDuEtReste(Ipaiement);
                 break;
             case 6:
                 Ipaiement.setMontant(Double.parseDouble(aValue + ""));

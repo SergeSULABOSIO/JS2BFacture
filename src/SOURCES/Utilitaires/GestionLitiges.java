@@ -28,7 +28,8 @@ public class GestionLitiges {
                 for (LiaisonPeriodeFrais liaison : Iarticle.getLiaisonsPeriodes()) {
                     if (liaison.getIdPeriode() == Iperiode.getId() && liaison.getNomPeriode().equals(Iperiode.getNom())) {
                         //Il faut appliquer la conversion selon la monnaie Output définie
-                        montantDu +=  Util.getMontantOutPut(parametresFacture, Iarticle.getIdMonnaie(), liaison.getMontant());
+                        double montDu = Util.round((Iarticle.getTotalTTC() * liaison.getPourcentage())/100, 2);
+                        montantDu +=  Util.getMontantOutPut(parametresFacture, Iarticle.getIdMonnaie(), montDu);
                     }
                 }
             }

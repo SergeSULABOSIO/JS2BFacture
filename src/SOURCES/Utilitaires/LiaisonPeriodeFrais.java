@@ -12,12 +12,20 @@ package SOURCES.Utilitaires;
 public class LiaisonPeriodeFrais {
     private int idPeriode;
     private String nomPeriode;
-    private double montant;
+    private double pourcentage;
 
-    public LiaisonPeriodeFrais(int idPeriode, String nomPeriode, double montant) {
+    public LiaisonPeriodeFrais(int idPeriode, String nomPeriode, double pourcentage) {
         this.idPeriode = idPeriode;
         this.nomPeriode = nomPeriode;
-        this.montant = montant;
+        this.pourcentage = pourcentage;
+    }
+
+    public int getIdPeriode() {
+        return idPeriode;
+    }
+
+    public void setIdPeriode(int idPeriode) {
+        this.idPeriode = idPeriode;
     }
 
     public String getNomPeriode() {
@@ -27,25 +35,17 @@ public class LiaisonPeriodeFrais {
     public void setNomPeriode(String nomPeriode) {
         this.nomPeriode = nomPeriode;
     }
-    
-    public int getIdPeriode() {
-        return idPeriode;
+
+    public double getPourcentage() {
+        return pourcentage;
     }
 
-    public void setIdPeriode(int idPeriode) {
-        this.idPeriode = idPeriode;
-    }
-
-    public double getMontant() {
-        return montant;
-    }
-
-    public void setMontant(double montant) {
-        this.montant = montant;
+    public void setPourcentage(double pourcentage) {
+        this.pourcentage = pourcentage;
     }
 
     @Override
     public String toString() {
-        return "LiaisonPeriodeFrais{" + "idPeriode=" + idPeriode + ", montant=" + montant + '}';
+        return "LiaisonPeriodeFrais{" + "idPeriode=" + idPeriode + ", nomPeriode=" + nomPeriode + ", pourcentage=" + pourcentage + '}';
     }
 }

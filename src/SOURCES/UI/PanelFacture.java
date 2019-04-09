@@ -65,8 +65,6 @@ public class PanelFacture extends javax.swing.JPanel {
         labStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
         labStatus.setText("Prêt.");
 
-        scrollContenuFacture.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(

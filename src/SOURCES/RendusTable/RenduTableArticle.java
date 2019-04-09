@@ -10,10 +10,10 @@ import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.DonneesFacture;
+import SOURCES.Utilitaires.LiaisonPeriodeFrais;
 import SOURCES.Utilitaires.ParametresFacture;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;
-import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
@@ -39,7 +39,17 @@ public class RenduTableArticle implements TableCellRenderer {
     private String getArticle(int idArticle) {
         for (InterfaceArticle article : donneesFacture.getArticles()) {
             if (idArticle == article.getId()) {
-                return article.getNom();
+                String labelArticle = article.getNom();
+                String pourc = "(";
+                for(int i=0; i<article.getLiaisonsPeriodes().size(); i++){
+                    if(i != article.getLiaisonsPeriodes().size() - 1){
+                        pourc += (article.getLiaisonsPeriodes()).elementAt(i).getPourcentage() +"% - ";
+                    }else{
+                        pourc += (article.getLiaisonsPeriodes()).elementAt(i).getPourcentage() +"%";
+                    }
+                }
+                pourc += ")"; 
+                return labelArticle + " " + pourc;
             }
         }
         return "";
