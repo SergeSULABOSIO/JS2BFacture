@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package SOURCES.ModelsTable;
 
 import BEAN_BARRE_OUTILS.Bouton;
@@ -17,7 +16,6 @@ import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
 import SOURCES.Interface.InterfaceArticle;
 import SOURCES.Interface.InterfacePaiement;
-import SOURCES.Interface.InterfacePeriode;
 import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.ParametresFacture;
 import java.awt.Color;
@@ -147,28 +145,32 @@ public class ModeleListePaiement extends AbstractTableModel {
             for (InterfaceArticle articleApayer : donneesFacture.getArticles()) {
                 if (idArticle == articleApayer.getId()) {
                     //On doit tenir compte du % défini dans le lien entre Frais et Période
-                    tot = tot + ((articleApayer.getTotalTTC() * Util.getPourcentagePeriode(parametresFacture, idPeriode, articleApayer))/100);
+                    tot = tot + ((articleApayer.getTotalTTC() * Util.getPourcentagePeriode(parametresFacture, idPeriode, articleApayer)) / 100);
                 }
             }
         }
         return tot;
     }
 
-    private double getMontantTotalPaye(int idArticle) {
+    private double getMontantTotalPaye(int idArticle, int idPeriode) {
         double tot = 0;
         for (InterfacePaiement paiement : listeData) {
-            if (paiement.getIdArticle() == idArticle) {
-                InterfaceArticle Iart = getArticle(idArticle);
-                if (Iart != null) {
-                    tot = tot + paiement.getMontant();
+            if (idPeriode == -1) {
+                if (paiement.getIdArticle() == idArticle) {
+                    tot += paiement.getMontant();
+                }
+            }else{
+                if (paiement.getIdArticle() == idArticle && paiement.getIdPeriode() == idPeriode) {
+                    tot += paiement.getMontant();
                 }
             }
+
         }
         return tot;
     }
 
     public double getReste(int idArticle, int idPeriode) {
-        double reste = getMontantTotalPayable(idArticle, idPeriode) - getMontantTotalPaye(idArticle);
+        double reste = getMontantTotalPayable(idArticle, idPeriode) - getMontantTotalPaye(idArticle, idPeriode);
         reste = Util.round(reste, 2);
         if (reste < 0) {
             return 0;
@@ -272,9 +274,9 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
         redessinerTable();
     }
-    
-    private void updateMontantDuEtReste(InterfacePaiement Ipaiement){
-        
+
+    private void updateMontantDuEtReste(InterfacePaiement Ipaiement) {
+
     }
 
     @Override
