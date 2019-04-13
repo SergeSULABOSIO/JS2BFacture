@@ -10,7 +10,6 @@ import SOURCES.Interface.InterfaceMonnaie;
 import SOURCES.ModelsTable.ModeleListeArticles;
 import SOURCES.UI.CelluleSimpleTableau;
 import SOURCES.Utilitaires.DonneesFacture;
-import SOURCES.Utilitaires.LiaisonPeriodeFrais;
 import SOURCES.Utilitaires.ParametresFacture;
 import SOURCES.Utilitaires.Util;
 import java.awt.Component;

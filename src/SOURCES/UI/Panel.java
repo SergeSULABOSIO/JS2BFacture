@@ -40,6 +40,8 @@ import SOURCES.Interface.InterfacePaiement;
 import SOURCES.Interface.InterfaceEcheance;
 import SOURCES.Interface.InterfaceEleve;
 import SOURCES.Interface.InterfaceExercice;
+import SOURCES.Interface.InterfaceMonnaie;
+import SOURCES.Interface.InterfacePeriode;
 import SOURCES.RendusTable.RenduTableEcheance;
 import SOURCES.Utilitaires.DonneesFacture;
 import SOURCES.Utilitaires.SortiesFacture;
@@ -94,13 +96,13 @@ public class Panel extends javax.swing.JPanel {
         this.ecouteurClose = ecouteurClose;
         this.ecouteurFacture = ecouteurFacture;
         this.init();
-        
+
         parametrerTableArticles();
         parametrerTablePaiement();
         parametrerTableEcheance();
         actualiserTotaux();
         activerBoutons(tabPrincipal.getSelectedIndex());
-        
+
     }
 
     private void init() {
@@ -118,7 +120,7 @@ public class Panel extends javax.swing.JPanel {
         this.labDateFacture.setIcon(icones.getCalendrier_01());
         this.labDateFacture.setText(Util.getDateFrancais(dateFacture));
         this.setTypeFacture();
-        
+
         InterfaceEleve eleve = donneesFacture.getEleve();
         InterfaceExercice exercice = parametres.getExercice();
         if (eleve != null & exercice != null) {
@@ -152,12 +154,10 @@ public class Panel extends javax.swing.JPanel {
                 }
             }
         };
-        
+
         setBoutons();
         setMenuContextuel();
     }
-
-    
 
     public Vector<InterfacePaiement> getPaiementsSelected() {
         return paiementsSelected;
@@ -198,7 +198,7 @@ public class Panel extends javax.swing.JPanel {
     public boolean isImprimerRelever() {
         return isReleverCompte.isSelected();
     }
-    
+
     public boolean isImprimerPlanPaiement() {
         return isPlanPaiement.isSelected();
     }
@@ -221,14 +221,14 @@ public class Panel extends javax.swing.JPanel {
         this.editeurArticle = new EditeurArticle(this.donneesFacture.getArticles(), modeleListePaiement);
         this.tableListeArticle.setModel(this.modeleListeArticles);
     }
-    
+
     private void chargerDataTableArticle() {
         //On charge les données s'il y en a
         if (this.donneesFacture != null) {
             this.modeleListeArticles.setListeArticles(this.donneesFacture.getArticles());
         }
     }
-    
+
     private void setTaille(TableColumn column, int taille, boolean fixe, TableCellEditor editor) {
         column.setPreferredWidth(taille);
         if (fixe == true) {
@@ -239,13 +239,13 @@ public class Panel extends javax.swing.JPanel {
             column.setCellEditor(editor);
         }
     }
-    
+
     private void fixerColonnesTableArticles(boolean resizeTable) {
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
         //Parametrage du rendu de la table
-        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.donneesFacture, this.parametres,this.modeleListeArticles, icones.getModifier_01()));
+        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableArticle(this.donneesFacture, this.parametres, this.modeleListeArticles, icones.getModifier_01()));
         this.tableListeArticle.setRowHeight(25);
-        
+
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
         setTaille(this.tableListeArticle.getColumnModel().getColumn(0), 30, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 250, false, null);
@@ -277,7 +277,10 @@ public class Panel extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedArticle = modeleListeArticles.getArticle(ligneSelected);
             if (SelectedArticle != null) {
-                this.ecouteurClose.onActualiser(SelectedArticle.getNom() + ", " + SelectedArticle.getQte() + " " + SelectedArticle.getUnite() + ", Total TTC : " + Util.getMontantFrancais(SelectedArticle.getTotalTTC()) + " " + this.parametres.getMonnaieOutPut().getCode(), icones.getTaxes_01());
+                InterfaceMonnaie Imon = Util.getMonnaie(parametres, SelectedArticle.getIdMonnaie());
+                if (Imon != null) {
+                    this.ecouteurClose.onActualiser(SelectedArticle.getNom() + ", " + SelectedArticle.getQte() + " " + SelectedArticle.getUnite() + ", Total TTC : " + Util.getMontantFrancais(SelectedArticle.getTotalTTC()) + " " + Imon.getCode(), icones.getTaxes_01());
+                }
             }
         }
     }
@@ -287,7 +290,14 @@ public class Panel extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedPaiement = modeleListePaiement.getPaiement(ligneSelected);
             if (SelectedPaiement != null) {
-                this.ecouteurClose.onActualiser(Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + this.parametres.getMonnaieOutPut().getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle(), -1)) + " " + this.parametres.getMonnaieOutPut().getCode() + ").", icones.getClient_01());
+                InterfacePeriode Iper = Util.getPeriode(parametres, SelectedPaiement.getIdPeriode());
+                InterfaceArticle Iart = Util.getArticle(donneesFacture, SelectedPaiement.getIdArticle());
+                if (Iart != null) {
+                    InterfaceMonnaie Imon = Util.getMonnaie(parametres, Iart.getIdMonnaie());
+                    if (Iper != null && Imon != null) {
+                        this.ecouteurClose.onActualiser(Iper.getNom() + ": " + Util.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + Util.getMontantFrancais(SelectedPaiement.getMontant()) + " " + Imon.getCode() + " pour " + SelectedPaiement.getNomArticle() + ", reste (" + Util.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdArticle(), SelectedPaiement.getIdPeriode())) + " " + Imon.getCode() + ").", icones.getClient_01());
+                    }
+                }
             }
         }
         chargerPaiementsSeletced();
@@ -937,7 +947,6 @@ public class Panel extends javax.swing.JPanel {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel8.setText("Référence :");
 
-        labReference.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
         labReference.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labReference.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
         labReference.setText("AXSDDS5SD");
@@ -946,7 +955,6 @@ public class Panel extends javax.swing.JPanel {
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabel10.setText("Date :");
 
-        labDateFacture.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
         labDateFacture.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labDateFacture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
         labDateFacture.setText("06/03/2019");
@@ -1027,7 +1035,7 @@ public class Panel extends javax.swing.JPanel {
         labTotalTTC.setText("2946.28 $");
 
         jLabel18.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        jLabel18.setText("Solde");
+        jLabel18.setText("Solde global");
 
         labTotalSolde.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
         labTotalSolde.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);

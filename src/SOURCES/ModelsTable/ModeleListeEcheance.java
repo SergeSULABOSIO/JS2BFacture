@@ -24,7 +24,7 @@ import SOURCES.Utilitaires.ParametresFacture;
  */
 public class ModeleListeEcheance extends AbstractTableModel {
 
-    private String[] titreColonnes = {"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
+    private String[] titreColonnes = {"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Progression"};
     private Vector<InterfaceEcheance> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;

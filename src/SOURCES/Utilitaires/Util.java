@@ -29,6 +29,15 @@ public class Util {
         }
         return null;
     }
+    
+    public static InterfacePeriode getPeriode(ParametresFacture parametresFacture, int idPeriode) {
+        for (InterfacePeriode Iper : parametresFacture.getListePeriodes()) {
+            if (Iper.getId() == idPeriode) {
+                return Iper;
+            }
+        }
+        return null;
+    }
 
     public static InterfaceArticle getArticle(DonneesFacture donneesFacture, int idArticle) {
         for (InterfaceArticle Iart : donneesFacture.getArticles()) {

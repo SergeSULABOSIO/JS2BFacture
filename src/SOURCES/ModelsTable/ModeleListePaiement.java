@@ -26,7 +26,7 @@ import java.awt.Color;
  */
 public class ModeleListePaiement extends AbstractTableModel {
 
-    private String[] titreColonnes = {"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
+    private String[] titreColonnes = {"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste / Période"};
     private Vector<InterfacePaiement> listeData = new Vector<>();
     private JScrollPane parent;
     private EcouteurValeursChangees ecouteurModele;
