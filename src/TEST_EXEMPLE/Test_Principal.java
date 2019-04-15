@@ -90,8 +90,7 @@ public class Test_Principal extends javax.swing.JFrame {
 
     private DonneesFacture getDonnees() {
         //On charge les données
-
-        Vector<InterfaceArticle> donneesArticles = new Vector<>();
+        
 
         liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre01.getId(), Trimestre01.getNom(), 100));
         liaisonInsription.add(new LiaisonPeriodeFrais(Trimestre02.getId(), Trimestre02.getNom(), 0));
@@ -109,6 +108,7 @@ public class Test_Principal extends javax.swing.JFrame {
         MINERVALE = new TEST_Article(2, "MINERVALE", 1, "Année", MONNAIE_USD.getId(), tva, 1500, remise, liaisonMinervale, InterfaceArticle.BETA_EXISTANT);
         TRAVAIL_MANUEL = new TEST_Article(121, "TRAVAIL MANUEL", 1, "Année", MONNAIE_USD.getId(), tva, 10, remise, liaisonTravManuel, InterfaceArticle.BETA_EXISTANT);
 
+        Vector<InterfaceArticle> donneesArticles = new Vector<>();
         donneesArticles.add(INSCRIPTION);
         donneesArticles.add(MINERVALE);
         donneesArticles.add(TRAVAIL_MANUEL);
