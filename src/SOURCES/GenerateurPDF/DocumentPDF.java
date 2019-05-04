@@ -283,7 +283,7 @@ public class DocumentPDF extends PdfPageEventHelper {
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getNom(), Font_Titre2, Element.ALIGN_LEFT));
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getAdresse(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getSiteWeb() + " | " + entreprise.getEmail() + " | " + entreprise.getTelephone(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
-                    celluleDetailsEntreprise.addElement(getParagraphe("RCC : " + entreprise.getRCCM() + "\nID. NAT : " + entreprise.getIDNAT() + "\nNIF : " + entreprise.getNumeroImpot(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
+                    celluleDetailsEntreprise.addElement(getParagraphe("RCC : " + entreprise.getRccm()+ "\nID. NAT : " + entreprise.getIdnat()+ "\nNIF : " + entreprise.getNumeroImpot(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
                 }
             } else {
                 celluleDetailsEntreprise.addElement(getParagraphe("UAP RDC Sarl, Courtier d'Assurances n°0189", Font_Titre2, Element.ALIGN_LEFT));
@@ -603,9 +603,9 @@ public class DocumentPDF extends PdfPageEventHelper {
                     tableau.addCell(getCelluleTableau("Code Swift :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
                     tableau.addCell(getCelluleTableau(entreprise.getCodeSwift(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
                 }
-                if (entreprise.getIBAN().trim().length() != 0) {
+                if (entreprise.getIban().trim().length() != 0) {
                     tableau.addCell(getCelluleTableau("IBAN :", borderwidth, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple_petit));
-                    tableau.addCell(getCelluleTableau(entreprise.getIBAN(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
+                    tableau.addCell(getCelluleTableau(entreprise.getIban(), borderwidth, BaseColor.WHITE, null, Element.ALIGN_LEFT, Font_TexteSimple_petit_Gras));
                 }
             } else {
                 setDefaultDetailsBancaires(tableau, borderwidth);
