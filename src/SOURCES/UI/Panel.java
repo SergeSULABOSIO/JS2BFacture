@@ -554,7 +554,7 @@ public class Panel extends javax.swing.JPanel {
     private void enregistrer() {
         if (this.ecouteurFacture != null) {
             rubEnregistrer.setCouleur(Color.BLACK);
-            btEnregistrer.setCouleur(Color.BLACK);
+            btEnregistrer.setForeground(Color.BLACK);
             SortiesFacture sortiesFacture = getSortieFacture(btEnregistrer, rubEnregistrer);
             this.ecouteurFacture.onEnregistre(sortiesFacture);
         }
@@ -714,14 +714,14 @@ public class Panel extends javax.swing.JPanel {
 
     private void setBoutons() {
         //BtAjouter
-        btAjouter = new Bouton(12, "Ajouter", icones.getAjouter_02(), new BoutonListener() {
+        btAjouter = new Bouton(12, "Ajouter", "Ajouter un élement", false, icones.getAjouter_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 ajouter();
             }
         });
         //BtSupprimer
-        btSupprimer = new Bouton(12, "Supprimer", icones.getSupprimer_02(), new BoutonListener() {
+        btSupprimer = new Bouton(12, "Supprimer", "Supprimer l'élement sélectionné", false, icones.getSupprimer_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 supprimer();
@@ -729,7 +729,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Vider
-        btVider = new Bouton(12, "Vider", icones.getAnnuler_02(), new BoutonListener() {
+        btVider = new Bouton(12, "Vider", "Vider cette liste", false, icones.getAnnuler_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 vider();
@@ -737,7 +737,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Actualiser
-        btActualiser = new Bouton(12, "Actualiser", icones.getSynchroniser_02(), new BoutonListener() {
+        btActualiser = new Bouton(12, "Actualiser", "Actualiser la liste active", false, icones.getSynchroniser_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 actualiserTotaux();
@@ -745,7 +745,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Imprimer
-        btImprimer = new Bouton(12, "Imprimer", icones.getImprimer_02(), new BoutonListener() {
+        btImprimer = new Bouton(12, "Imprimer", "Imprimer le contenu de la liste active", false, icones.getImprimer_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 imprimer();
@@ -753,7 +753,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Export. PDF
-        btPDF = new Bouton(12, "Exp. PDF", icones.getPDF_02(), new BoutonListener() {
+        btPDF = new Bouton(12, "Exp. PDF", "Généer le rapport PDF du contenu actif", false, icones.getPDF_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 exporterPDF();
@@ -761,7 +761,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Fermer
-        btFermer = new Bouton(12, "Fermer", icones.getFermer_02(), new BoutonListener() {
+        btFermer = new Bouton(12, "Fermer", "Fermer cet onglet", false, icones.getFermer_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 fermer();
@@ -769,7 +769,7 @@ public class Panel extends javax.swing.JPanel {
         });
 
         //Fermer
-        btEnregistrer = new Bouton(12, "Enregistrer", icones.getEnregistrer_02(), new BoutonListener() {
+        btEnregistrer = new Bouton(12, "Enregistrer", "Enregistrer les modifications apportées aux données.", false, icones.getEnregistrer_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 enregistrer();
@@ -778,7 +778,7 @@ public class Panel extends javax.swing.JPanel {
         btEnregistrer.setGras(true);
 
         //Recu
-        btRecu = new Bouton(12, "Prod. Reçu", icones.getPDF_02(), new BoutonListener() {
+        btRecu = new Bouton(12, "Prod. Reçu", "Produire le reçu imprimable", false, icones.getPDF_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
                 genererRecu();

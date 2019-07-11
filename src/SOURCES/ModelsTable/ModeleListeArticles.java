@@ -91,7 +91,7 @@ public class ModeleListeArticles extends AbstractTableModel {
     public void AjouterArticle(InterfaceArticle art) {
         this.listeData.add(art);
         mEnreg.setCouleur(Color.blue);
-        btEnreg.setCouleur(Color.blue);
+        btEnreg.setForeground(Color.blue);
         appliquerAssigetissementTVA();
         redessinerTable();
     }
@@ -275,7 +275,7 @@ public class ModeleListeArticles extends AbstractTableModel {
             if(article.getBeta() == InterfaceArticle.BETA_EXISTANT){
                 article.setBeta(InterfaceArticle.BETA_MODIFIE);
                 mEnreg.setCouleur(Color.blue);
-                btEnreg.setCouleur(Color.blue);
+                btEnreg.setForeground(Color.blue);
             }
         }
         listeData.set(rowIndex, article);

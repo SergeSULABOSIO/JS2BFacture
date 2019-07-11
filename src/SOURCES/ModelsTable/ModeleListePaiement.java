@@ -69,7 +69,7 @@ public class ModeleListePaiement extends AbstractTableModel {
     public void AjouterPaiement(InterfacePaiement art) {
         this.listeData.add(art);
         mEnreg.setCouleur(Color.blue);
-        btEnreg.setCouleur(Color.blue);
+        btEnreg.setForeground(Color.blue);
         //System.out.println("Ajout!!!!"+art.toString());
         redessinerTable();
     }
@@ -313,7 +313,7 @@ public class ModeleListePaiement extends AbstractTableModel {
             if (Ipaiement.getBeta() == InterfacePaiement.BETA_EXISTANT) {
                 Ipaiement.setBeta(InterfacePaiement.BETA_MODIFIE);
                 mEnreg.setCouleur(Color.blue);
-                btEnreg.setCouleur(Color.blue);
+                btEnreg.setForeground(Color.blue);
             }
         }
         listeData.set(rowIndex, Ipaiement);
