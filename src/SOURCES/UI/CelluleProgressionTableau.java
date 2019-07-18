@@ -5,7 +5,7 @@
  */
 package SOURCES.UI;
 
-import static SOURCES.UI.CelluleSimpleTableau.COULEUR_CELLULE_SELECTIONNEE;
+
 import SOURCES.Utilitaires.Util;
 import java.awt.Color;
 import java.awt.Font;

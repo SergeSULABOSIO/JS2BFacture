@@ -12,7 +12,7 @@ import SOURCES.ModelsTable.ModeleListePaiement;
  *
  * @author HP Pavilion
  */
-public abstract class EcouteurAjout {
+public abstract class EcouteurAjoutFacture {
     
     //public abstract void setAjoutArticle(ModeleListeArticles modeleListeArticles);
     public abstract void setAjoutPaiement(ModeleListePaiement modeleListePaiement);

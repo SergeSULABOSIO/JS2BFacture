@@ -14,7 +14,7 @@ import BEAN_MenuContextuel.MenuContextuel;
 import BEAN_MenuContextuel.RubriqueListener;
 import BEAN_MenuContextuel.RubriqueSimple;
 import ICONES.Icones;
-import SOURCES.CallBack.EcouteurAjout;
+import SOURCES.CallBack.EcouteurAjoutFacture;
 import SOURCES.CallBack.EcouteurEnregistrement;
 import SOURCES.CallBack.EcouteurFacture;
 import SOURCES.EditeursTable.EditeurArticle;
@@ -78,7 +78,7 @@ public class Panel extends javax.swing.JPanel {
     private EditeurArticle editeurArticle = null;
     private EcouteurUpdateClose ecouteurClose;
     private EcouteurFacture ecouteurFacture = null;
-    private EcouteurAjout ecouteurAjout;
+    private EcouteurAjoutFacture ecouteurAjout;
 
     private Vector<InterfacePaiement> paiementsSelected = new Vector<InterfacePaiement>();
     private InterfaceArticle SelectedArticle = null;
@@ -130,7 +130,7 @@ public class Panel extends javax.swing.JPanel {
             labAdresseClient.setText(eleve.getAdresse());
         }
 
-        this.ecouteurAjout = new EcouteurAjout() {
+        this.ecouteurAjout = new EcouteurAjoutFacture() {
             @Override
             public void setAjoutPaiement(ModeleListePaiement modeleListePaiement) {
                 double montant = 0;
