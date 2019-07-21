@@ -46,7 +46,6 @@ public class RenduTableFrais implements TableCellRenderer {
                 for (int i = 0; i < article.getLiaisonsPeriodes().size(); i++) {
                     LiaisonFraisPeriode liaison = article.getLiaisonsPeriodes().elementAt(i);
                     if (liaison != null) {
-                        
                         double pc = liaison.getPourcentage();
                         long signaturePeriode = liaison.getSignaturePeriode();
                         
