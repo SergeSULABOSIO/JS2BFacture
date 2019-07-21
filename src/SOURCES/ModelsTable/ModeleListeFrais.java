@@ -151,7 +151,7 @@ public class ModeleListeFrais extends AbstractTableModel {
                 case 1:
                     return Icharge.getId();
                 case 2:
-                    return Icharge.getIdMonnaie();
+                    return Icharge.getId();
                 default:
                     return null;
             }

@@ -5,7 +5,6 @@
  */
 package SOURCES.RendusTable;
 
-
 import SOURCES.ModelsTable.ModeleListeFrais;
 import SOURCES.Utilitaires_Facture.DonneesFacture;
 import SOURCES.Utilitaires_Facture.ParametresFacture;
@@ -13,10 +12,11 @@ import SOURCES.Utilitaires_Facture.UtilFacture;
 import Source.Interface.InterfaceFrais;
 import Source.Objet.CouleurBasique;
 import Source.Objet.Frais;
+import Source.Objet.LiaisonFraisPeriode;
 import Source.Objet.Monnaie;
+import Source.Objet.Periode;
 import Source.UI.CelluleTableauSimple;
 import java.awt.Component;
-import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
@@ -42,31 +42,67 @@ public class RenduTableFrais implements TableCellRenderer {
         for (Frais article : donneesFacture.getArticles()) {
             if (idArticle == article.getId()) {
                 String labelArticle = article.getNom();
-                String pourc = "(";
-                for(int i=0; i<article.getLiaisonsPeriodes().size(); i++){
-                    if(i != article.getLiaisonsPeriodes().size() - 1){
-                        pourc += (article.getLiaisonsPeriodes()).elementAt(i).getPourcentage() +"% - ";
-                    }else{
-                        pourc += (article.getLiaisonsPeriodes()).elementAt(i).getPourcentage() +"%";
+                String pourc = "";
+                for (int i = 0; i < article.getLiaisonsPeriodes().size(); i++) {
+                    LiaisonFraisPeriode liaison = article.getLiaisonsPeriodes().elementAt(i);
+                    if (liaison != null) {
+                        
+                        double pc = liaison.getPourcentage();
+                        long signaturePeriode = liaison.getSignaturePeriode();
+                        
+                        String nomPeriode = "";
+                        Periode p = getPeriode(signaturePeriode);
+                        if(p != null){
+                            nomPeriode = p.getNom();
+                        }
+                        
+                        if (i != article.getLiaisonsPeriodes().size() - 1) {
+                            pourc += pourc + nomPeriode + ": " + pc + "% - ";
+                        } else {
+                            pourc += nomPeriode + ": " + pc + "%";
+                        }
                     }
+
                 }
-                pourc += ")"; 
-                return labelArticle + " " + pourc;
+                return labelArticle + " (" + pourc + ").";
             }
         }
         return "";
     }
+    
+    private Periode getPeriode(long signaturePeriode){
+        if(parametresFacture != null){
+            for(Periode p: parametresFacture.getListePeriodes()){
+                if(p.getSignature() == signaturePeriode){
+                    return p;
+                }
+            }
+        }
+        return null;
+    }
 
-    private String getCodeMonnaie(int row) {
-        Frais article = modeleListeArticles.getFrais(row);
-        if (article != null) {
-            for (Monnaie Imonnaie : parametresFacture.getListeMonnaies()) {
-                if (article.getIdMonnaie() == Imonnaie.getId()) {
-                    return Imonnaie.getCode();
+    private String getCodeMonnaie(int idMonnaie) {
+        if(parametresFacture != null){
+            for(Monnaie m: parametresFacture.getListeMonnaies()){
+                if(m.getId() == idMonnaie){
+                    return m.getCode();
                 }
             }
         }
         return "";
+    }
+    
+    
+    private String getMontantFrais(int idFrais){
+        String txt = "";
+        if(donneesFacture != null){
+            for(Frais f: donneesFacture.getArticles()){
+                if(f.getId() == idFrais){
+                    return UtilFacture.getMontantFrancais(f.getMontantDefaut()) + " " + getCodeMonnaie(f.getIdMonnaie());
+                }
+            }
+        }
+        return txt;
     }
 
     @Override
@@ -81,28 +117,10 @@ public class RenduTableFrais implements TableCellRenderer {
                 cellule = new CelluleTableauSimple(couleurBasique, " " + getFrais(Integer.parseInt(value + "")) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, null);
                 break;
             case 2:
-                cellule = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " ", CelluleTableauSimple.ALIGNE_CENTRE, null);
-                break;
-            case 3:
-                cellule = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, null);
-                break;
-            case 4:
-                cellule = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, null);
-                break;
-            case 5:
-                cellule = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, null);
-                break;
-            case 6:
-                cellule = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, null);
-                break;
-            case 7:
-                cellule = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, null);
-                break;
-            case 8:
-                cellule = new CelluleTableauSimple(couleurBasique, " " + value + " tranche(s) ", CelluleTableauSimple.ALIGNE_DROITE, null);
+                cellule = new CelluleTableauSimple(couleurBasique, " " + getMontantFrais(Integer.parseInt(value + "")) + " ", CelluleTableauSimple.ALIGNE_CENTRE, null);
                 break;
         }
-        if(cellule != null){
+        if (cellule != null) {
             cellule.ecouterSelection(isSelected, row, getBeta(row), hasFocus);
         }
         return cellule;

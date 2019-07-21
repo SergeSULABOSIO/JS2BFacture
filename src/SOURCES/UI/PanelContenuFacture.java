@@ -123,6 +123,8 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         this.tabPrincipal.setIconAt(0, icones.getTaxes_01());   //Frais
         this.tabPrincipal.setIconAt(1, icones.getClient_01());  //Relevé de compte
         this.tabPrincipal.setIconAt(2, icones.getCalendrier_01()); //Revenu
+        PanelFacture.labStatus.setIcon(icones.getInfos_01());
+        this.labAdresseClient.setIcon(icones.getAdresse_01());
         
         Eleve eleve = donneesFacture.getEleve();
         Exercice exercice = parametres.getExercice();
@@ -252,7 +254,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
         //{"N°", "Frais", "Montant"}; en plus il faurdra afficher son fractionnement selon les périodes
         setTaille(this.tableListeArticle.getColumnModel().getColumn(0), 30, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 250, false, null);
+        setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 600, false, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(2), 80, true, null);
         //setTaille(this.tableListeArticle.getColumnModel().getColumn(3), 100, true, null);
         //setTaille(this.tableListeArticle.getColumnModel().getColumn(4), 100, true, null);
