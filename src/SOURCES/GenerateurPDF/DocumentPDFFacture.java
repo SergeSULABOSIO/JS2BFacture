@@ -189,7 +189,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
         }
 
         if (this.gestionnaireFacture != null) {
-            preface.add(getParagraphe("Date: " + UtilFacture.getDateFrancais(this.gestionnaireFacture.getDateFacture()), Font_Titre3, Element.ALIGN_RIGHT));
+            preface.add(getParagraphe("Date: " + UtilFacture.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe(titre + " n°" + this.gestionnaireFacture.getParametres().getNumero(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
             preface.add(getParagraphe("Date: " + UtilFacture.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
