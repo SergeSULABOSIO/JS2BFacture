@@ -5,15 +5,18 @@
  */
 package SOURCES.RendusTable;
 
-import SOURCES.Interface.InterfaceArticle;
-import SOURCES.Interface.InterfaceMonnaie;
-import SOURCES.Interface.InterfacePaiement;
-import SOURCES.Interface.InterfacePeriode;
+
 import SOURCES.ModelsTable.ModeleListePaiement;
-import SOURCES.UI.CelluleSimpleTableau;
-import SOURCES.Utilitaires.DonneesFacture;
-import SOURCES.Utilitaires.ParametresFacture;
-import SOURCES.Utilitaires.Util;
+import SOURCES.Utilitaires_Facture.DonneesFacture;
+import SOURCES.Utilitaires_Facture.ParametresFacture;
+import SOURCES.Utilitaires_Facture.UtilFacture;
+import Source.Interface.InterfacePaiement;
+import Source.Objet.CouleurBasique;
+import Source.Objet.Frais;
+import Source.Objet.Monnaie;
+import Source.Objet.Paiement;
+import Source.Objet.Periode;
+import Source.UI.CelluleTableauSimple;
 import java.awt.Component;
 import java.util.Date;
 import javax.swing.ImageIcon;
@@ -30,8 +33,10 @@ public class RenduTablePaiement implements TableCellRenderer {
     private ModeleListePaiement modeleListePaiement;
     private ParametresFacture parametresFacture;
     private DonneesFacture donneesFacture;
+    private CouleurBasique couleurBasique;
 
-    public RenduTablePaiement(DonneesFacture donneesFacture, ParametresFacture parametresFacture, ModeleListePaiement modeleListePaiement, ImageIcon iconeEdition) {
+    public RenduTablePaiement(CouleurBasique couleurBasique, DonneesFacture donneesFacture, ParametresFacture parametresFacture, ModeleListePaiement modeleListePaiement, ImageIcon iconeEdition) {
+        this.couleurBasique = couleurBasique;
         this.iconeEdition = iconeEdition;
         this.modeleListePaiement = modeleListePaiement;
         this.donneesFacture = donneesFacture;
@@ -39,9 +44,9 @@ public class RenduTablePaiement implements TableCellRenderer {
     }
 
     private String getCodeMonnaie(int row) {
-        InterfaceArticle article = getArticle_(modeleListePaiement.getPaiement(row).getIdArticle());
+        Frais article = getFrais_(modeleListePaiement.getPaiement(row).getIdFrais());
         if (article != null) {
-            for (InterfaceMonnaie Imonnaie : parametresFacture.getListeMonnaies()) {
+            for (Monnaie Imonnaie : parametresFacture.getListeMonnaies()) {
                 if (article.getIdMonnaie() == Imonnaie.getId()) {
                     return Imonnaie.getCode();
                 }
@@ -50,16 +55,16 @@ public class RenduTablePaiement implements TableCellRenderer {
         return "";
     }
 
-    private String getArticle(int id) {
-        InterfaceArticle Iart = getArticle_(id);
+    private String getFrais(int id) {
+        Frais Iart = getFrais_(id);
         if (Iart != null) {
             return Iart.getNom();
         }
         return "";
     }
 
-    private InterfaceArticle getArticle_(int id) {
-        for (InterfaceArticle articleRech : this.donneesFacture.getArticles()) {
+    private Frais getFrais_(int id) {
+        for (Frais articleRech : this.donneesFacture.getArticles()) {
             if (id == articleRech.getId()) {
                 return articleRech;
             }
@@ -85,7 +90,7 @@ public class RenduTablePaiement implements TableCellRenderer {
     private String getPeriode(Object value) {
         String periode = "Null";
         int idPeriode = Integer.parseInt(value + "");
-        for (InterfacePeriode Iperiode : parametresFacture.getListePeriodes()) {
+        for (Periode Iperiode : parametresFacture.getListePeriodes()) {
             if(Iperiode.getId() == idPeriode){
                 periode = Iperiode.getNom();
                 break;
@@ -97,33 +102,33 @@ public class RenduTablePaiement implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
-        CelluleSimpleTableau celluleNum = null;
+        CelluleTableauSimple celluleNum = null;
         if (column == 0 || column == 1 || column == 2 || column == 3 || column == 4 || column == 5) {
             switch (column) {
                 case 0:
-                    celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_CENTRE, null);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + value + " ", CelluleTableauSimple.ALIGNE_CENTRE, null);
                     break;
                 case 1:
-                    celluleNum = new CelluleSimpleTableau(" " + Util.getDateFrancais(((Date) value)) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getDateFrancais(((Date) value)) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 case 2:
-                    celluleNum = new CelluleSimpleTableau(" " + getArticle(Integer.parseInt(value + "")) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getFrais(Integer.parseInt(value + "")) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 case 4:
-                    celluleNum = new CelluleSimpleTableau(" " + getMode(value) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getMode(value) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 case 5:
-                    celluleNum = new CelluleSimpleTableau(" " + getPeriode(value) + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getPeriode(value) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
                     break;
                 default:
-                    celluleNum = new CelluleSimpleTableau(" " + value + " ", CelluleSimpleTableau.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + value + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
                     break;
             }
         } else {
             if (column == 6) {
-                celluleNum = new CelluleSimpleTableau(" " + Util.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleSimpleTableau.ALIGNE_DROITE, iconeEdition);
+                celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, iconeEdition);
             } else {
-                celluleNum = new CelluleSimpleTableau(" " + Util.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleSimpleTableau.ALIGNE_DROITE, null);
+                celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, null);
             }
         }
         celluleNum.ecouterSelection(isSelected, row, getBeta(row), hasFocus);
@@ -132,7 +137,7 @@ public class RenduTablePaiement implements TableCellRenderer {
 
     private int getBeta(int row) {
         if (this.modeleListePaiement != null) {
-            InterfacePaiement Ipaiement = this.modeleListePaiement.getPaiement(row);
+            Paiement Ipaiement = this.modeleListePaiement.getPaiement(row);
             if (Ipaiement != null) {
                 return Ipaiement.getBeta();
             }

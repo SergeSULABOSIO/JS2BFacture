@@ -5,10 +5,11 @@
  */
 package SOURCES.UI;
 
-import SOURCES.CallBack.EcouteurFacture;
-import SOURCES.CallBack.EcouteurUpdateClose;
-import SOURCES.Utilitaires.DonneesFacture;
-import SOURCES.Utilitaires.ParametresFacture;
+import SOURCES.CallBackFacture.EcouteurFacture;
+import SOURCES.Utilitaires_Facture.DonneesFacture;
+import SOURCES.Utilitaires_Facture.ParametresFacture;
+import Source.Callbacks.EcouteurUpdateClose;
+import Source.Objet.CouleurBasique;
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 
@@ -25,16 +26,18 @@ public class PanelFacture extends javax.swing.JPanel {
     
     private JTabbedPane parent;
     private PanelFacture moi;
+    private CouleurBasique couleurBasique;
     
-    public PanelFacture(JTabbedPane parent, ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture) {
+    public PanelFacture(CouleurBasique couleurBasique, JTabbedPane parent, ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture) {
         initComponents();
+        this.couleurBasique = couleurBasique;
         this.parent = parent;
         setPanelFacture(parametres, donneesFacture, ecouteurFacture);
         this.moi = this;
     }
     
     private void setPanelFacture(ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture){
-        this.scrollContenuFacture.setViewportView(new Panel(parametres, donneesFacture, ecouteurFacture, new EcouteurUpdateClose() {
+        this.scrollContenuFacture.setViewportView(new PanelContenuFacture(couleurBasique, parametres, donneesFacture, ecouteurFacture, new EcouteurUpdateClose() {
             
             @Override
             public void onFermer() {
