@@ -120,7 +120,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     }
 
     private void parametres_ouvrir_fichier() {
-        String nomFichier = "Facture_S2B.pdf";
+        String nomFichier = "Output.pdf";
         if (this.gestionnaireFacture != null) {
             nomFichier = this.gestionnaireFacture.getNomfichierPreuve();
         }
@@ -143,7 +143,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     }
 
     private void parametres_imprimer_fichier() {
-        String nomFichier = "Facture_S2B.pdf";
+        String nomFichier = "Output.pdf";
         if (this.gestionnaireFacture != null) {
             nomFichier = this.gestionnaireFacture.getNomfichierPreuve();
         }
@@ -256,11 +256,14 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
             String logo = "";
             if (this.gestionnaireFacture != null) {
                 logo = this.gestionnaireFacture.getParametres().getEntreprise().getLogo();
+                System.out.println("Fic logo: " + logo);
             }
-            File ficLogo = new File(logo);
+            File ficLogo = new File(new File(logo).getName());
+            System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath());
             if (ficLogo.exists() == true) {
+                System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath()+ " - Trouvé!");
                 //Chargement du logo et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
-                Image Imglogo = Image.getInstance(logo);
+                Image Imglogo = Image.getInstance(ficLogo.getName());
                 Imglogo.scaleAbsoluteWidth(70);
                 Imglogo.scaleAbsoluteHeight(70);
                 celluleLogoEntreprise = new PdfPCell(Imglogo);

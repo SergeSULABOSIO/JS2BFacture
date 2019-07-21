@@ -26,17 +26,15 @@ import javax.swing.table.TableCellRenderer;
  */
 public class RenduTableFrais implements TableCellRenderer {
 
-    private ImageIcon iconeEdition;
     private ModeleListeFrais modeleListeArticles;
     private DonneesFacture donneesFacture;
     private ParametresFacture parametresFacture;
     private CouleurBasique couleurBasique;
 
-    public RenduTableFrais(CouleurBasique couleurBasique, DonneesFacture donneesFacture, ParametresFacture parametresFacture, ModeleListeFrais modeleListeArticles, ImageIcon iconeEdition) {
+    public RenduTableFrais(CouleurBasique couleurBasique, DonneesFacture donneesFacture, ParametresFacture parametresFacture, ModeleListeFrais modeleListeArticles) {
         this.couleurBasique = couleurBasique;
         this.donneesFacture = donneesFacture;
         this.parametresFacture = parametresFacture;
-        this.iconeEdition = iconeEdition;
         this.modeleListeArticles = modeleListeArticles;
     }
 

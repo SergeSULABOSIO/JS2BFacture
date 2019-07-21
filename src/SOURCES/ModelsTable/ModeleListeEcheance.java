@@ -122,8 +122,8 @@ public class ModeleListeEcheance extends AbstractTableModel {
         }
     }
 
-    public InterfaceEcheance getEcheance_id(int id) {
-        for (InterfaceEcheance paiem : listeData) {
+    public Echeance getEcheance_id(int id) {
+        for (Echeance paiem : listeData) {
             if (paiem.getId() == id) {
                 return paiem;
             }
@@ -131,9 +131,9 @@ public class ModeleListeEcheance extends AbstractTableModel {
         return null;
     }
 
-    public InterfaceEcheance getEcheance_row(int row) {
+    public Echeance getEcheance_row(int row) {
         if (row < listeData.size() && row != -1) {
-            InterfaceEcheance art = listeData.elementAt(row);
+            Echeance art = listeData.elementAt(row);
             if (art != null) {
                 return art;
             } else {
@@ -166,7 +166,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     public String getStatus(int rowIndex) {
         if (rowIndex <= listeData.size()) {
-            InterfaceEcheance eche = this.listeData.elementAt(rowIndex);
+            Echeance eche = this.listeData.elementAt(rowIndex);
             if (eche != null) {
                 int nbjour = (int) UtilFacture.getNombre_jours_from_today(eche.getDateFinale());
                 String jourS = " jour";
@@ -191,7 +191,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     public double getMontantDu(int row) {
         if (row <= this.listeData.size()) {
-            InterfaceEcheance eche = listeData.elementAt(row);
+            Echeance eche = listeData.elementAt(row);
             if (eche != null) {
                 return UtilFacture.round(eche.getMontantDu(), 2);
             } else {
@@ -204,7 +204,7 @@ public class ModeleListeEcheance extends AbstractTableModel {
 
     public double getMontantPaye(int row) {
         if (row <= this.listeData.size()) {
-            InterfaceEcheance eche = listeData.elementAt(row);
+            Echeance eche = listeData.elementAt(row);
             if (eche != null) {
                 return UtilFacture.round(listeData.elementAt(row).getMontantPaye(), 2);
             } else {

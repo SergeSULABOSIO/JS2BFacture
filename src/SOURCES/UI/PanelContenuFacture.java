@@ -43,13 +43,15 @@ import Source.Interface.InterfaceEcheance;
 import Source.Interface.InterfaceEleve;
 import Source.Interface.InterfaceExercice;
 import Source.Interface.InterfaceFrais;
-import Source.Interface.InterfaceMonnaie;
 import Source.Interface.InterfacePaiement;
-import Source.Interface.InterfacePeriode;
 import Source.Objet.CouleurBasique;
 import Source.Objet.Echeance;
+import Source.Objet.Eleve;
+import Source.Objet.Exercice;
 import Source.Objet.Frais;
+import Source.Objet.Monnaie;
 import Source.Objet.Paiement;
+import Source.Objet.Periode;
 import java.awt.Color;
 import java.util.Vector;
 import javax.swing.JTable;
@@ -85,8 +87,8 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
     private Vector<Paiement> paiementsSelected = new Vector<Paiement>();
     private Frais SelectedArticle = null;
-    private InterfacePaiement SelectedPaiement = null;
-    private InterfaceEcheance SelectedEcheance = null;
+    private Paiement SelectedPaiement = null;
+    private Echeance SelectedEcheance = null;
 
     public ParametresFacture parametres;
     public DonneesFacture donneesFacture;
@@ -111,23 +113,19 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     private void init() {
-        dateFacture = new Date();
         this.icones = new Icones();
         this.moi = this;
         this.labTelephone.setIcon(icones.getTéléphone_01());
         this.labNomClient.setIcon(icones.getClient_01());
-        this.labAdresseClient.setIcon(icones.getAdresse_01());
+        this.labTotalPaye.setIcon(icones.getCaisse_01());
+        this.labTotalSolde.setIcon(icones.getCaisse_01());
+        this.labTotalTTC.setIcon(icones.getCaisse_01());
         this.tabPrincipal.setIconAt(0, icones.getTaxes_01());   //Frais
         this.tabPrincipal.setIconAt(1, icones.getClient_01());  //Relevé de compte
         this.tabPrincipal.setIconAt(2, icones.getCalendrier_01()); //Revenu
-        this.labReference.setIcon(icones.getFacture_01());
-        this.labReference.setText(parametres.getNumero());
-        this.labDateFacture.setIcon(icones.getCalendrier_01());
-        this.labDateFacture.setText(UtilFacture.getDateFrancais(dateFacture));
-        this.setTypeFacture();
-
-        InterfaceEleve eleve = donneesFacture.getEleve();
-        InterfaceExercice exercice = parametres.getExercice();
+        
+        Eleve eleve = donneesFacture.getEleve();
+        Exercice exercice = parametres.getExercice();
         if (eleve != null & exercice != null) {
             String Sexercice = exercice.getNom() + " [" + UtilFacture.getDateFrancais(exercice.getDebut()) + " - " + UtilFacture.getDateFrancais(exercice.getFin()) + "].";
             labNomClient.setText(eleve.getNom() + " " + eleve.getPostnom() + " " + eleve.getPrenom() + ", " + Sexercice);
@@ -148,7 +146,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
             @Override
             public void setAjoutEcheance(ModeleListeEcheance modeleListeEcheance) {
-                InterfaceExercice exercice = parametres.getExercice();
+                Exercice exercice = parametres.getExercice();
                 if (exercice != null) {
                     int nbEcheancesExistant = modeleListeEcheance.getRowCount();
                     String nomTransche = "1ère Tranche";
@@ -249,18 +247,18 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private void fixerColonnesTableArticles(boolean resizeTable) {
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
         //Parametrage du rendu de la table
-        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableFrais(couleurBasique, this.donneesFacture, this.parametres, this.modeleListeArticles, icones.getModifier_01()));
+        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableFrais(couleurBasique, this.donneesFacture, this.parametres, this.modeleListeArticles));
         this.tableListeArticle.setRowHeight(25);
 
-        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC", "Tranches"};
+        //{"N°", "Frais", "Montant"}; en plus il faurdra afficher son fractionnement selon les périodes
         setTaille(this.tableListeArticle.getColumnModel().getColumn(0), 30, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 250, false, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(2), 80, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(3), 100, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(4), 100, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(5), 100, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(6), 120, true, null);
-        setTaille(this.tableListeArticle.getColumnModel().getColumn(7), 120, true, null);
+        //setTaille(this.tableListeArticle.getColumnModel().getColumn(3), 100, true, null);
+        //setTaille(this.tableListeArticle.getColumnModel().getColumn(4), 100, true, null);
+        //setTaille(this.tableListeArticle.getColumnModel().getColumn(5), 100, true, null);
+        //setTaille(this.tableListeArticle.getColumnModel().getColumn(6), 120, true, null);
+        //setTaille(this.tableListeArticle.getColumnModel().getColumn(7), 120, true, null);
 
         //On écoute les sélction
         this.tableListeArticle.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -283,7 +281,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedArticle = modeleListeArticles.getFrais(ligneSelected);
             if (SelectedArticle != null) {
-                InterfaceMonnaie Imon = UtilFacture.getMonnaie(parametres, SelectedArticle.getIdMonnaie());
+                Monnaie Imon = UtilFacture.getMonnaie(parametres, SelectedArticle.getIdMonnaie());
                 if (Imon != null) {
                     this.ecouteurClose.onActualiser(SelectedArticle.getNom() + ", " + ", Total TTC : " + UtilFacture.getMontantFrancais(SelectedArticle.getMontantDefaut()) + " " + Imon.getCode(), icones.getTaxes_01());
                 }
@@ -296,10 +294,10 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedPaiement = modeleListePaiement.getPaiement(ligneSelected);
             if (SelectedPaiement != null) {
-                InterfacePeriode Iper = UtilFacture.getPeriode(parametres, SelectedPaiement.getIdPeriode());
+                Periode Iper = UtilFacture.getPeriode(parametres, SelectedPaiement.getIdPeriode());
                 Frais Iart = UtilFacture.getFrais(donneesFacture, SelectedPaiement.getIdFrais());
                 if (Iart != null) {
-                    InterfaceMonnaie Imon = UtilFacture.getMonnaie(parametres, Iart.getIdMonnaie());
+                    Monnaie Imon = UtilFacture.getMonnaie(parametres, Iart.getIdMonnaie());
                     if (Iper != null && Imon != null) {
                         this.ecouteurClose.onActualiser(Iper.getNom() + ": " + UtilFacture.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + UtilFacture.getMontantFrancais(SelectedPaiement.getMontant()) + " " + Imon.getCode() + " pour " + SelectedPaiement.getNomFrais() + ", reste (" + UtilFacture.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdFrais(), SelectedPaiement.getIdPeriode())) + " " + Imon.getCode() + ").", icones.getClient_01());
                     }
@@ -832,10 +830,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         }
     }
 
-    private void setTypeFacture() {
-        labReference.setText(this.parametres.getNumero());
-    }
-
+    
     public void activerBoutons(int selectedTab) {
         this.indexTabSelected = selectedTab;
         if (selectedTab == 2 || selectedTab == 0) {
@@ -900,24 +895,12 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         labTelephone = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         labAdresseClient = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        labReference = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        labDateFacture = new javax.swing.JLabel();
-        panSynthese = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        labTotalHT = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        labTotalTVA = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
-        jLabel9 = new javax.swing.JLabel();
         labTotalTTC = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        labTotalSolde = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
         labTotalPaye = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        labRemise = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        labTotalSolde = new javax.swing.JLabel();
         isReleverCompte = new javax.swing.JCheckBox();
         barreOutilsArticles = new javax.swing.JToolBar();
         jButton5 = new javax.swing.JButton();
@@ -933,7 +916,6 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
         labTypeClient.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         labTypeClient.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
@@ -959,21 +941,29 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         labAdresseClient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
         labAdresseClient.setText("167b, Av. ITAGA, C. LINGWALA, KINSHASA, RDC");
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel8.setText("Référence :");
-
-        labReference.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labReference.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
-        labReference.setText("AXSDDS5SD");
-
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
-        jLabel10.setText("Date :");
+        jLabel10.setText("Montant dû :");
 
-        labDateFacture.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labDateFacture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
-        labDateFacture.setText("06/03/2019");
+        labTotalTTC.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labTotalTTC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
+        labTotalTTC.setText("00000000 USD");
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel11.setText("Payé :");
+
+        labTotalPaye.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labTotalPaye.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
+        labTotalPaye.setText("00000000 USD");
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jLabel12.setText("Solde restant dû :");
+
+        labTotalSolde.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        labTotalSolde.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/Facture01.png"))); // NOI18N
+        labTotalSolde.setText("00000000 USD");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -988,22 +978,24 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                         .addComponent(labNomClient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labTelephone, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labAdresseClient, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
-                            .addComponent(labReference, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labDateFacture, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(labAdresseClient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(labTotalTTC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(labTotalPaye, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(labTotalSolde, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labTypeClient)
                     .addComponent(labNomClient))
@@ -1015,125 +1007,18 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(labAdresseClient))
-                .addGap(1, 1, 1)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(labReference))
-                .addGap(1, 1, 1)
+                .addGap(0, 0, 0)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(labDateFacture))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        panSynthese.setBackground(new java.awt.Color(255, 255, 255));
-        panSynthese.setBorder(javax.swing.BorderFactory.createTitledBorder("Synthèse"));
-
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel5.setText("Total HT");
-
-        labTotalHT.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labTotalHT.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labTotalHT.setText("2539.90 $");
-
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel7.setText("TVA (16%)");
-
-        labTotalTVA.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labTotalTVA.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labTotalTVA.setText("507.98 $");
-
-        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel9.setText("Total TTC");
-
-        labTotalTTC.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labTotalTTC.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labTotalTTC.setText("2946.28 $");
-
-        jLabel18.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        jLabel18.setText("Solde global");
-
-        labTotalSolde.setFont(new java.awt.Font("Tahoma", 1, 10)); // NOI18N
-        labTotalSolde.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labTotalSolde.setText("2946.28 $");
-
-        jLabel17.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(0, 153, 51));
-        jLabel17.setText("Total payé");
-
-        labTotalPaye.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labTotalPaye.setForeground(new java.awt.Color(0, 153, 51));
-        labTotalPaye.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labTotalPaye.setText("2946.28 $");
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(204, 0, 0));
-        jLabel6.setText("Remise");
-
-        labRemise.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        labRemise.setForeground(new java.awt.Color(204, 0, 0));
-        labRemise.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labRemise.setText("- 100 $");
-
-        javax.swing.GroupLayout panSyntheseLayout = new javax.swing.GroupLayout(panSynthese);
-        panSynthese.setLayout(panSyntheseLayout);
-        panSyntheseLayout.setHorizontalGroup(
-            panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panSyntheseLayout.createSequentialGroup()
-                .addGap(3, 3, 3)
-                .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panSyntheseLayout.createSequentialGroup()
-                        .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labTotalHT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labTotalTVA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labRemise, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(panSyntheseLayout.createSequentialGroup()
-                        .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labTotalTTC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(labTotalSolde, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                            .addComponent(labTotalPaye, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(3, 3, 3))
-        );
-        panSyntheseLayout.setVerticalGroup(
-            panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panSyntheseLayout.createSequentialGroup()
-                .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(labRemise))
-                .addGap(0, 0, 0)
-                .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(labTotalHT))
-                .addGap(0, 0, 0)
-                .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(labTotalTVA))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 4, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
                     .addComponent(labTotalTTC))
-                .addGap(0, 0, 0)
-                .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
+                .addGap(1, 1, 1)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
                     .addComponent(labTotalPaye))
-                .addGap(0, 0, 0)
-                .addGroup(panSyntheseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel18)
-                    .addComponent(labTotalSolde))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(1, 1, 1)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(labTotalSolde)))
         );
 
         isReleverCompte.setBackground(new java.awt.Color(255, 255, 255));
@@ -1192,7 +1077,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             tableListeArticle.getColumnModel().getColumn(6).setPreferredWidth(50);
         }
 
-        tabPrincipal.addTab("Biens/Services/Frais", scrollListeArticles);
+        tabPrincipal.addTab("Frais", scrollListeArticles);
 
         scrollListeReleveCompte.setBackground(new java.awt.Color(255, 255, 255));
         scrollListeReleveCompte.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -1281,34 +1166,26 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(isPlanPaiement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(isReleverCompte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(tabPrincipal)
+            .addComponent(tabPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
             .addComponent(barreOutilsArticles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(isReleverCompte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(isPlanPaiement, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addComponent(barreOutilsArticles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(tabPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panSynthese, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(isReleverCompte)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(isPlanPaiement)))
-                .addGap(5, 5, 5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(isReleverCompte)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(isPlanPaiement)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1372,30 +1249,18 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private javax.swing.JCheckBox isReleverCompte;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labAdresseClient;
-    private javax.swing.JLabel labDateFacture;
     private javax.swing.JLabel labNomClient;
-    private javax.swing.JLabel labReference;
-    private javax.swing.JLabel labRemise;
     private javax.swing.JLabel labTelephone;
-    private javax.swing.JLabel labTotalHT;
     private javax.swing.JLabel labTotalPaye;
     private javax.swing.JLabel labTotalSolde;
     private javax.swing.JLabel labTotalTTC;
-    private javax.swing.JLabel labTotalTVA;
     private javax.swing.JLabel labTypeClient;
-    private javax.swing.JPanel panSynthese;
     private javax.swing.JScrollPane scrollListeArticles;
     private javax.swing.JScrollPane scrollListeEcheances;
     private javax.swing.JScrollPane scrollListeReleveCompte;
