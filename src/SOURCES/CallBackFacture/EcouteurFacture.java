@@ -13,6 +13,7 @@ import SOURCES.Utilitaires_Facture.SortiesFacture;
  */
 public abstract class EcouteurFacture {
     public abstract void onEnregistre(SortiesFacture sortiesFacture);
-    public abstract void onDetruitElements(int idElement, int index);
+    public abstract void onDetruitPaiement(int idPaiement);
+    public abstract void onDetruitTousLesPaiements(int idEleve, int idExercice);
     
 }

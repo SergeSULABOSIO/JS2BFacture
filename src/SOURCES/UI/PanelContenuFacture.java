@@ -256,11 +256,6 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         setTaille(this.tableListeArticle.getColumnModel().getColumn(0), 30, true, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(1), 600, false, null);
         setTaille(this.tableListeArticle.getColumnModel().getColumn(2), 80, true, null);
-        //setTaille(this.tableListeArticle.getColumnModel().getColumn(3), 100, true, null);
-        //setTaille(this.tableListeArticle.getColumnModel().getColumn(4), 100, true, null);
-        //setTaille(this.tableListeArticle.getColumnModel().getColumn(5), 100, true, null);
-        //setTaille(this.tableListeArticle.getColumnModel().getColumn(6), 120, true, null);
-        //setTaille(this.tableListeArticle.getColumnModel().getColumn(7), 120, true, null);
 
         //On écoute les sélction
         this.tableListeArticle.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -571,16 +566,13 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         if (modeleListePaiement != null) {
             Tpaye = modeleListePaiement.getTotalMontant();
         }
-        //double Tnet = modeleListeArticles.getTotal_Net();
-        //double Ttva = modeleListeArticles.getTotal_TVA();
-        double Tttc = modeleListeArticles.getTotal_TTC();
-        //double Trab = modeleListeArticles.getTotal_Rabais();
-        double Tsolde = UtilFacture.round(Tpaye, 2);
+        double Tttc = 0;
+        if(modeleListeArticles != null){
+            Tttc = modeleListeArticles.getTotal_TTC();
+        }
+        double Tsolde = UtilFacture.round(Tttc - Tpaye, 2);
 
         String monn = this.parametres.getMonnaieOutPut().getCode();
-        //labTotalHT.setText(UtilFacture.getMontantFrancais(Tnet) + " " + monn);
-        //labRemise.setText("-" + UtilFacture.getMontantFrancais(Trab) + " " + monn);
-        //labTotalTVA.setText(UtilFacture.getMontantFrancais(Ttva) + " " + monn);
         labTotalTTC.setText(UtilFacture.getMontantFrancais(Tttc) + " " + monn);
         labTotalPaye.setText(UtilFacture.getMontantFrancais(Tpaye) + " " + monn);
         labTotalSolde.setText(UtilFacture.getMontantFrancais(Tsolde) + " " + monn);
@@ -600,7 +592,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 modeleListePaiement.SupprimerPaiement(tableListePaiement.getSelectedRow(), true, new EcouteurSuppressionElement() {
                     @Override
                     public void onSuppressionConfirmee(int idElement) {
-                        ecouteurFacture.onDetruitElements(idElement, indexTabSelected);
+                        ecouteurFacture.onDetruitPaiement(idElement);
                     }
                 });
                 break;
@@ -618,6 +610,10 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             case 1:
                 System.out.println("*** SUPPRESSION DES PAIEMENTS");
                 modeleListePaiement.viderListe();
+                if(ecouteurFacture != null){
+                    ecouteurFacture.onDetruitTousLesPaiements(donneesFacture.getEleve().getId(), parametres.getExercice().getId());
+                }
+                
                 break;
             default:
                 //modeleListeEcheance.viderListe();

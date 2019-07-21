@@ -182,37 +182,6 @@ public class ModeleListeFrais extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        /*
-        //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC""};
-        Frais article = listeData.get(rowIndex);
-        String avant = article.toString();
-        switch (columnIndex) {
-            case 1:
-                article.setId(Integer.parseInt(aValue + ""));
-                break;
-            case 2:
-                article.setQte(Double.parseDouble(aValue + ""));
-                break;
-            case 4:
-                article.setRabais(Double.parseDouble(aValue + ""));
-                break;
-            default:
-                break;
-        }
-        String apres = article.toString();
-        if (!avant.equals(apres)) {
-            if (article.getBeta() == InterfaceFrais.BETA_EXISTANT) {
-                article.setBeta(InterfaceFrais.BETA_MODIFIE);
-                //mEnreg.setCouleur(Color.blue);
-                //btEnreg.setForeground(Color.blue);
-                mEnreg.setCouleur(colBasique.getCouleur_foreground_objet_nouveau());                                        //mEnreg.setCouleur(Color.blue);
-                btEnreg.setForeground(colBasique.getCouleur_foreground_objet_nouveau());                                   //btEnreg.setForeground(Color.blue);
-            }
-        }
-        listeData.set(rowIndex, article);
-        ecouteurModele.onValeurChangee();
-        fireTableDataChanged();
         
-         */
     }
 }

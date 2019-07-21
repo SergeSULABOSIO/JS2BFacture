@@ -208,11 +208,15 @@ public class Principal_Facture extends javax.swing.JFrame {
 
         //Initialisation du gestionnaire des factures
         this.panelFacture = new PanelFacture(new CouleurBasique(), jTabbedPane1, getParametres(), getDonnees(), new EcouteurFacture() {
+            @Override
+            public void onDetruitTousLesPaiements(int idEleve, int idExercice) {
+                System.out.println("DESCTRUCTION DE TOUS LES PAIEMENTS DE L'ELEVE " + idEleve + ", POUR L'EXERCICE " + idExercice);
+            }
             
             
             @Override
-            public void onDetruitElements(int idElement, int index) {
-                System.out.println("DESCTRUCTION DE L'ELEMENT " + idElement + ", INDEX " + index);
+            public void onDetruitPaiement(int idPaiement) {
+                System.out.println("DESCTRUCTION DU PAIEMENT " + idPaiement);
             }
             
             
