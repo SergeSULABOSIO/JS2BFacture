@@ -22,30 +22,36 @@ public class CalculateurLitigesFacture {
     public static Vector<Echeance> getEcheances(Vector<Frais> listeFrais, ModeleListePaiement modeleListePaiement, ParametresFacture parametresFacture) {
         Vector<Echeance> listeEcheances = new Vector<>();
         for (Periode Iperiode : parametresFacture.getListePeriodes()) {
-            
+
             //Recherche des montants dûs
             double montantDu = 0;
             for (Frais Iarticle : listeFrais) {
                 for (LiaisonFraisPeriode liaison : Iarticle.getLiaisonsPeriodes()) {
                     if (liaison.getIdPeriode() == Iperiode.getId() && liaison.getNomPeriode().equals(Iperiode.getNom())) {
                         //Il faut appliquer la conversion selon la monnaie Output définie
-                        double montDu = UtilFacture.round((Iarticle.getMontantDefaut() * liaison.getPourcentage())/100, 2);
-                        montantDu +=  UtilFacture.getMontantOutPut(parametresFacture, Iarticle.getIdMonnaie(), montDu);
+                        double montDu = UtilFacture.round((Iarticle.getMontantDefaut() * liaison.getPourcentage()) / 100, 2);
+                        montantDu += UtilFacture.getMontantOutPut(parametresFacture, Iarticle.getIdMonnaie(), montDu);
                     }
                 }
             }
-            
+
             //Recherche des montants payes
             double montantPaye = 0;
-            for(Paiement Ipaiement: modeleListePaiement.getListeData()){
-                if(Ipaiement.getIdPeriode() == Iperiode.getId()){
-                    //Il faut appliquer la conversion selon la monnaie Output définie
-                    Frais Iart = UtilFacture.getFrais(listeFrais, Ipaiement.getIdFrais());
-                    montantPaye += UtilFacture.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Ipaiement.getMontant()); 
+            for (Paiement Ipaiement : modeleListePaiement.getListeData()) {
+                if (Ipaiement != null) {
+                    if (Ipaiement.getIdPeriode() == Iperiode.getId()) {
+                        //Il faut appliquer la conversion selon la monnaie Output définie
+                        Frais Iart = UtilFacture.getFrais(listeFrais, Ipaiement.getIdFrais());
+                        if (Iart != null) {
+                            montantPaye += UtilFacture.getMontantOutPut(parametresFacture, Iart.getIdMonnaie(), Ipaiement.getMontant());
+                        }
+                    }
                 }
+
             }
             listeEcheances.add(new Echeance(-1, Iperiode.getNom(), -1, Iperiode.getDebut(), Iperiode.getFin(), "", montantPaye, montantDu, parametresFacture.getMonnaieOutPut().getId()));
         }
+
         return listeEcheances;
     }
 

@@ -39,9 +39,7 @@ import Source.Callbacks.EcouteurEnregistrement;
 import Source.Callbacks.EcouteurSuppressionElement;
 import Source.Callbacks.EcouteurUpdateClose;
 import Source.Callbacks.EcouteurValeursChangees;
-import Source.Interface.InterfaceEcheance;
 import Source.Interface.InterfaceEleve;
-import Source.Interface.InterfaceExercice;
 import Source.Interface.InterfaceFrais;
 import Source.Interface.InterfacePaiement;
 import Source.Objet.CouleurBasique;
@@ -89,7 +87,6 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private Frais SelectedArticle = null;
     private Paiement SelectedPaiement = null;
     private Echeance SelectedEcheance = null;
-
     public ParametresFacture parametres;
     public DonneesFacture donneesFacture;
     private Date dateFacture = null;
@@ -109,7 +106,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         parametrerTableEcheance();
         actualiserTotaux();
         activerBoutons(tabPrincipal.getSelectedIndex());
-
+        tabPrincipal.setSelectedIndex(1);
     }
 
     private void init() {
@@ -155,7 +152,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                     if (nbEcheancesExistant > 1) {
                         nomTransche = (nbEcheancesExistant + 1) + "ème Tranche";
                     }
-                    modeleListeEcheance.AjouterEcheanceAutomatique(new Echeance(-1, nomTransche, parametres.getIdFacture(), exercice.getDebut(), exercice.getFin(), parametres.getNumero(), 0, 0, parametres.getMonnaieOutPut().getId()));
+                    modeleListeEcheance.AjouterEcheanceAutomatique(new Echeance(-1, nomTransche, -1, exercice.getDebut(), exercice.getFin(), "RAS", 0, 0, parametres.getMonnaieOutPut().getId()));
                     //modeleListeEcheance.AjouterEcheanceAutomatique(new Echeance(-1, nomTransche, parametres.getIdFacture(), exercice.getDebut(), exercice.getFin(), parametres.getNumero(), 0, 0, parametres.getMonnaieOutPut().getId()));
                 }
             }
@@ -636,7 +633,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                         if (this.editeurArticle.getTailleCombo() != 0) {
                             this.ecouteurAjout.setAjoutPaiement(modeleListePaiement);
                         } else {
-                            JOptionPane.showMessageDialog(tabPrincipal, "Désolé " + this.parametres.getNomUtilisateur() + ", il n'y a plus d'autre frais à payer !");
+                            JOptionPane.showMessageDialog(tabPrincipal, "Désolé " + this.parametres.getUtilisateur().getNom()+ ", il n'y a plus d'autre frais à payer !");
                         }
                     }
                 } else {

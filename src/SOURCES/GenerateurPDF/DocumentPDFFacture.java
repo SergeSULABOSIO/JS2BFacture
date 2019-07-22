@@ -190,7 +190,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
 
         if (this.gestionnaireFacture != null) {
             preface.add(getParagraphe("Date: " + UtilFacture.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
-            preface.add(getParagraphe(titre + " n°" + this.gestionnaireFacture.getParametres().getNumero(), Font_Titre1, Element.ALIGN_CENTER));
+            preface.add(getParagraphe(titre + " n°" + UtilFacture.generateSignature(), Font_Titre1, Element.ALIGN_CENTER));
         } else {
             preface.add(getParagraphe("Date: " + UtilFacture.getDateFrancais(new Date()), Font_Titre3, Element.ALIGN_RIGHT));
             preface.add(getParagraphe("Facture n°XXXXXXXXX/2018", Font_Titre1, Element.ALIGN_CENTER));
@@ -201,7 +201,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     private void setSignataire() throws Exception {
         if (this.gestionnaireFacture != null) {
             this.document.add(getParagraphe(""
-                    + "Produit par " + this.gestionnaireFacture.getParametres().getNomUtilisateur() + "\n"
+                    + "Produit par " + this.gestionnaireFacture.getParametres().getUtilisateur().getNom() + "\n"
                     + "Validé par :..............................................\n\n"
                     + "Signature", Font_TexteSimple, Element.ALIGN_RIGHT));
         } else {

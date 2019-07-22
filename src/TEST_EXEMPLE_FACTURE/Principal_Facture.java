@@ -121,7 +121,7 @@ public class Principal_Facture extends javax.swing.JFrame {
 
         Vector<LiaisonFraisEleve> lfeSULA = new Vector<>();
         lfeSULA.add(new LiaisonFraisEleve(eleve_SULA_BOSIO.getSignature(), frais_inscription.getSignature(), frais_inscription.getId(), 0, monnaie_USD.getId(), "USD"));
-        lfeSULA.add(new LiaisonFraisEleve(eleve_SULA_BOSIO.getSignature(), frais_inscription.getSignature(), frais_minervale.getId(), 0, monnaie_USD.getId(), "USD"));
+        lfeSULA.add(new LiaisonFraisEleve(eleve_SULA_BOSIO.getSignature(), frais_minervale.getSignature(), frais_minervale.getId(), 200, monnaie_USD.getId(), "USD"));
 
         ayantdroit_SULA_BOSIO = new Ayantdroit(1, entreprise.getId(), utilisateur.getId(), exercice.getId(), eleve_SULA_BOSIO.getId(), eleve_SULA_BOSIO.getNom(), lfeSULA, UtilFacture.generateSignature(), eleve_SULA_BOSIO.getSignature(), InterfaceAyantDroit.BETA_EXISTANT);
         System.out.println("INIT DATA EXECUTEE AVEC SUCCES!");
@@ -141,7 +141,7 @@ public class Principal_Facture extends javax.swing.JFrame {
         listePeriodes.add(periode_Trimestre01);
         listePeriodes.add(periode_Trimestre02);
         
-        return new ParametresFacture(-1, "000000", utilisateur.getId(), utilisateur.getNom(), entreprise, exercice, monnaie_USD, listeMonnaies, listeClasse, listePeriodes);
+        return new ParametresFacture(utilisateur, entreprise, exercice, monnaie_USD, listeMonnaies, listeClasse, listePeriodes);
     }
 
     private DonneesFacture getDonnees() {
@@ -154,7 +154,7 @@ public class Principal_Facture extends javax.swing.JFrame {
         
         Vector<Paiement> listePaiement_eleve_SULA_BOSIO = new Vector<>();
         
-        return new DonneesFacture(eleve_SULA_BOSIO, listeFrais_eleve_SULA_BOSIO, listePaiement_eleve_SULA_BOSIO);
+        return new DonneesFacture(eleve_SULA_BOSIO, listeFrais_eleve_SULA_BOSIO, listePaiement_eleve_SULA_BOSIO, listeAyantDroits);
     }
 
     

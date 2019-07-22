@@ -11,6 +11,7 @@ import Source.Objet.Entreprise;
 import Source.Objet.Exercice;
 import Source.Objet.Monnaie;
 import Source.Objet.Periode;
+import Source.Objet.Utilisateur;
 import java.util.Vector;
 
 /**
@@ -18,22 +19,16 @@ import java.util.Vector;
  * @author HP Pavilion
  */
 public class ParametresFacture {
-    private int idFacture;
-    private String numero;
-    private int idUtilisateur;
-    private String nomUtilisateur;
     private Entreprise entreprise;
+    private Utilisateur utilisateur;
     private Exercice exercice;
     private Monnaie monnaieOutPut;
     private Vector<Monnaie> listeMonnaies;
     private Vector<Classe> listeClasse;
     private Vector<Periode> listePeriodes;
 
-    public ParametresFacture(int idFacture, String numero, int idUtilisateur, String nomUtilisateur, Entreprise entreprise, Exercice exercice, Monnaie monnaieOutPut, Vector<Monnaie> listeMonnaies, Vector<Classe> listeClasse, Vector<Periode> listePeriodes) {
-        this.idFacture = idFacture;
-        this.numero = numero;
-        this.idUtilisateur = idUtilisateur;
-        this.nomUtilisateur = nomUtilisateur;
+    public ParametresFacture(Utilisateur utilisateur, Entreprise entreprise, Exercice exercice, Monnaie monnaieOutPut, Vector<Monnaie> listeMonnaies, Vector<Classe> listeClasse, Vector<Periode> listePeriodes) {
+        this.utilisateur = utilisateur;
         this.entreprise = entreprise;
         this.exercice = exercice;
         this.monnaieOutPut = monnaieOutPut;
@@ -42,36 +37,12 @@ public class ParametresFacture {
         this.listePeriodes = listePeriodes;
     }
 
-    public int getIdFacture() {
-        return idFacture;
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
     }
 
-    public void setIdFacture(int idFacture) {
-        this.idFacture = idFacture;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
-
-    public int getIdUtilisateur() {
-        return idUtilisateur;
-    }
-
-    public void setIdUtilisateur(int idUtilisateur) {
-        this.idUtilisateur = idUtilisateur;
-    }
-
-    public String getNomUtilisateur() {
-        return nomUtilisateur;
-    }
-
-    public void setNomUtilisateur(String nomUtilisateur) {
-        this.nomUtilisateur = nomUtilisateur;
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
     }
 
     public Entreprise getEntreprise() {
@@ -124,6 +95,6 @@ public class ParametresFacture {
 
     @Override
     public String toString() {
-        return "ParametresFacture{" + "idFacture=" + idFacture + ", numero=" + numero + ", idUtilisateur=" + idUtilisateur + ", nomUtilisateur=" + nomUtilisateur + ", entreprise=" + entreprise + ", exercice=" + exercice + ", monnaieOutPut=" + monnaieOutPut + ", listeMonnaies=" + listeMonnaies + ", listeClasse=" + listeClasse + ", listePeriodes=" + listePeriodes + '}';
+        return "ParametresFacture{" + "entreprise=" + entreprise + ", utilisateur=" + utilisateur + ", exercice=" + exercice + ", monnaieOutPut=" + monnaieOutPut + ", listeMonnaies=" + listeMonnaies + ", listeClasse=" + listeClasse + ", listePeriodes=" + listePeriodes + '}';
     }
 }
