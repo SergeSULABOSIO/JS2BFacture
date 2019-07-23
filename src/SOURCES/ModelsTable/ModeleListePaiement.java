@@ -287,10 +287,6 @@ public class ModeleListePaiement extends AbstractTableModel {
         redessinerTable();
     }
 
-    private void updateMontantDuEtReste(InterfacePaiement Ipaiement) {
-
-    }
-
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
@@ -302,8 +298,11 @@ public class ModeleListePaiement extends AbstractTableModel {
                     Ipaiement.setDate((Date) aValue);
                     break;
                 case 2:
-                    Ipaiement.setIdFrais(Integer.parseInt(aValue + ""));
-                    updateArticle(Ipaiement);
+                    int newIdFrais = Integer.parseInt(aValue + "");
+                    if (Ipaiement.getIdFrais() != newIdFrais) {
+                        Ipaiement.setIdFrais(newIdFrais);
+                        updateArticle(Ipaiement);
+                    }
                     break;
                 case 3:
                     Ipaiement.setReferenceTransaction(aValue + "");
@@ -313,7 +312,6 @@ public class ModeleListePaiement extends AbstractTableModel {
                     break;
                 case 5:
                     Ipaiement.setIdPeriode(Integer.parseInt(aValue + ""));
-                    updateMontantDuEtReste(Ipaiement);
                     break;
                 case 6:
                     Ipaiement.setMontant(Double.parseDouble(aValue + ""));
