@@ -43,6 +43,9 @@ public class EditeurFraisFacture extends AbstractCellEditor implements TableCell
                     if(reste > 0){
                         //System.out.println("reste " + reste+", frais = " + article.getNom());
                         this.champEditionCombo.addItem(article.getNom());
+                    }else{
+                        //On doit désactiver le champ de saisie de frais
+                        
                     }
                 }else{
                     this.champEditionCombo.addItem(article.getNom());
@@ -75,7 +78,11 @@ public class EditeurFraisFacture extends AbstractCellEditor implements TableCell
     @Override
     public Object getCellEditorValue() {
         //Après édition de l'utilisateur
-        return getIdFrais(champEditionCombo.getSelectedItem() + "");
+        if(champEditionCombo.getItemCount() != 0){
+            return getIdFrais(champEditionCombo.getSelectedItem() + "");
+        }else{
+            return -1;
+        }
     }
 
     @Override
@@ -84,8 +91,13 @@ public class EditeurFraisFacture extends AbstractCellEditor implements TableCell
         initCombo();
         System.out.println("valeur: " + value);
         String defaultSelection = getFrais(Integer.parseInt(value+""));
-        champEditionCombo.setSelectedItem(defaultSelection);
-        return champEditionCombo;
+        
+        if(champEditionCombo.getItemCount() != 0){
+            champEditionCombo.setSelectedItem(defaultSelection);
+            return champEditionCombo;
+        }else{
+            return null;
+        }
     }
 
 }

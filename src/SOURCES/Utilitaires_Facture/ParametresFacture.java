@@ -36,6 +36,15 @@ public class ParametresFacture {
         this.listeClasse = listeClasse;
         this.listePeriodes = listePeriodes;
     }
+    
+    public String getMonnaieS(int idMonnaie){
+        for(Monnaie m: listeMonnaies){
+            if(m.getId() == idMonnaie){
+                return m.getCode();
+            }
+        }
+        return "";
+    }
 
     public Utilisateur getUtilisateur() {
         return utilisateur;

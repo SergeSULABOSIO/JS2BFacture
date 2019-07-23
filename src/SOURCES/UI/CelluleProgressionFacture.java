@@ -6,8 +6,11 @@
 package SOURCES.UI;
 
 
+import SOURCES.Utilitaires_Facture.ParametresFacture;
 import SOURCES.Utilitaires_Facture.UtilFacture;
+import Source.Interface.InterfaceEcheance;
 import Source.Objet.CouleurBasique;
+import Source.Objet.Echeance;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.ImageIcon;
@@ -24,15 +27,31 @@ public class CelluleProgressionFacture extends javax.swing.JPanel {
     
     public static final Color COULEUR_CELLULE_SELECTIONNEE = new java.awt.Color(255, 255, 51);
     private CouleurBasique couleurBasique;
+    private ParametresFacture parametresFacture;
     
     
-    public CelluleProgressionFacture(CouleurBasique couleurBasique, String monnaie, double value, double totalDu, ImageIcon iconeProgression) {
+    public CelluleProgressionFacture(CouleurBasique couleurBasique, ParametresFacture parametresFacture, Echeance echeance, ImageIcon iconeProgression) {
         initComponents();
         this.couleurBasique = couleurBasique;
         this.labicone.setIcon(iconeProgression);
-        this.setValeur(monnaie, value, totalDu);
+        this.parametresFacture = parametresFacture;
+        
+        if(echeance != null){
+            this.setValeur(getLabel(echeance), echeance.getMontantPaye(), echeance.getMontantDu());
+        }
     }
     
+    
+    private String getLabel(Echeance Iecheance) {
+        if (Iecheance != null) {
+            String monnaie = parametresFacture.getMonnaieS(Iecheance.getIdMonnaie());
+            String mntDu = UtilFacture.getMontantFrancais(Iecheance.getMontantDu()) + " " + monnaie;
+            String mntPaye = UtilFacture.getMontantFrancais(Iecheance.getMontantPaye()) + " " + monnaie;
+            return "(" + mntPaye + " / " + mntDu + ")";
+        } else {
+            return "";
+        }
+    }
     
     private void ecouterLigneImpare(int row){
         if((row % 2) == 0){
@@ -59,7 +78,6 @@ public class CelluleProgressionFacture extends javax.swing.JPanel {
     
     public void appliquerCouleurFocusBordureCellule(boolean hasFocus){
         if(hasFocus == true){
-            //this.setBorder(javax.swing.BorderFactory.createLineBorder(COULEUR_CELLULE_SELECTIONNEE, 2));
             this.setBorder(javax.swing.BorderFactory.createLineBorder(couleurBasique.getCouleur_encadrement_selection(), 2));    //COULEUR_CELLULE_SELECTIONNEE
         }else{
             this.setBorder(null);
@@ -67,10 +85,10 @@ public class CelluleProgressionFacture extends javax.swing.JPanel {
     }
     
     
-    public void setValeur(String monnaie, double val, double totalDu){
+    public void setValeur(String valeurs, double val, double totalDu){
         this.progress.setStringPainted(true);
         this.progress.setMaximum((int)totalDu);
-        this.progress.setString(UtilFacture.getMontantFrancais(val) + " " + monnaie);
+        this.progress.setString(valeurs);
         this.progress.setValue((int)val);
     }
 

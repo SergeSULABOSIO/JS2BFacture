@@ -299,7 +299,7 @@ public class ModeleListePaiement extends AbstractTableModel {
                     break;
                 case 2:
                     int newIdFrais = Integer.parseInt(aValue + "");
-                    if (Ipaiement.getIdFrais() != newIdFrais) {
+                    if (Ipaiement.getIdFrais() != newIdFrais && newIdFrais != -1) {
                         Ipaiement.setIdFrais(newIdFrais);
                         updateArticle(Ipaiement);
                     }

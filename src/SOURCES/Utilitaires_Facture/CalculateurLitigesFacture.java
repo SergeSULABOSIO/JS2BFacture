@@ -21,13 +21,14 @@ public class CalculateurLitigesFacture {
 
     public static Vector<Echeance> getEcheances(Vector<Frais> listeFrais, ModeleListePaiement modeleListePaiement, ParametresFacture parametresFacture) {
         Vector<Echeance> listeEcheances = new Vector<>();
+        System.out.println("POUR CHAQUE PERIODE:");
         for (Periode Iperiode : parametresFacture.getListePeriodes()) {
-
+            System.out.println(" ** " + Iperiode.getNom());
             //Recherche des montants dûs
             double montantDu = 0;
             for (Frais Iarticle : listeFrais) {
                 for (LiaisonFraisPeriode liaison : Iarticle.getLiaisonsPeriodes()) {
-                    if (liaison.getIdPeriode() == Iperiode.getId() && liaison.getNomPeriode().equals(Iperiode.getNom())) {
+                    if (liaison.getIdPeriode() == Iperiode.getId()) {
                         //Il faut appliquer la conversion selon la monnaie Output définie
                         double montDu = UtilFacture.round((Iarticle.getMontantDefaut() * liaison.getPourcentage()) / 100, 2);
                         montantDu += UtilFacture.getMontantOutPut(parametresFacture, Iarticle.getIdMonnaie(), montDu);

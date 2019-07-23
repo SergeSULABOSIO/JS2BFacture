@@ -12,6 +12,7 @@ import SOURCES.Utilitaires_Facture.ParametresFacture;
 import SOURCES.Utilitaires_Facture.UtilFacture;
 import Source.Interface.InterfaceFrais;
 import Source.Objet.CouleurBasique;
+import Source.Objet.Echeance;
 import Source.UI.CelluleTableauSimple;
 import java.awt.Component;
 import java.util.Date;
@@ -68,9 +69,8 @@ public class RenduTableEcheance implements TableCellRenderer {
                 celluleNum.ecouterSelection(isSelected, row, InterfaceFrais.BETA_EXISTANT, hasFocus);
                 return celluleNum;
             case 6:
-                double valeur = Double.parseDouble(value+"");
-                double montDu = modeleListeEcheance.getEcheance_row(row).getMontantDu();
-                CelluleProgressionFacture celluleProgress = new CelluleProgressionFacture(couleurBasique, parametresFacture.getMonnaieOutPut().getCode(), valeur, montDu, iconeProgression);
+                Echeance eche = modeleListeEcheance.getEcheance_row(row);
+                CelluleProgressionFacture celluleProgress = new CelluleProgressionFacture(couleurBasique, parametresFacture, eche, iconeProgression);
                 celluleProgress.ecouterSelection(isSelected, row, hasFocus);
                 return celluleProgress;
             default:
