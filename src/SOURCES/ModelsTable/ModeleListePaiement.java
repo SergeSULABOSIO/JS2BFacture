@@ -106,12 +106,12 @@ public class ModeleListePaiement extends AbstractTableModel {
                         int dialogResult = JOptionPane.showConfirmDialog(parent, "Etes-vous sûr de vouloir supprimer cette ligne?", "Avertissement", JOptionPane.YES_NO_OPTION);
                         if (dialogResult == JOptionPane.YES_OPTION) {
                             deleteLigne(row);
-                            ecouteurSuppressionElement.onSuppressionConfirmee(idASupp);
+                            ecouteurSuppressionElement.onSuppressionConfirmee(idASupp, articl.getSignature());
                         }
                     }
                 } else {
                     deleteLigne(row);
-                    ecouteurSuppressionElement.onSuppressionConfirmee(idASupp);
+                    ecouteurSuppressionElement.onSuppressionConfirmee(idASupp, articl.getSignature());
                 }
             }
 
