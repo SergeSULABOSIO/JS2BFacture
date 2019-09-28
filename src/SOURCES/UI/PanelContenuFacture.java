@@ -665,7 +665,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             case 0:
                 modeleListeArticles.SupprimerFrais(tableListeArticle.getSelectedRow(), new EcouteurSuppressionElement() {
                     @Override
-                    public void onSuppressionConfirmee(int idElement) {
+                    public void onSuppressionConfirmee(int idElement, long signature) {
                         //System.out.println("Ce n'est pas ici qu'un frais peut être supprimé");
                     }
                 });
@@ -673,8 +673,8 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             case 1:
                 modeleListePaiement.SupprimerPaiement(tableListePaiement.getSelectedRow(), true, new EcouteurSuppressionElement() {
                     @Override
-                    public void onSuppressionConfirmee(int idElement) {
-                        ecouteurFacture.onDetruitPaiement(idElement);
+                    public void onSuppressionConfirmee(int idElement, long signature) {
+                        ecouteurFacture.onDetruitPaiement(idElement, signature);
                     }
                 });
                 break;
