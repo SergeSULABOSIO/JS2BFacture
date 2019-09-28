@@ -203,7 +203,7 @@ public class UtilFacture {
         try {
             texte = ProcesseurNombreFacture.CALCULATE.getLettres(montant, NomMonnaie);
         } catch (Exception e) {
-            System.out.println("Un problème est survenu lors de la conversion des chiffres en nombre.");
+            //System.out.println("Un problème est survenu lors de la conversion des chiffres en nombre.");
             texte = "";
         }
         return texte;
@@ -213,7 +213,9 @@ public class UtilFacture {
         double origine = 10000.14;
 
         String res = UtilFacture.getMontantFrancais(origine);
-        System.out.println("Résultat = " + res);
-        System.out.println("Résultat = " + UtilFacture.getMontantLettres(origine, "Dollars Américains"));
+        //System.out.println("Résultat = " + res);
+        //System.out.println("Résultat = " + UtilFacture.getMontantLettres(origine, "Dollars Américains"));
     }
 }
+
+

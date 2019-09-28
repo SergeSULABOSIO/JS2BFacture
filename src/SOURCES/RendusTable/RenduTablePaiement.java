@@ -10,6 +10,7 @@ import SOURCES.ModelsTable.ModeleListePaiement;
 import SOURCES.Utilitaires_Facture.DonneesFacture;
 import SOURCES.Utilitaires_Facture.ParametresFacture;
 import SOURCES.Utilitaires_Facture.UtilFacture;
+import Source.GestionEdition;
 import Source.Interface.InterfacePaiement;
 import Source.Objet.CouleurBasique;
 import Source.Objet.Frais;
@@ -34,13 +35,15 @@ public class RenduTablePaiement implements TableCellRenderer {
     private ParametresFacture parametresFacture;
     private DonneesFacture donneesFacture;
     private CouleurBasique couleurBasique;
+    private GestionEdition gestionEdition;
 
-    public RenduTablePaiement(CouleurBasique couleurBasique, DonneesFacture donneesFacture, ParametresFacture parametresFacture, ModeleListePaiement modeleListePaiement, ImageIcon iconeEdition) {
+    public RenduTablePaiement(GestionEdition gestionEdition, CouleurBasique couleurBasique, DonneesFacture donneesFacture, ParametresFacture parametresFacture, ModeleListePaiement modeleListePaiement, ImageIcon iconeEdition) {
         this.couleurBasique = couleurBasique;
         this.iconeEdition = iconeEdition;
         this.modeleListePaiement = modeleListePaiement;
         this.donneesFacture = donneesFacture;
         this.parametresFacture = parametresFacture;
+        this.gestionEdition = gestionEdition;
     }
 
     private String getCodeMonnaie(int row) {
@@ -103,30 +106,41 @@ public class RenduTablePaiement implements TableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
         CelluleTableauSimple celluleNum = null;
+        
+        ImageIcon icone = null;
+        if(gestionEdition != null){
+            Paiement Ieleve = this.modeleListePaiement.getPaiement(row);
+            if(Ieleve != null){
+                if(gestionEdition.isEditable(Ieleve.getId(), 1)){
+                    icone = iconeEdition;
+                }
+            }
+        }
+        
         if (column == 0 || column == 1 || column == 2 || column == 3 || column == 4 || column == 5) {
             switch (column) {
                 case 0:
                     celluleNum = new CelluleTableauSimple(couleurBasique, " " + value + " ", CelluleTableauSimple.ALIGNE_CENTRE, null);
                     break;
                 case 1:
-                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getDateFrancais(((Date) value)) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getDateFrancais(((Date) value)) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, icone);
                     break;
                 case 2:
-                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getFrais(Integer.parseInt(value + "")) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getFrais(Integer.parseInt(value + "")) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, icone);
                     break;
                 case 4:
-                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getMode(value) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getMode(value) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, icone);
                     break;
                 case 5:
-                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getPeriode(value) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + getPeriode(value) + " ", CelluleTableauSimple.ALIGNE_GAUCHE, icone);
                     break;
                 default:
-                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + value + " ", CelluleTableauSimple.ALIGNE_GAUCHE, iconeEdition);
+                    celluleNum = new CelluleTableauSimple(couleurBasique, " " + value + " ", CelluleTableauSimple.ALIGNE_GAUCHE, icone);
                     break;
             }
         } else {
             if (column == 6) {
-                celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, iconeEdition);
+                celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, icone);
             } else {
                 celluleNum = new CelluleTableauSimple(couleurBasique, " " + UtilFacture.getMontantFrancais(Double.parseDouble(value + "")) + " " + getCodeMonnaie(row) + " ", CelluleTableauSimple.ALIGNE_DROITE, null);
             }
@@ -145,3 +159,13 @@ public class RenduTablePaiement implements TableCellRenderer {
         return InterfacePaiement.BETA_NOUVEAU;
     }
 }
+
+
+
+
+
+
+
+
+
+

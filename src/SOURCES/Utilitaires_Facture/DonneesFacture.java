@@ -38,17 +38,17 @@ public class DonneesFacture {
         if(ayantdroits != null){
             if(!ayantdroits.isEmpty()){
                 for(Ayantdroit ay: ayantdroits){
-                    System.out.println("XXXXX  TEST de ("+ay.getSignatureEleve()+"," + eleve.getSignature()+"):");
+                    //System.out.println("XXXXX  TEST de ("+ay.getSignatureEleve()+"," + eleve.getSignature()+"):");
                     if(ay.getSignatureEleve() == eleve.getSignature()){
-                        System.out.println("XXXXX  ---- " + eleve.getNom()+" est un Ayantdroit ----- XXXXXX");
+                        //System.out.println("XXXXX  ---- " + eleve.getNom()+" est un Ayantdroit ----- XXXXXX");
                         for(LiaisonFraisEleve lfe: ay.getListeLiaisons()){
                             for(Frais f: articles){
-                                System.out.println("XXXXX  TEST des IDs (" + lfe.getIdFrais() + "," + f.getId() + "):");
+                                //System.out.println("XXXXX  TEST des IDs (" + lfe.getIdFrais() + "," + f.getId() + "):");
                                 if(lfe.getIdFrais() == f.getId()){
                                     f.setMontantDefaut(lfe.getMontant());
                                     f.setIdMonnaie(lfe.getIdMonnaie());
                                     f.setMonnaie(lfe.getMonnaie());
-                                    System.out.println("XXXXX  ---- " + f.getNom()+" modifié !");
+                                    //System.out.println("XXXXX  ---- " + f.getNom()+" modifié !");
                                 }
                             }
                         }
@@ -87,3 +87,5 @@ public class DonneesFacture {
         return "DonneesFacture{" + "eleve=" + eleve + ", articles=" + articles + ", paiements=" + paiements + '}';
     }
 }
+
+

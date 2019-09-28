@@ -12,6 +12,7 @@ import BEAN_MenuContextuel.MenuContextuel;
 import BEAN_MenuContextuel.RubriqueListener;
 import BEAN_MenuContextuel.RubriqueSimple;
 import ICONES.Icones;
+import SOURCES.CallBackFacture.EcouteurActualisationFacture;
 import SOURCES.CallBackFacture.EcouteurAjoutFacture;
 import SOURCES.CallBackFacture.EcouteurFacture;
 import SOURCES.EditeursTable.EditeurFraisFacture;
@@ -26,22 +27,24 @@ import SOURCES.RendusTable.RenduTablePaiement;
 import SOURCES.GenerateurPDF.DocumentPDFFacture;
 import SOURCES.ModelsTable.ModeleListeEcheance;
 import SOURCES.Utilitaires_Facture.UtilFacture;
-import java.awt.event.MouseEvent;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.table.TableColumn;
 import SOURCES.RendusTable.RenduTableEcheance;
+import SOURCES.Utilitaires_Facture.DataFacture;
 import SOURCES.Utilitaires_Facture.DonneesFacture;
 import SOURCES.Utilitaires_Facture.SortiesFacture;
 import Source.Callbacks.EcouteurEnregistrement;
 import Source.Callbacks.EcouteurSuppressionElement;
 import Source.Callbacks.EcouteurUpdateClose;
 import Source.Callbacks.EcouteurValeursChangees;
-import Source.Interface.InterfaceEleve;
+import Source.GestionClickDroit;
+import Source.GestionEdition;
 import Source.Interface.InterfaceFrais;
 import Source.Interface.InterfacePaiement;
+import Source.Interface.InterfaceUtilisateur;
 import Source.Objet.CouleurBasique;
 import Source.Objet.Echeance;
 import Source.Objet.Eleve;
@@ -50,8 +53,10 @@ import Source.Objet.Frais;
 import Source.Objet.Monnaie;
 import Source.Objet.Paiement;
 import Source.Objet.Periode;
+import Source.Objet.Utilisateur;
 import java.awt.Color;
 import java.util.Vector;
+import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -72,9 +77,9 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private PanelContenuFacture moi = null;
     private BarreOutils barreOutilsA = null;
     private MenuContextuel menuContextuel = null;
-    private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubEnregistrer, rubRecu = null;
-    private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btEnregistrer, btRecu;
-    
+    private RubriqueSimple rubAjouter, rubSupprimer, rubVider, rubActualiser, rubImprimer, rubPDF, rubFermer, rubEnregistrer, rubEdition, rubRecu = null;
+    private Bouton btAjouter, btSupprimer, btVider, btActualiser, btImprimer, btPDF, btFermer, btEnregistrer, btRecu, btEdition;
+
     private ModeleListeFrais modeleListeArticles = null;
     private ModeleListePaiement modeleListePaiement = null;
     private ModeleListeEcheance modeleListeEcheance = null;
@@ -87,16 +92,18 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private Frais SelectedArticle = null;
     private Paiement SelectedPaiement = null;
     private Echeance SelectedEcheance = null;
-    public ParametresFacture parametres;
-    public DonneesFacture donneesFacture;
+    public DataFacture dataFacture;
     private Date dateFacture = null;
     private CouleurBasique couleurBasique;
+    private JProgressBar progress;
+    public EcouteurActualisationFacture ecouteurActualisationFacture;
+    private GestionEdition gestionEdition = new GestionEdition();
 
-    public PanelContenuFacture(CouleurBasique couleurBasique, ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture, EcouteurUpdateClose ecouteurClose) {
+    public PanelContenuFacture(CouleurBasique couleurBasique, JProgressBar progress, DataFacture dataFacture, EcouteurFacture ecouteurFacture, EcouteurUpdateClose ecouteurClose) {
         initComponents();
+        this.progress = progress;
         this.couleurBasique = couleurBasique;
-        this.parametres = parametres;
-        this.donneesFacture = donneesFacture;
+        this.dataFacture = dataFacture;
         this.ecouteurClose = ecouteurClose;
         this.ecouteurFacture = ecouteurFacture;
         this.init();
@@ -107,6 +114,49 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         actualiserTotaux();
         activerBoutons(tabPrincipal.getSelectedIndex());
         tabPrincipal.setSelectedIndex(1);
+        ecouterClickDroit();
+    }
+
+    private void actualiserEditeur() {
+        gestionEdition.reinitialiser();
+        modeleListePaiement.actualiser();
+    }
+
+    private void setEditionMode() {
+        switch (indexTabSelected) {
+            case 1:
+                if (SelectedPaiement != null && gestionEdition != null) {
+                    if (gestionEdition.isEditable(SelectedPaiement.getId(), indexTabSelected)) {
+                        gestionEdition.setModeEdition(SelectedPaiement.getId(), indexTabSelected, false);
+                    } else {
+                        gestionEdition.setModeEdition(SelectedPaiement.getId(), indexTabSelected, true);
+                    }
+                    modeleListePaiement.actualiser();
+                }
+                break;
+            default:
+        }
+    }
+
+    private void ecouterClickDroit() {
+        new GestionClickDroit(menuContextuel, tableListeArticle, scrollListeArticles).init();
+        new GestionClickDroit(menuContextuel, tableListeEcheance, scrollListeEcheances).init();
+        new GestionClickDroit(menuContextuel, tableListePaiement, scrollListePaiement).init();
+    }
+
+    public void setBtEnregistrerNouveau() {
+        if (rubEnregistrer != null && btEnregistrer != null) {
+            rubEnregistrer.setCouleur(couleurBasique.getCouleur_foreground_objet_nouveau());                                        //mEnreg.setCouleur(Color.blue);
+            btEnregistrer.setForeground(couleurBasique.getCouleur_foreground_objet_nouveau());
+        }
+    }
+
+    public EcouteurActualisationFacture getEcouteurActualisationFacture() {
+        return ecouteurActualisationFacture;
+    }
+
+    public void setEcouteurActualisationFacture(EcouteurActualisationFacture ecouteurActualisationFacture) {
+        this.ecouteurActualisationFacture = ecouteurActualisationFacture;
     }
 
     private void init() {
@@ -122,9 +172,9 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         this.tabPrincipal.setIconAt(2, icones.getCalendrier_01()); //Revenu
         PanelFacture.labStatus.setIcon(icones.getInfos_01());
         this.labAdresseClient.setIcon(icones.getAdresse_01());
-        
-        Eleve eleve = donneesFacture.getEleve();
-        Exercice exercice = parametres.getExercice();
+
+        Eleve eleve = dataFacture.getDonneesFacture().getEleve();
+        Exercice exercice = dataFacture.getParametresFacture().getExercice();
         if (eleve != null & exercice != null) {
             String Sexercice = exercice.getNom() + " [" + UtilFacture.getDateFrancais(exercice.getDebut()) + " - " + UtilFacture.getDateFrancais(exercice.getFin()) + "].";
             labNomClient.setText(eleve.getNom() + " " + eleve.getPostnom() + " " + eleve.getPrenom() + ", " + Sexercice);
@@ -137,22 +187,23 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             public void setAjoutPaiement(ModeleListePaiement modeleListePaiement) {
                 double montant = 0;
                 Date newDate = new Date();
-                InterfaceEleve eleveQuiPaie = donneesFacture.getEleve();
+                Eleve eleveQuiPaie = dataFacture.getDonneesFacture().getEleve();
                 if (eleveQuiPaie != null) {
-                    modeleListePaiement.AjouterPaiement(new Paiement(-1, parametres.getExercice().getId(), eleveQuiPaie.getId(), -1, -1, eleveQuiPaie.getNom(), "", eleveQuiPaie.getNom(), montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime() + "", InterfacePaiement.BETA_NOUVEAU));
+                    String nomEleveQuiPaie = eleveQuiPaie.getNom() + " " + eleveQuiPaie.getPostnom() + " " + eleveQuiPaie.getPrenom();
+                    modeleListePaiement.AjouterPaiement(new Paiement(-1, dataFacture.getParametresFacture().getExercice().getId(), eleveQuiPaie.getId(), -1, -1, nomEleveQuiPaie, "", nomEleveQuiPaie, montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime() + "", InterfacePaiement.BETA_NOUVEAU));
                 }
             }
 
             @Override
             public void setAjoutEcheance(ModeleListeEcheance modeleListeEcheance) {
-                Exercice exercice = parametres.getExercice();
+                Exercice exercice = dataFacture.getParametresFacture().getExercice();
                 if (exercice != null) {
                     int nbEcheancesExistant = modeleListeEcheance.getRowCount();
                     String nomTransche = "1ère Tranche";
                     if (nbEcheancesExistant > 1) {
                         nomTransche = (nbEcheancesExistant + 1) + "ème Tranche";
                     }
-                    modeleListeEcheance.AjouterEcheanceAutomatique(new Echeance(-1, nomTransche, -1, exercice.getDebut(), exercice.getFin(), "RAS", 0, 0, parametres.getMonnaieOutPut().getId()));
+                    modeleListeEcheance.AjouterEcheanceAutomatique(new Echeance(-1, nomTransche, -1, exercice.getDebut(), exercice.getFin(), "RAS", 0, 0, dataFacture.getParametresFacture().getMonnaieOutPut().getId()));
                     //modeleListeEcheance.AjouterEcheanceAutomatique(new Echeance(-1, nomTransche, parametres.getIdFacture(), exercice.getDebut(), exercice.getFin(), parametres.getNumero(), 0, 0, parametres.getMonnaieOutPut().getId()));
                 }
             }
@@ -167,7 +218,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     public ParametresFacture getParametres() {
-        return parametres;
+        return dataFacture.getParametresFacture();
     }
 
     public Date getDateFacture() {
@@ -195,7 +246,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     public String getNomfichierPreuve() {
-        return "FactureS2B.pdf";
+        return "Output.pdf";
     }
 
     public boolean isImprimerRelever() {
@@ -207,11 +258,11 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     public DonneesFacture getDonneesFacture() {
-        return donneesFacture;
+        return dataFacture.getDonneesFacture();
     }
 
     private void initModelTableArticle() {
-        this.modeleListeArticles = new ModeleListeFrais(couleurBasique, this.scrollListeArticles, btEnregistrer, rubEnregistrer, this.parametres, new EcouteurValeursChangees() {
+        this.modeleListeArticles = new ModeleListeFrais(couleurBasique, this.scrollListeArticles, btEnregistrer, rubEnregistrer, this.dataFacture.getParametresFacture(), new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 //Actualisation des listes de base
@@ -221,14 +272,14 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 actualiserTotaux();
             }
         });
-        this.editeurArticle = new EditeurFraisFacture(this.donneesFacture.getArticles(), modeleListePaiement);
+        this.editeurArticle = new EditeurFraisFacture(this.dataFacture.getDonneesFacture().getArticles(), modeleListePaiement);
         this.tableListeArticle.setModel(this.modeleListeArticles);
     }
 
     private void chargerDataTableArticle() {
         //On charge les données s'il y en a
-        if (this.donneesFacture != null) {
-            this.modeleListeArticles.setListeFrais(this.donneesFacture.getArticles());
+        if (this.dataFacture.getDonneesFacture() != null) {
+            this.modeleListeArticles.setListeFrais(this.dataFacture.getDonneesFacture().getArticles());
         }
     }
 
@@ -246,7 +297,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private void fixerColonnesTableArticles(boolean resizeTable) {
         //{"N°", "Article", "Qté", "Prix U.", "Rabais", "Prix U.", "Mnt Tva", "Mnt TTC"};
         //Parametrage du rendu de la table
-        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableFrais(couleurBasique, this.donneesFacture, this.parametres, this.modeleListeArticles));
+        this.tableListeArticle.setDefaultRenderer(Object.class, new RenduTableFrais(couleurBasique, this.dataFacture.getDonneesFacture(), this.dataFacture.getParametresFacture(), this.modeleListeArticles));
         this.tableListeArticle.setRowHeight(25);
 
         //{"N°", "Frais", "Montant"}; en plus il faurdra afficher son fractionnement selon les périodes
@@ -275,7 +326,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedArticle = modeleListeArticles.getFrais(ligneSelected);
             if (SelectedArticle != null) {
-                Monnaie Imon = UtilFacture.getMonnaie(parametres, SelectedArticle.getIdMonnaie());
+                Monnaie Imon = UtilFacture.getMonnaie(dataFacture.getParametresFacture(), SelectedArticle.getIdMonnaie());
                 if (Imon != null) {
                     this.ecouteurClose.onActualiser(SelectedArticle.getNom() + ", " + ", Total TTC : " + UtilFacture.getMontantFrancais(SelectedArticle.getMontantDefaut()) + " " + Imon.getCode(), icones.getTaxes_01());
                 }
@@ -288,10 +339,10 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedPaiement = modeleListePaiement.getPaiement(ligneSelected);
             if (SelectedPaiement != null) {
-                Periode Iper = UtilFacture.getPeriode(parametres, SelectedPaiement.getIdPeriode());
-                Frais Iart = UtilFacture.getFrais(donneesFacture, SelectedPaiement.getIdFrais());
+                Periode Iper = UtilFacture.getPeriode(dataFacture.getParametresFacture(), SelectedPaiement.getIdPeriode());
+                Frais Iart = UtilFacture.getFrais(dataFacture.getDonneesFacture(), SelectedPaiement.getIdFrais());
                 if (Iart != null) {
-                    Monnaie Imon = UtilFacture.getMonnaie(parametres, Iart.getIdMonnaie());
+                    Monnaie Imon = UtilFacture.getMonnaie(dataFacture.getParametresFacture(), Iart.getIdMonnaie());
                     if (Iper != null && Imon != null) {
                         this.ecouteurClose.onActualiser(Iper.getNom() + ": " + UtilFacture.getDateFrancais(SelectedPaiement.getDate()) + ", ref.: " + SelectedPaiement.getReferenceTransaction() + ", montant : " + UtilFacture.getMontantFrancais(SelectedPaiement.getMontant()) + " " + Imon.getCode() + " pour " + SelectedPaiement.getNomFrais() + ", reste (" + UtilFacture.getMontantFrancais(modeleListePaiement.getReste(SelectedPaiement.getIdFrais(), SelectedPaiement.getIdPeriode())) + " " + Imon.getCode() + ").", icones.getClient_01());
                     }
@@ -306,7 +357,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         if (ligneSelected != -1) {
             this.SelectedEcheance = modeleListeEcheance.getEcheance_row(ligneSelected);
             if (SelectedEcheance != null) {
-                this.ecouteurClose.onActualiser("Entre " + UtilFacture.getDateFrancais(SelectedEcheance.getDateInitiale()) + " et " + UtilFacture.getDateFrancais(SelectedEcheance.getDateFinale()) + ", il faut payer " + UtilFacture.getMontantFrancais(UtilFacture.round(SelectedEcheance.getMontantDu(), 2)) + " " + this.parametres.getMonnaieOutPut().getCode(), icones.getCalendrier_01());
+                this.ecouteurClose.onActualiser("Entre " + UtilFacture.getDateFrancais(SelectedEcheance.getDateInitiale()) + " et " + UtilFacture.getDateFrancais(SelectedEcheance.getDateFinale()) + ", il faut payer " + UtilFacture.getMontantFrancais(UtilFacture.round(SelectedEcheance.getMontantDu(), 2)) + " " + this.dataFacture.getParametresFacture().getMonnaieOutPut().getCode(), icones.getCalendrier_01());
             }
         }
     }
@@ -318,26 +369,26 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     private void initModelTablePaiement() {
-        this.modeleListePaiement = new ModeleListePaiement(couleurBasique, this.scrollListeReleveCompte, btEnregistrer, rubEnregistrer, this.donneesFacture, this.parametres, new EcouteurValeursChangees() {
+        this.modeleListePaiement = new ModeleListePaiement(gestionEdition, couleurBasique, this.scrollListePaiement, btEnregistrer, rubEnregistrer, this.dataFacture.getDonneesFacture(), this.dataFacture.getParametresFacture(), new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
             }
         });
-        this.editeurArticle = new EditeurFraisFacture(this.donneesFacture.getArticles(), modeleListePaiement);
+        this.editeurArticle = new EditeurFraisFacture(this.dataFacture.getDonneesFacture().getArticles(), modeleListePaiement);
         this.tableListePaiement.setModel(this.modeleListePaiement);
     }
 
     private void chargerDataTablePaiement() {
-        if (this.donneesFacture.getPaiements() != null) {
-            this.modeleListePaiement.setListePaiements(this.donneesFacture.getPaiements());
+        if (this.dataFacture.getDonneesFacture().getPaiements() != null) {
+            this.modeleListePaiement.setListePaiements(this.dataFacture.getDonneesFacture().getPaiements());
         }
     }
 
     private void fixerColonnesTablePaiement(boolean resizeTable) {
         //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
         //Parametrage du rendu de la table
-        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(couleurBasique, this.donneesFacture, this.parametres, this.modeleListePaiement, icones.getModifier_01()));
+        this.tableListePaiement.setDefaultRenderer(Object.class, new RenduTablePaiement(gestionEdition, couleurBasique, this.dataFacture.getDonneesFacture(), this.dataFacture.getParametresFacture(), this.modeleListePaiement, icones.getModifier_01()));
         this.tableListePaiement.setRowHeight(25);
 
         setTaille(this.tableListePaiement.getColumnModel().getColumn(0), 30, true, null);
@@ -345,7 +396,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         setTaille(this.tableListePaiement.getColumnModel().getColumn(2), 200, false, editeurArticle);
         setTaille(this.tableListePaiement.getColumnModel().getColumn(3), 200, true, null);
         setTaille(this.tableListePaiement.getColumnModel().getColumn(4), 150, true, new EditeurModeFacture());
-        setTaille(this.tableListePaiement.getColumnModel().getColumn(5), 150, true, new EditeurPeriodeFacture(parametres.getListePeriodes()));
+        setTaille(this.tableListePaiement.getColumnModel().getColumn(5), 150, true, new EditeurPeriodeFacture(dataFacture.getParametresFacture().getListePeriodes()));
         setTaille(this.tableListePaiement.getColumnModel().getColumn(6), 120, true, null);
         setTaille(this.tableListePaiement.getColumnModel().getColumn(7), 120, true, null);
 
@@ -372,7 +423,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     private void initModelTableEcheance() {
-        this.modeleListeEcheance = new ModeleListeEcheance(scrollListeEcheances, modeleListePaiement, modeleListeArticles, parametres, new EcouteurValeursChangees() {
+        this.modeleListeEcheance = new ModeleListeEcheance(scrollListeEcheances, modeleListePaiement, modeleListeArticles, dataFacture.getParametresFacture(), new EcouteurValeursChangees() {
             @Override
             public void onValeurChangee() {
                 actualiserTotaux();
@@ -388,7 +439,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
     private void fixerColonnesTableEcheance(boolean resizeTable) {
         //Parametrage du rendu de la table
-        this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(couleurBasique, this.parametres, modeleListeEcheance, icones.getSablier_01()));
+        this.tableListeEcheance.setDefaultRenderer(Object.class, new RenduTableEcheance(couleurBasique, this.dataFacture.getParametresFacture(), modeleListeEcheance, icones.getSablier_01()));
         this.tableListeEcheance.setRowHeight(25);
 
         //{"N°", "Nom", "Date initiale", "Echéance", "Status", "Montant dû", "Montant payé"};
@@ -555,21 +606,54 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             btEnregistrer.setForeground(Color.BLACK);
             SortiesFacture sortiesFacture = getSortieFacture(btEnregistrer, rubEnregistrer);
             this.ecouteurFacture.onEnregistre(sortiesFacture);
+
+            actualiserEditeur();
         }
     }
 
+    private void actualiser() {
+        //System.out.println("Actualisation...");
+        new Thread() {
+            public void run() {
+                if (progress != null) {
+                    progress.setVisible(true);
+                    progress.setIndeterminate(true);
+                }
+
+                EcouteurValeursChangees eco = new EcouteurValeursChangees() {
+                    @Override
+                    public void onValeurChangee() {
+                        //initModelTableEleves();
+                        parametrerTableArticles();
+                        parametrerTablePaiement();
+                        parametrerTableEcheance();
+
+                        actualiserTotaux();
+                        //System.out.println("Actualisation...Fin");
+                    }
+                };
+
+                if (ecouteurActualisationFacture != null) {
+                    dataFacture = ecouteurActualisationFacture.onRechargeDonneesEtParametres();
+                    eco.onValeurChangee();
+                }
+
+            }
+        }.start();
+    }
+
     private void actualiserTotaux() {
+        String monn = dataFacture.getParametresFacture().getMonnaieOutPut().getCode();
         double Tpaye = 0;
         if (modeleListePaiement != null) {
             Tpaye = modeleListePaiement.getTotalMontant();
         }
         double Tttc = 0;
-        if(modeleListeArticles != null){
+        if (modeleListeArticles != null) {
             Tttc = modeleListeArticles.getTotal_TTC();
         }
         double Tsolde = UtilFacture.round(Tttc - Tpaye, 2);
 
-        String monn = this.parametres.getMonnaieOutPut().getCode();
         labTotalTTC.setText(UtilFacture.getMontantFrancais(Tttc) + " " + monn);
         labTotalPaye.setText(UtilFacture.getMontantFrancais(Tpaye) + " " + monn);
         labTotalSolde.setText(UtilFacture.getMontantFrancais(Tsolde) + " " + monn);
@@ -581,7 +665,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 modeleListeArticles.SupprimerFrais(tableListeArticle.getSelectedRow(), new EcouteurSuppressionElement() {
                     @Override
                     public void onSuppressionConfirmee(int idElement) {
-                        System.out.println("Ce n'est pas ici qu'un frais peut être supprimé");
+                        //System.out.println("Ce n'est pas ici qu'un frais peut être supprimé");
                     }
                 });
                 break;
@@ -605,12 +689,11 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 modeleListeArticles.viderListe();
                 break;
             case 1:
-                System.out.println("*** SUPPRESSION DES PAIEMENTS");
+                //System.out.println("*** SUPPRESSION DES PAIEMENTS");
                 modeleListePaiement.viderListe();
-                if(ecouteurFacture != null){
-                    ecouteurFacture.onDetruitTousLesPaiements(donneesFacture.getEleve().getId(), parametres.getExercice().getId());
+                if (ecouteurFacture != null) {
+                    ecouteurFacture.onDetruitTousLesPaiements(dataFacture.getDonneesFacture().getEleve().getId(), dataFacture.getParametresFacture().getExercice().getId());
                 }
-                
                 break;
             default:
                 //modeleListeEcheance.viderListe();
@@ -633,7 +716,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                         if (this.editeurArticle.getTailleCombo() != 0) {
                             this.ecouteurAjout.setAjoutPaiement(modeleListePaiement);
                         } else {
-                            JOptionPane.showMessageDialog(tabPrincipal, "Désolé " + this.parametres.getUtilisateur().getNom()+ ", il n'y a plus d'autre frais à payer !");
+                            JOptionPane.showMessageDialog(tabPrincipal, "Désolé " + this.dataFacture.getParametresFacture().getUtilisateur().getNom() + ", il n'y a plus d'autre frais à payer !");
                         }
                     }
                 } else {
@@ -641,84 +724,6 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 }
                 break;
         }
-    }
-
-    private void setMenuContextuel() {
-        rubAjouter = new RubriqueSimple("Ajouter", 12, false, icones.getAjouter_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                ajouter();
-            }
-        });
-        rubSupprimer = new RubriqueSimple("Supprimer", 12, false, icones.getSupprimer_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                supprimer();
-            }
-        });
-
-        rubVider = new RubriqueSimple("Vider", 12, false, icones.getAnnuler_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                vider();
-            }
-        });
-
-        rubActualiser = new RubriqueSimple("Actualiser", 12, false, icones.getSynchroniser_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                actualiserTotaux();
-            }
-        });
-
-        rubImprimer = new RubriqueSimple("Imprimer", 12, false, icones.getImprimer_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                imprimer();
-            }
-        });
-
-        rubFermer = new RubriqueSimple("Fermer", 12, false, icones.getFermer_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                fermer();
-            }
-        });
-
-        rubPDF = new RubriqueSimple("Exp. PDF", 12, false, icones.getPDF_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                exporterPDF();
-            }
-        });
-
-        rubEnregistrer = new RubriqueSimple("Enregistrer", 12, true, icones.getEnregistrer_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                enregistrer();
-            }
-        });
-
-        rubRecu = new RubriqueSimple("Prod. Reçu", 12, false, icones.getPDF_01(), new RubriqueListener() {
-            @Override
-            public void OnEcouterLaSelection() {
-                genererRecu();
-            }
-        });
-
-        menuContextuel = new MenuContextuel();
-        menuContextuel.Ajouter(rubEnregistrer);
-        menuContextuel.Ajouter(new JPopupMenu.Separator());
-        menuContextuel.Ajouter(rubAjouter);
-        menuContextuel.Ajouter(rubSupprimer);
-        menuContextuel.Ajouter(rubVider);
-        menuContextuel.Ajouter(rubActualiser);
-        menuContextuel.Ajouter(new JPopupMenu.Separator());
-        menuContextuel.Ajouter(rubImprimer);
-        menuContextuel.Ajouter(rubPDF);
-        menuContextuel.Ajouter(rubRecu);
-        menuContextuel.Ajouter(new JPopupMenu.Separator());
-        menuContextuel.Ajouter(rubFermer);
     }
 
     private void setBoutons() {
@@ -749,7 +754,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         btActualiser = new Bouton(12, "Actualiser", "Actualiser la liste active", false, icones.getSynchroniser_02(), new BoutonListener() {
             @Override
             public void OnEcouteLeClick() {
-                actualiserTotaux();
+                actualiser();
             }
         });
 
@@ -794,38 +799,130 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             }
         });
 
-        barreOutilsA = new BarreOutils(barreOutilsArticles);
-        barreOutilsA.AjouterBouton(btEnregistrer);
-        barreOutilsA.AjouterSeparateur();
-        barreOutilsA.AjouterBouton(btAjouter);
-        barreOutilsA.AjouterBouton(btSupprimer);
-        barreOutilsA.AjouterBouton(btVider);
-        barreOutilsA.AjouterBouton(btActualiser);
-        barreOutilsA.AjouterSeparateur();
-        barreOutilsA.AjouterBouton(btImprimer);
-        barreOutilsA.AjouterBouton(btPDF);
-        barreOutilsA.AjouterBouton(btRecu);
-        barreOutilsA.AjouterSeparateur();
-        barreOutilsA.AjouterBouton(btFermer);
-    }
-
-    private void ecouterMenContA(java.awt.event.MouseEvent evt, int tab) {
-        if (evt.getButton() == MouseEvent.BUTTON3) {
-            switch (tab) {
-                case 0:
-                    menuContextuel.afficher(scrollListeArticles, evt.getX(), evt.getY());
-                    break;
-                case 1:
-                    menuContextuel.afficher(scrollListeReleveCompte, evt.getX(), evt.getY());
-                    break;
-                default:
-                    menuContextuel.afficher(scrollListeEcheances, evt.getX(), evt.getY());
-                    break;
+        btEdition = new Bouton(12, "Edition", "", true, icones.getModifier_02(), new BoutonListener() {
+            @Override
+            public void OnEcouteLeClick() {
+                setEditionMode();
             }
+        });
+
+        //Il faut respecter les droits d'accès attribué à l'utilisateur actuel!
+        barreOutilsA = new BarreOutils(barreOutilsArticles);
+        if (dataFacture.getParametresFacture().getUtilisateur() != null) {
+            Utilisateur user = dataFacture.getParametresFacture().getUtilisateur();
+            
+            if (user.getDroitFacture() == InterfaceUtilisateur.DROIT_CONTROLER) {
+                barreOutilsA.AjouterBouton(btEnregistrer);
+                barreOutilsA.AjouterBouton(btAjouter);
+                barreOutilsA.AjouterBouton(btEdition);
+                barreOutilsA.AjouterSeparateur();
+                barreOutilsA.AjouterBouton(btSupprimer);
+                barreOutilsA.AjouterBouton(btVider);
+            }
+            barreOutilsA.AjouterBouton(btActualiser);
+            barreOutilsA.AjouterSeparateur();
+            barreOutilsA.AjouterBouton(btImprimer);
+            barreOutilsA.AjouterBouton(btPDF);
+            barreOutilsA.AjouterBouton(btRecu);
+            barreOutilsA.AjouterSeparateur();
+            barreOutilsA.AjouterBouton(btFermer);
         }
     }
 
-    
+    private void setMenuContextuel() {
+        rubAjouter = new RubriqueSimple("Ajouter", 12, false, icones.getAjouter_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                ajouter();
+            }
+        });
+        rubSupprimer = new RubriqueSimple("Supprimer", 12, false, icones.getSupprimer_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                supprimer();
+            }
+        });
+
+        rubVider = new RubriqueSimple("Vider", 12, false, icones.getAnnuler_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                vider();
+            }
+        });
+
+        rubActualiser = new RubriqueSimple("Actualiser", 12, false, icones.getSynchroniser_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                actualiser();
+            }
+        });
+
+        rubImprimer = new RubriqueSimple("Imprimer", 12, false, icones.getImprimer_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                imprimer();
+            }
+        });
+
+        rubFermer = new RubriqueSimple("Fermer", 12, false, icones.getFermer_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                fermer();
+            }
+        });
+
+        rubPDF = new RubriqueSimple("Exp. PDF", 12, false, icones.getPDF_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                exporterPDF();
+            }
+        });
+
+        rubEnregistrer = new RubriqueSimple("Enregistrer", 12, true, icones.getEnregistrer_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                enregistrer();
+            }
+        });
+
+        rubRecu = new RubriqueSimple("Prod. Reçu", 12, false, icones.getPDF_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                genererRecu();
+            }
+        });
+
+        rubEdition = new RubriqueSimple("Editer", 12, false, icones.getModifier_01(), new RubriqueListener() {
+            @Override
+            public void OnEcouterLaSelection() {
+                setEditionMode();
+            }
+        });
+
+        //Il faut respecter les droits d'accès attribué à l'utilisateur actuel!
+        menuContextuel = new MenuContextuel();
+        if (dataFacture.getParametresFacture().getUtilisateur() != null) {
+            Utilisateur user = dataFacture.getParametresFacture().getUtilisateur();
+
+            if (user.getDroitFacture() == InterfaceUtilisateur.DROIT_CONTROLER) {
+                menuContextuel.Ajouter(rubEnregistrer);
+                menuContextuel.Ajouter(rubAjouter);
+                menuContextuel.Ajouter(rubEdition);
+                menuContextuel.Ajouter(new JPopupMenu.Separator());
+                menuContextuel.Ajouter(rubSupprimer);
+                menuContextuel.Ajouter(rubVider);
+            }
+            menuContextuel.Ajouter(rubActualiser);
+            menuContextuel.Ajouter(new JPopupMenu.Separator());
+            menuContextuel.Ajouter(rubImprimer);
+            menuContextuel.Ajouter(rubPDF);
+            menuContextuel.Ajouter(rubRecu);
+            menuContextuel.Ajouter(new JPopupMenu.Separator());
+            menuContextuel.Ajouter(rubFermer);
+        }
+
+    }
+
     public void activerBoutons(int selectedTab) {
         this.indexTabSelected = selectedTab;
         if (selectedTab == 2 || selectedTab == 0) {
@@ -902,7 +999,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         tabPrincipal = new javax.swing.JTabbedPane();
         scrollListeArticles = new javax.swing.JScrollPane();
         tableListeArticle = new javax.swing.JTable();
-        scrollListeReleveCompte = new javax.swing.JScrollPane();
+        scrollListePaiement = new javax.swing.JScrollPane();
         tableListePaiement = new javax.swing.JTable();
         scrollListeEcheances = new javax.swing.JScrollPane();
         tableListeEcheance = new javax.swing.JTable();
@@ -1074,15 +1171,15 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
         tabPrincipal.addTab("Frais", scrollListeArticles);
 
-        scrollListeReleveCompte.setBackground(new java.awt.Color(255, 255, 255));
-        scrollListeReleveCompte.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        scrollListePaiement.setBackground(new java.awt.Color(255, 255, 255));
+        scrollListePaiement.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
-                scrollListeReleveCompteMouseDragged(evt);
+                scrollListePaiementMouseDragged(evt);
             }
         });
-        scrollListeReleveCompte.addMouseListener(new java.awt.event.MouseAdapter() {
+        scrollListePaiement.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                scrollListeReleveCompteMouseClicked(evt);
+                scrollListePaiementMouseClicked(evt);
             }
         });
 
@@ -1109,7 +1206,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 tableListePaiementKeyReleased(evt);
             }
         });
-        scrollListeReleveCompte.setViewportView(tableListePaiement);
+        scrollListePaiement.setViewportView(tableListePaiement);
         if (tableListePaiement.getColumnModel().getColumnCount() > 0) {
             tableListePaiement.getColumnModel().getColumn(0).setPreferredWidth(50);
             tableListePaiement.getColumnModel().getColumn(0).setHeaderValue("Facture");
@@ -1118,7 +1215,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
             tableListePaiement.getColumnModel().getColumn(2).setPreferredWidth(50);
         }
 
-        tabPrincipal.addTab("Paiements", scrollListeReleveCompte);
+        tabPrincipal.addTab("Paiements", scrollListePaiement);
 
         scrollListeEcheances.setBackground(new java.awt.Color(255, 255, 255));
         scrollListeEcheances.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1186,40 +1283,39 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
     private void scrollListeArticlesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeArticlesMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, 0);
+        //ecouterMenContA(evt, 0);
     }//GEN-LAST:event_scrollListeArticlesMouseClicked
 
     private void tableListeArticleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListeArticleMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, 0);
+        //ecouterMenContA(evt, 0);
     }//GEN-LAST:event_tableListeArticleMouseClicked
 
     private void tabPrincipalStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabPrincipalStateChanged
         // TODO add your handling code here:
-
         activerBoutons(((JTabbedPane) evt.getSource()).getSelectedIndex());
 
     }//GEN-LAST:event_tabPrincipalStateChanged
 
     private void tableListePaiementMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, 1);
+        //ecouterMenContA(evt, 1);
 
     }//GEN-LAST:event_tableListePaiementMouseClicked
 
-    private void scrollListeReleveCompteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseClicked
+    private void scrollListePaiementMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListePaiementMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, 1);
-    }//GEN-LAST:event_scrollListeReleveCompteMouseClicked
+        //ecouterMenContA(evt, 1);
+    }//GEN-LAST:event_scrollListePaiementMouseClicked
 
     private void tableListeEcheanceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListeEcheanceMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, 2);
+        //ecouterMenContA(evt, 2);
     }//GEN-LAST:event_tableListeEcheanceMouseClicked
 
     private void scrollListeEcheancesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeEcheancesMouseClicked
         // TODO add your handling code here:
-        ecouterMenContA(evt, 2);
+        //ecouterMenContA(evt, 2);
     }//GEN-LAST:event_scrollListeEcheancesMouseClicked
 
     private void tableListePaiementKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableListePaiementKeyReleased
@@ -1227,10 +1323,10 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
     }//GEN-LAST:event_tableListePaiementKeyReleased
 
-    private void scrollListeReleveCompteMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListeReleveCompteMouseDragged
+    private void scrollListePaiementMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scrollListePaiementMouseDragged
         // TODO add your handling code here:
 
-    }//GEN-LAST:event_scrollListeReleveCompteMouseDragged
+    }//GEN-LAST:event_scrollListePaiementMouseDragged
 
     private void tableListePaiementMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListePaiementMouseDragged
         // TODO add your handling code here:
@@ -1258,7 +1354,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private javax.swing.JLabel labTypeClient;
     private javax.swing.JScrollPane scrollListeArticles;
     private javax.swing.JScrollPane scrollListeEcheances;
-    private javax.swing.JScrollPane scrollListeReleveCompte;
+    private javax.swing.JScrollPane scrollListePaiement;
     private javax.swing.JTabbedPane tabPrincipal;
     private javax.swing.JTable tableListeArticle;
     private javax.swing.JTable tableListeEcheance;

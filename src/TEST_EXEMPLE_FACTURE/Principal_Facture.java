@@ -5,8 +5,10 @@
  */
 package TEST_EXEMPLE_FACTURE;
 
+import SOURCES.CallBackFacture.EcouteurActualisationFacture;
 import SOURCES.CallBackFacture.EcouteurFacture;
 import SOURCES.UI.PanelFacture;
+import SOURCES.Utilitaires_Facture.DataFacture;
 import SOURCES.Utilitaires_Facture.ParametresFacture;
 import java.util.Date;
 import java.util.Vector;
@@ -124,7 +126,7 @@ public class Principal_Facture extends javax.swing.JFrame {
         lfeSULA.add(new LiaisonFraisEleve(eleve_SULA_BOSIO.getSignature(), frais_minervale.getSignature(), frais_minervale.getId(), 200, monnaie_USD.getId(), "USD"));
 
         ayantdroit_SULA_BOSIO = new Ayantdroit(1, entreprise.getId(), utilisateur.getId(), exercice.getId(), eleve_SULA_BOSIO.getId(), eleve_SULA_BOSIO.getNom(), lfeSULA, UtilFacture.generateSignature(), eleve_SULA_BOSIO.getSignature(), InterfaceAyantDroit.BETA_EXISTANT);
-        System.out.println("INIT DATA EXECUTEE AVEC SUCCES!");
+        //System.out.println("INIT DATA EXECUTEE AVEC SUCCES!");
     }
     
     
@@ -207,7 +209,7 @@ public class Principal_Facture extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         //Initialisation du gestionnaire des factures
-        this.panelFacture = new PanelFacture(new CouleurBasique(), jTabbedPane1, getParametres(), getDonnees(), new EcouteurFacture() {
+        this.panelFacture = new PanelFacture(new CouleurBasique(), null, jTabbedPane1, new DataFacture(getDonnees(), getParametres()), new EcouteurFacture() {
             @Override
             public void onDetruitTousLesPaiements(int idEleve, int idExercice) {
                 System.out.println("DESCTRUCTION DE TOUS LES PAIEMENTS DE L'ELEVE " + idEleve + ", POUR L'EXERCICE " + idExercice);
@@ -234,7 +236,8 @@ public class Principal_Facture extends javax.swing.JFrame {
 
                                 for (Paiement paiement : sortiesFacture.getPaiements()) {
                                     if (paiement.getBeta() == InterfacePaiement.BETA_MODIFIE || paiement.getBeta() == InterfacePaiement.BETA_NOUVEAU) {
-                                        System.out.println(" * Paiement: " + paiement.toString());
+                                        //System.out.println(" * Paiement: " + paiement.toString());
+                                        paiement.setId(new Date().getSeconds());
                                         paiement.setBeta(InterfacePaiement.BETA_EXISTANT);
                                     }
                                 }
@@ -250,12 +253,15 @@ public class Principal_Facture extends javax.swing.JFrame {
                 th.start();
 
             }
+        }, new EcouteurActualisationFacture() {
+            @Override
+            public DataFacture onRechargeDonneesEtParametres() {
+                return new DataFacture(new DonneesFacture(eleve_SULA_BOSIO, new Vector<Frais>(), new Vector<Paiement>(), new Vector<>()), new ParametresFacture(utilisateur, entreprise, exercice, monnaie_USD, new Vector<Monnaie>(), new Vector<Classe>(), new Vector<>()));
+            }
         });
-
+        
         //Chargement du gestionnaire sur l'onglet
         jTabbedPane1.add("Facture", panelFacture);
-
-        //On séléctionne l'onglet actuel
         jTabbedPane1.setSelectedComponent(panelFacture);
 
     }//GEN-LAST:event_jButton2ActionPerformed

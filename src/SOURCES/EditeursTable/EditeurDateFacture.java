@@ -10,6 +10,8 @@ import SOURCES.ModelsTable.ModeleListePaiement;
 import Source.Objet.Paiement;
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -28,6 +30,12 @@ public class EditeurDateFacture extends AbstractCellEditor implements TableCellE
     
     public EditeurDateFacture(ModeleListePaiement modeleListePaiement) {
         this.modeleListePaiement = modeleListePaiement;
+        this.dateChooser.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                fireEditingStopped();
+            }
+        });
     }
 
     
@@ -49,3 +57,4 @@ public class EditeurDateFacture extends AbstractCellEditor implements TableCellE
     }
 
 }
+

@@ -7,6 +7,8 @@ package SOURCES.EditeursTable;
 
 import Source.Interface.InterfacePaiement;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
@@ -24,6 +26,13 @@ public class EditeurModeFacture extends AbstractCellEditor implements TableCellE
     }
 
     public void initCombo() {
+        this.champEditionCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //System.out.println("Clic: " + e.getActionCommand());
+                fireEditingStopped();
+            }
+        });
         this.champEditionCombo.removeAllItems();
         this.champEditionCombo.addItem("CAISSE");
         this.champEditionCombo.addItem("BANQUE");
@@ -48,3 +57,4 @@ public class EditeurModeFacture extends AbstractCellEditor implements TableCellE
     }
 
 }
+

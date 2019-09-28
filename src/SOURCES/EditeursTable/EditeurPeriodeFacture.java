@@ -8,6 +8,8 @@ package SOURCES.EditeursTable;
 import Source.Interface.InterfacePeriode;
 import Source.Objet.Periode;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
@@ -33,6 +35,13 @@ public class EditeurPeriodeFacture extends AbstractCellEditor implements TableCe
     }
     
     public void initCombo() {
+        this.champEditionCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //System.out.println("Clic: " + e.getActionCommand());
+                fireEditingStopped();
+            }
+        });
         this.champEditionCombo.removeAllItems();
         if (this.listePeriodes != null) {
             this.listePeriodes.forEach((Iperiode) -> {
@@ -71,10 +80,12 @@ public class EditeurPeriodeFacture extends AbstractCellEditor implements TableCe
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         //Pendant édition de l'utilisateur
         initCombo();
-        System.out.println("valeur: " + value);
+        //System.out.println("valeur: " + value);
         String defaultSelection = getPeriode(Integer.parseInt(value+""));
         champEditionCombo.setSelectedItem(defaultSelection);
         return champEditionCombo;
     }
 
 }
+
+

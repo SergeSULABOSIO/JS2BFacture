@@ -5,12 +5,13 @@
  */
 package SOURCES.UI;
 
+import SOURCES.CallBackFacture.EcouteurActualisationFacture;
 import SOURCES.CallBackFacture.EcouteurFacture;
-import SOURCES.Utilitaires_Facture.DonneesFacture;
-import SOURCES.Utilitaires_Facture.ParametresFacture;
+import SOURCES.Utilitaires_Facture.DataFacture;
 import Source.Callbacks.EcouteurUpdateClose;
 import Source.Objet.CouleurBasique;
 import javax.swing.ImageIcon;
+import javax.swing.JProgressBar;
 import javax.swing.JTabbedPane;
 
 
@@ -27,17 +28,22 @@ public class PanelFacture extends javax.swing.JPanel {
     private JTabbedPane parent;
     private PanelFacture moi;
     private CouleurBasique couleurBasique;
+    private DataFacture dataFacture;
+    private JProgressBar progress;
+    public PanelContenuFacture pcfacture = null;
     
-    public PanelFacture(CouleurBasique couleurBasique, JTabbedPane parent, ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture) {
+    public PanelFacture(CouleurBasique couleurBasique, JProgressBar progress, JTabbedPane parent, DataFacture dataFacture, EcouteurFacture ecouteurFacture, EcouteurActualisationFacture ecouteurActualisationFacture) {
         initComponents();
+        this.progress = progress;
         this.couleurBasique = couleurBasique;
         this.parent = parent;
-        setPanelFacture(parametres, donneesFacture, ecouteurFacture);
+        setPanelFacture(dataFacture, progress, ecouteurFacture, ecouteurActualisationFacture);
         this.moi = this;
     }
+
     
-    private void setPanelFacture(ParametresFacture parametres, DonneesFacture donneesFacture, EcouteurFacture ecouteurFacture){
-        this.scrollContenuFacture.setViewportView(new PanelContenuFacture(couleurBasique, parametres, donneesFacture, ecouteurFacture, new EcouteurUpdateClose() {
+    private void setPanelFacture(DataFacture dataFacture, JProgressBar progress, EcouteurFacture ecouteurFacture, EcouteurActualisationFacture ecouteurActualisationFacture){
+        pcfacture = new PanelContenuFacture(couleurBasique, progress, dataFacture, ecouteurFacture, new EcouteurUpdateClose() {
             
             @Override
             public void onFermer() {
@@ -50,7 +56,17 @@ public class PanelFacture extends javax.swing.JPanel {
                 labStatus.setText(texte);
                 labStatus.setIcon(icone);
             }
-        }));
+        });
+        
+        pcfacture.setEcouteurActualisationFacture(ecouteurActualisationFacture);
+        
+        this.scrollContenuFacture.setViewportView(pcfacture);
+    }
+    
+    public void setBtEnregistrerNouveau() {
+        if(pcfacture != null){
+            pcfacture.setBtEnregistrerNouveau();
+        }
     }
 
     /**

@@ -17,10 +17,12 @@ import SOURCES.Utilitaires_Facture.DonneesFacture;
 import SOURCES.Utilitaires_Facture.ParametresFacture;
 import Source.Callbacks.EcouteurSuppressionElement;
 import Source.Callbacks.EcouteurValeursChangees;
+import Source.GestionEdition;
 import Source.Interface.InterfacePaiement;
 import Source.Objet.CouleurBasique;
 import Source.Objet.Frais;
 import Source.Objet.Paiement;
+import Source.Objet.Revenu;
 
 /**
  *
@@ -37,8 +39,9 @@ public class ModeleListePaiement extends AbstractTableModel {
     private Bouton btEnreg;
     private RubriqueSimple mEnreg;
     private CouleurBasique colBasique;
+    private GestionEdition gestionEdition;
 
-    public ModeleListePaiement(CouleurBasique colBasique, JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, DonneesFacture donneesFacture, ParametresFacture parametresFacture, EcouteurValeursChangees ecouteurModele) {
+    public ModeleListePaiement(GestionEdition gestionEdition, CouleurBasique colBasique, JScrollPane parent, Bouton btEnreg, RubriqueSimple mEnreg, DonneesFacture donneesFacture, ParametresFacture parametresFacture, EcouteurValeursChangees ecouteurModele) {
         this.parent = parent;
         this.colBasique = colBasique;
         this.ecouteurModele = ecouteurModele;
@@ -46,6 +49,7 @@ public class ModeleListePaiement extends AbstractTableModel {
         this.parametresFacture = parametresFacture;
         this.mEnreg = mEnreg;
         this.btEnreg = btEnreg;
+        this.gestionEdition = gestionEdition;
     }
 
     public void setListePaiements(Vector<Paiement> listeData) {
@@ -64,6 +68,11 @@ public class ModeleListePaiement extends AbstractTableModel {
         } else {
             return null;
         }
+    }
+    
+    public void actualiser() {
+        //System.out.println("actualiser - Revenu...");
+        redessinerTable();
     }
 
     public Vector<Paiement> getListeData() {
@@ -266,11 +275,22 @@ public class ModeleListePaiement extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         //{"N°", "Date", "Article", "Référence", "Mode", "Période", "Montant reçu", "Reste"};
-        if (columnIndex == 0 || columnIndex == 7) {
-            return false;
-        } else {
-            return true;
+        Paiement eleve = null;
+        boolean canEdit = false;
+        if (listeData.size() > rowIndex) {
+            eleve = listeData.elementAt(rowIndex);
+            canEdit = gestionEdition.isEditable(eleve.getId(), 1);
         }
+        if (canEdit == true) {
+            if (columnIndex == 0 || columnIndex == 7) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+
     }
 
     private void updateArticle(Paiement newPaiement) {
@@ -335,3 +355,7 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
     }
 }
+
+
+
+

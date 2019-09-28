@@ -13,6 +13,8 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import SOURCES.ModelsTable.ModeleListePaiement;
 import Source.Objet.Frais;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  *
@@ -35,6 +37,13 @@ public class EditeurFraisFacture extends AbstractCellEditor implements TableCell
     }
     
     public void initCombo() {
+        this.champEditionCombo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //System.out.println("Clic: " + e.getActionCommand());
+                fireEditingStopped();
+            }
+        });
         this.champEditionCombo.removeAllItems();
         if (this.listeArticles != null) {
             for (Frais article : this.listeArticles) {
@@ -89,7 +98,7 @@ public class EditeurFraisFacture extends AbstractCellEditor implements TableCell
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         //Pendant édition de l'utilisateur
         initCombo();
-        System.out.println("valeur: " + value);
+        //System.out.println("valeur: " + value);
         String defaultSelection = getFrais(Integer.parseInt(value+""));
         
         if(champEditionCombo.getItemCount() != 0){
@@ -101,3 +110,5 @@ public class EditeurFraisFacture extends AbstractCellEditor implements TableCell
     }
 
 }
+
+

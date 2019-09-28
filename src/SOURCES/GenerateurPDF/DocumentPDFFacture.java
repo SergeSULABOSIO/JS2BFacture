@@ -31,14 +31,16 @@ import java.util.Date;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import SOURCES.ModelsTable.ModeleListeEcheance;
+import SOURCES.Utilitaires_Facture.DonneesFacture;
+import SOURCES.Utilitaires_Facture.ParametresFacture;
 import SOURCES.Utilitaires_Facture.SortiesFacture;
-import Source.Interface.InterfaceClasse;
 import Source.Interface.InterfaceEcheance;
-import Source.Interface.InterfaceEleve;
 import Source.Interface.InterfaceEntreprise;
 import Source.Interface.InterfaceMonnaie;
 import Source.Interface.InterfacePaiement;
+import Source.Objet.Classe;
 import Source.Objet.Echeance;
+import Source.Objet.Eleve;
 import Source.Objet.Entreprise;
 import Source.Objet.Frais;
 import Source.Objet.Monnaie;
@@ -256,12 +258,12 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
             String logo = "";
             if (this.gestionnaireFacture != null) {
                 logo = this.gestionnaireFacture.getParametres().getEntreprise().getLogo();
-                System.out.println("Fic logo: " + logo);
+                //System.out.println("Fic logo: " + logo);
             }
             File ficLogo = new File(new File(logo).getName());
-            System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath());
+            //System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath());
             if (ficLogo.exists() == true) {
-                System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath()+ " - Trouvé!");
+                //System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath() + " - Trouvé!");
                 //Chargement du logo et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
                 Image Imglogo = Image.getInstance(ficLogo.getName());
                 Imglogo.scaleAbsoluteWidth(70);
@@ -290,7 +292,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getNom(), Font_Titre2, Element.ALIGN_LEFT));
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getAdresse(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
                     celluleDetailsEntreprise.addElement(getParagraphe(entreprise.getSiteWeb() + " | " + entreprise.getEmail() + " | " + entreprise.getTelephone(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
-                    celluleDetailsEntreprise.addElement(getParagraphe("RCC : " + entreprise.getRccm()+ "\nID. NAT : " + entreprise.getIdnat()+ "\nNIF : " + entreprise.getNumeroImpot(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
+                    celluleDetailsEntreprise.addElement(getParagraphe("RCC : " + entreprise.getRccm() + "\nID. NAT : " + entreprise.getIdnat() + "\nNIF : " + entreprise.getNumeroImpot(), Font_TexteSimple_petit, Element.ALIGN_LEFT));
                 }
             } else {
                 celluleDetailsEntreprise.addElement(getParagraphe("UAP RDC Sarl, Courtier d'Assurances n°0189", Font_Titre2, Element.ALIGN_LEFT));
@@ -325,13 +327,19 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
             celluleDonnees.setPadding(2);
             celluleDonnees.setBorderWidth(0);
             if (this.gestionnaireFacture != null) {
-                InterfaceEleve eleve = this.gestionnaireFacture.getDonneesFacture().getEleve();
-                InterfaceClasse classe = UtilFacture.getClasse(gestionnaireFacture.getParametres(), eleve.getIdClasse());
-                String Seleve = eleve.getNom() + " " + eleve.getPostnom() + " " + eleve.getPrenom();
-                String Sclasse = classe.getNom() + ", " + classe.getNomLocal();
-                String Scontacts = eleve.getTelephonesParents() + ", " + eleve.getAdresse();
-                String Sannee = this.gestionnaireFacture.getParametres().getExercice().getNom();
-                celluleDonnees.addElement(getParagraphe(Seleve + "\n" + Sclasse + "\n" + Scontacts + "\n" + Sannee, Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+                DonneesFacture donnees = this.gestionnaireFacture.getDonneesFacture();
+                ParametresFacture parametres = this.gestionnaireFacture.getParametres();
+                if (donnees != null && parametres != null) {
+                    Eleve eleve = donnees.getEleve();
+                    Classe classe = UtilFacture.getClasse(gestionnaireFacture.getParametres(), eleve.getIdClasse());
+                    if (eleve != null && classe != null) {
+                        String Seleve = eleve.getNom() + " " + eleve.getPostnom() + " " + eleve.getPrenom();
+                        String Sclasse = classe.getNom() + ", " + classe.getNomLocal();
+                        String Scontacts = eleve.getTelephonesParents() + ", " + eleve.getAdresse();
+                        String Sannee = this.gestionnaireFacture.getParametres().getExercice().getNom();
+                        celluleDonnees.addElement(getParagraphe(Seleve + "\n" + Sclasse + "\n" + Scontacts + "\n" + Sannee, Font_TexteSimple_Italique, Element.ALIGN_LEFT));
+                    }
+                }
             } else {
                 celluleDonnees.addElement(getParagraphe("SULA BOSIO SERGE\n(+243)844803514, (+243)828727706\nClasse: 1e A, Ecole 42 - Informatique de Gestion - Université de Kinshasa - RDC", Font_TexteSimple_Italique, Element.ALIGN_LEFT));
             }
@@ -348,7 +356,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     }
 
     private void setTableauDetailsPaiementsRecus(Vector<Paiement> listePaiement) {
-        System.out.println("listePaiement: " + listePaiement.size());
+        //System.out.println("listePaiement: " + listePaiement.size());
         try {
             document.add(getParagraphe("Détails - Paiements reçus", Font_TexteSimple, Element.ALIGN_CENTER));
             PdfPTable tableReleve = getTableau(
@@ -512,7 +520,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     }
 
     private void setLigneTabArticle(PdfPTable tableDetailsArticles, Frais article, int i) {
-        InterfaceMonnaie Im = UtilFacture.getMonnaie(gestionnaireFacture.parametres, article.getIdMonnaie());
+        InterfaceMonnaie Im = UtilFacture.getMonnaie(gestionnaireFacture.dataFacture.getParametresFacture(), article.getIdMonnaie());
         if (Im != null) {
             String monnaie = Im.getCode();
             tableDetailsArticles.addCell(getCelluleTableau("" + (i + 1), 0.2f, BaseColor.WHITE, null, Element.ALIGN_RIGHT, Font_TexteSimple));
@@ -757,3 +765,11 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     }
 
 }
+
+
+
+
+
+
+
+

@@ -21,10 +21,7 @@ public class CalculateurLitigesFacture {
 
     public static Vector<Echeance> getEcheances(Vector<Frais> listeFrais, ModeleListePaiement modeleListePaiement, ParametresFacture parametresFacture) {
         Vector<Echeance> listeEcheances = new Vector<>();
-        System.out.println("POUR CHAQUE PERIODE:");
         for (Periode Iperiode : parametresFacture.getListePeriodes()) {
-            System.out.println(" ** " + Iperiode.getNom());
-            //Recherche des montants dûs
             double montantDu = 0;
             for (Frais Iarticle : listeFrais) {
                 for (LiaisonFraisPeriode liaison : Iarticle.getLiaisonsPeriodes()) {
@@ -35,7 +32,6 @@ public class CalculateurLitigesFacture {
                     }
                 }
             }
-
             //Recherche des montants payes
             double montantPaye = 0;
             for (Paiement Ipaiement : modeleListePaiement.getListeData()) {
@@ -52,16 +48,15 @@ public class CalculateurLitigesFacture {
             }
             listeEcheances.add(new Echeance(-1, Iperiode.getNom(), -1, Iperiode.getDebut(), Iperiode.getFin(), "", montantPaye, montantDu, parametresFacture.getMonnaieOutPut().getId()));
         }
-
         return listeEcheances;
     }
-
-    private static Frais getFrais(Vector<Frais> listeArticle, int id) {
-        for (Frais Iart : listeArticle) {
-            if (id == Iart.getId()) {
-                return Iart;
-            }
-        }
-        return null;
-    }
 }
+
+
+
+
+
+
+
+
+
