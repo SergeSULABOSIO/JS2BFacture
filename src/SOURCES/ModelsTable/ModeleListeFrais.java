@@ -96,7 +96,7 @@ public class ModeleListeFrais extends AbstractTableModel {
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     if (row <= listeData.size()) {
                         this.listeData.removeElementAt(row);
-                        ecouteurSuppressionElement.onSuppressionConfirmee(idASupp);
+                        ecouteurSuppressionElement.onSuppressionConfirmee(idASupp, articl.getSignature());
                     }
                     redessinerTable();
                 }
