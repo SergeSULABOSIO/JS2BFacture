@@ -37,6 +37,7 @@ import Source.Objet.LiaisonFraisPeriode;
 import Source.Objet.Monnaie;
 import Source.Objet.Paiement;
 import Source.Objet.Periode;
+import Source.Objet.UtilObjet;
 import Source.Objet.Utilisateur;
 import static java.lang.Thread.sleep;
 
@@ -86,7 +87,7 @@ public class Principal_Facture extends javax.swing.JFrame {
     
     private void initData() {
         entreprise = new Entreprise(1, "ECOLE CARESIENNE DE KINSHASA", "7e Rue Limeté Industrielle, Kinshasa/RDC", "+243844803514", "infos@cartesien.org", "wwww.cartesien.org", "logo.png", "RCCM/KD/CD/4513", "IDN00111454", "IMP00124100", "Equity Bank Congo SA", "AIB RDC Sarl", "000000121212400", "IBANNN0012", "SWIFTCDK");
-        exercice = new Exercice(12, entreprise.getId(), 1, "Année Scolaire 2019-2020", new Date(), UtilFacture.getDate_AjouterAnnee(new Date(), 1), InterfaceExercice.BETA_EXISTANT);
+        exercice = new Exercice(12, entreprise.getId(), 1, "Année Scolaire 2019-2020", new Date(), UtilFacture.getDate_AjouterAnnee(new Date(), 1), UtilObjet.getSignature(), InterfaceExercice.BETA_EXISTANT);
         utilisateur = new Utilisateur(1, entreprise.getId(), "SULA", "BOSIO", "SERGE", "sulabosiog@gmail.com", "abc", InterfaceUtilisateur.TYPE_ADMIN, UtilFacture.generateSignature(), InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.BETA_EXISTANT);
 
         classe_CM1 = new Classe(1, utilisateur.getId(), entreprise.getId(), exercice.getId(), "CM1", 50, "Local 01", UtilFacture.generateSignature(), InterfaceClasse.BETA_EXISTANT);
@@ -217,7 +218,7 @@ public class Principal_Facture extends javax.swing.JFrame {
             
             
             @Override
-            public void onDetruitPaiement(int idPaiement) {
+            public void onDetruitPaiement(int idPaiement, long signature) {
                 System.out.println("DESCTRUCTION DU PAIEMENT " + idPaiement);
             }
             
