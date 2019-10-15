@@ -191,7 +191,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
                 Eleve eleveQuiPaie = dataFacture.getDonneesFacture().getEleve();
                 if (eleveQuiPaie != null) {
                     String nomEleveQuiPaie = eleveQuiPaie.getNom() + " " + eleveQuiPaie.getPostnom() + " " + eleveQuiPaie.getPrenom();
-                    modeleListePaiement.AjouterPaiement(new Paiement(-1, dataFacture.getParametresFacture().getExercice().getId(), eleveQuiPaie.getId(), -1, -1, nomEleveQuiPaie, "", nomEleveQuiPaie, montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime() + "", UtilObjet.getSignature(), InterfacePaiement.BETA_NOUVEAU));
+                    modeleListePaiement.AjouterPaiement(new Paiement(-1, dataFacture.getParametresFacture().getExercice().getId(), dataFacture.getParametresFacture().getEntreprise().getId(), eleveQuiPaie.getId(), -1, -1, nomEleveQuiPaie, "", nomEleveQuiPaie, montant, newDate, InterfacePaiement.MODE_CAISSE, newDate.getTime() + "", UtilObjet.getSignature(), InterfacePaiement.BETA_NOUVEAU));
                 }
             }
 
