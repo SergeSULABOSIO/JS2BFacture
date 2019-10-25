@@ -48,7 +48,7 @@ import Source.Interface.InterfaceUtilisateur;
 import Source.Objet.CouleurBasique;
 import Source.Objet.Echeance;
 import Source.Objet.Eleve;
-import Source.Objet.Exercice;
+import Source.Objet.Annee;
 import Source.Objet.Frais;
 import Source.Objet.Monnaie;
 import Source.Objet.Paiement;
@@ -175,7 +175,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         this.labAdresseClient.setIcon(icones.getAdresse_01());
 
         Eleve eleve = dataFacture.getDonneesFacture().getEleve();
-        Exercice exercice = dataFacture.getParametresFacture().getExercice();
+        Annee exercice = dataFacture.getParametresFacture().getExercice();
         if (eleve != null & exercice != null) {
             String Sexercice = exercice.getNom() + " [" + UtilFacture.getDateFrancais(exercice.getDebut()) + " - " + UtilFacture.getDateFrancais(exercice.getFin()) + "].";
             labNomClient.setText(eleve.getNom() + " " + eleve.getPostnom() + " " + eleve.getPrenom() + ", " + Sexercice);
@@ -197,7 +197,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
             @Override
             public void setAjoutEcheance(ModeleListeEcheance modeleListeEcheance) {
-                Exercice exercice = dataFacture.getParametresFacture().getExercice();
+                Annee exercice = dataFacture.getParametresFacture().getExercice();
                 if (exercice != null) {
                     int nbEcheancesExistant = modeleListeEcheance.getRowCount();
                     String nomTransche = "1ère Tranche";

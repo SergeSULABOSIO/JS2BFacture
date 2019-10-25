@@ -8,7 +8,7 @@ package SOURCES.Utilitaires_Facture;
 
 import Source.Objet.Classe;
 import Source.Objet.Entreprise;
-import Source.Objet.Exercice;
+import Source.Objet.Annee;
 import Source.Objet.Monnaie;
 import Source.Objet.Periode;
 import Source.Objet.Utilisateur;
@@ -21,13 +21,13 @@ import java.util.Vector;
 public class ParametresFacture {
     private Entreprise entreprise;
     private Utilisateur utilisateur;
-    private Exercice exercice;
+    private Annee exercice;
     private Monnaie monnaieOutPut;
     private Vector<Monnaie> listeMonnaies;
     private Vector<Classe> listeClasse;
     private Vector<Periode> listePeriodes;
 
-    public ParametresFacture(Utilisateur utilisateur, Entreprise entreprise, Exercice exercice, Monnaie monnaieOutPut, Vector<Monnaie> listeMonnaies, Vector<Classe> listeClasse, Vector<Periode> listePeriodes) {
+    public ParametresFacture(Utilisateur utilisateur, Entreprise entreprise, Annee exercice, Monnaie monnaieOutPut, Vector<Monnaie> listeMonnaies, Vector<Classe> listeClasse, Vector<Periode> listePeriodes) {
         this.utilisateur = utilisateur;
         this.entreprise = entreprise;
         this.exercice = exercice;
@@ -62,11 +62,11 @@ public class ParametresFacture {
         this.entreprise = entreprise;
     }
 
-    public Exercice getExercice() {
+    public Annee getExercice() {
         return exercice;
     }
 
-    public void setExercice(Exercice exercice) {
+    public void setExercice(Annee exercice) {
         this.exercice = exercice;
     }
 

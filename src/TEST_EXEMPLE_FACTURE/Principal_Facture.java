@@ -18,7 +18,6 @@ import SOURCES.Utilitaires_Facture.UtilFacture;
 import Source.Interface.InterfaceAyantDroit;
 import Source.Interface.InterfaceClasse;
 import Source.Interface.InterfaceEleve;
-import Source.Interface.InterfaceExercice;
 import Source.Interface.InterfaceFrais;
 import Source.Interface.InterfaceMonnaie;
 import Source.Interface.InterfacePaiement;
@@ -29,7 +28,7 @@ import Source.Objet.Classe;
 import Source.Objet.CouleurBasique;
 import Source.Objet.Eleve;
 import Source.Objet.Entreprise;
-import Source.Objet.Exercice;
+import Source.Objet.Annee;
 import Source.Objet.Frais;
 import Source.Objet.LiaisonFraisClasse;
 import Source.Objet.LiaisonFraisEleve;
@@ -40,6 +39,7 @@ import Source.Objet.Periode;
 import Source.Objet.UtilObjet;
 import Source.Objet.Utilisateur;
 import static java.lang.Thread.sleep;
+import Source.Interface.InterfaceAnnee;
 
 /**
  *
@@ -48,7 +48,7 @@ import static java.lang.Thread.sleep;
 public class Principal_Facture extends javax.swing.JFrame {
 
     public Entreprise entreprise = null;
-    public Exercice exercice = null;
+    public Annee exercice = null;
     public Utilisateur utilisateur = null;
 
     //Classe
@@ -88,7 +88,7 @@ public class Principal_Facture extends javax.swing.JFrame {
     private void initData() {
         //Initialisation de la méthode.
         entreprise = new Entreprise(1, "ECOLE CARESIENNE DE KINSHASA", "7e Rue Limeté Industrielle, Kinshasa/RDC", "+243844803514", "infos@cartesien.org", "wwww.cartesien.org", "logo.png", "RCCM/KD/CD/4513", "IDN00111454", "IMP00124100", "Equity Bank Congo SA", "AIB RDC Sarl", "000000121212400", "IBANNN0012", "SWIFTCDK");
-        exercice = new Exercice(12, entreprise.getId(), 1, "Année Scolaire 2019-2020", new Date(), UtilFacture.getDate_AjouterAnnee(new Date(), 1), UtilObjet.getSignature(), InterfaceExercice.BETA_EXISTANT);
+        exercice = new Annee(12, entreprise.getId(), 1, "Année Scolaire 2019-2020", new Date(), UtilFacture.getDate_AjouterAnnee(new Date(), 1), UtilObjet.getSignature(), InterfaceAnnee.BETA_EXISTANT);
         utilisateur = new Utilisateur(1, entreprise.getId(), "SULA", "BOSIO", "SERGE", "sulabosiog@gmail.com", "abc", InterfaceUtilisateur.TYPE_ADMIN, UtilFacture.generateSignature(), InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.DROIT_CONTROLER, InterfaceUtilisateur.BETA_EXISTANT);
 
         classe_CM1 = new Classe(1, utilisateur.getId(), entreprise.getId(), exercice.getId(), "CM1", 50, "Local 01", UtilFacture.generateSignature(), InterfaceClasse.BETA_EXISTANT);
