@@ -212,6 +212,11 @@ public class Principal_Facture extends javax.swing.JFrame {
             public boolean onVerifie() {
                 return true;
             }
+
+            @Override
+            public boolean onVerifieNombre(String nomTable) {
+                return true;
+            }
         }, new CouleurBasique(), null, jTabbedPane1, new DataFacture(getDonnees(), getParametres()), new EcouteurFacture() {
             @Override
             public void onDetruitTousLesPaiements(int idEleve, int idExercice) {
