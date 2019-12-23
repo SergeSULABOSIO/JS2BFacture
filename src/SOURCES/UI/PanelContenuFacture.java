@@ -478,17 +478,21 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     private void genererRecu() {
-        if (paiementsSelected != null) {
-            int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter le reçu dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
-            if (dialogResult == JOptionPane.YES_OPTION) {
-                try {
-                    SortiesFacture sortie = getSortieFacture(btRecu, rubRecu);
-                    DocumentPDFFacture recuPDF = new DocumentPDFFacture(this, DocumentPDFFacture.ACTION_OUVRIR, true, sortie);
-                    paiementsSelected.removeAllElements();
-                    modeleListePaiement.redessinerTable();
-                    activerRecu(false);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (ef != null) {
+            if (ef.onVerifie() == true) {
+                if (paiementsSelected != null) {
+                    int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter le reçu dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
+                    if (dialogResult == JOptionPane.YES_OPTION) {
+                        try {
+                            SortiesFacture sortie = getSortieFacture(btRecu, rubRecu);
+                            DocumentPDFFacture recuPDF = new DocumentPDFFacture(this, DocumentPDFFacture.ACTION_OUVRIR, true, sortie);
+                            paiementsSelected.removeAllElements();
+                            modeleListePaiement.redessinerTable();
+                            activerRecu(false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         }
