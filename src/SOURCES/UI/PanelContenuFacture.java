@@ -37,6 +37,7 @@ import SOURCES.Utilitaires_Facture.DataFacture;
 import SOURCES.Utilitaires_Facture.DonneesFacture;
 import SOURCES.Utilitaires_Facture.SortiesFacture;
 import Source.Callbacks.EcouteurEnregistrement;
+import Source.Callbacks.EcouteurFreemium;
 import Source.Callbacks.EcouteurSuppressionElement;
 import Source.Callbacks.EcouteurUpdateClose;
 import Source.Callbacks.EcouteurValeursChangees;
@@ -99,9 +100,11 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     private JProgressBar progress;
     public EcouteurActualisationFacture ecouteurActualisationFacture;
     private GestionEdition gestionEdition = new GestionEdition();
+    private EcouteurFreemium ef = null;
 
-    public PanelContenuFacture(CouleurBasique couleurBasique, JProgressBar progress, DataFacture dataFacture, EcouteurFacture ecouteurFacture, EcouteurUpdateClose ecouteurClose) {
+    public PanelContenuFacture(EcouteurFreemium ef, CouleurBasique couleurBasique, JProgressBar progress, DataFacture dataFacture, EcouteurFacture ecouteurFacture, EcouteurUpdateClose ecouteurClose) {
         initComponents();
+        this.ef = ef;
         this.progress = progress;
         this.couleurBasique = couleurBasique;
         this.dataFacture = dataFacture;
@@ -492,15 +495,20 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     private void exporterPDF() {
-        int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
-        if (dialogResult == JOptionPane.YES_OPTION) {
-            try {
-                SortiesFacture sortie = getSortieFacture(btPDF, rubPDF);
-                DocumentPDFFacture docpdf = new DocumentPDFFacture(this, DocumentPDFFacture.ACTION_OUVRIR, false, sortie);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (ef != null) {
+            if (ef.onVerifie() == true) {
+                int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    try {
+                        SortiesFacture sortie = getSortieFacture(btPDF, rubPDF);
+                        DocumentPDFFacture docpdf = new DocumentPDFFacture(this, DocumentPDFFacture.ACTION_OUVRIR, false, sortie);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+
     }
 
     private boolean mustBeSaved() {
@@ -590,15 +598,20 @@ public class PanelContenuFacture extends javax.swing.JPanel {
     }
 
     private void imprimer() {
-        int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir imprimer ce document?", "Avertissement", JOptionPane.YES_NO_OPTION);
-        if (dialogResult == JOptionPane.YES_OPTION) {
-            try {
-                SortiesFacture sortie = getSortieFacture(btImprimer, rubImprimer);
-                DocumentPDFFacture documentPDF = new DocumentPDFFacture(this, DocumentPDFFacture.ACTION_IMPRIMER, false, sortie);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (ef != null) {
+            if (ef.onVerifie() == true) {
+                int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir imprimer ce document?", "Avertissement", JOptionPane.YES_NO_OPTION);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    try {
+                        SortiesFacture sortie = getSortieFacture(btImprimer, rubImprimer);
+                        DocumentPDFFacture documentPDF = new DocumentPDFFacture(this, DocumentPDFFacture.ACTION_IMPRIMER, false, sortie);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+
     }
 
     private void enregistrer() {
@@ -811,7 +824,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         barreOutilsA = new BarreOutils(barreOutilsArticles);
         if (dataFacture.getParametresFacture().getUtilisateur() != null) {
             Utilisateur user = dataFacture.getParametresFacture().getUtilisateur();
-            
+
             if (user.getDroitFacture() == InterfaceUtilisateur.DROIT_CONTROLER) {
                 barreOutilsA.AjouterBouton(btEnregistrer);
                 barreOutilsA.AjouterBouton(btAjouter);

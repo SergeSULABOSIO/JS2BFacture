@@ -8,6 +8,7 @@ package SOURCES.UI;
 import SOURCES.CallBackFacture.EcouteurActualisationFacture;
 import SOURCES.CallBackFacture.EcouteurFacture;
 import SOURCES.Utilitaires_Facture.DataFacture;
+import Source.Callbacks.EcouteurFreemium;
 import Source.Callbacks.EcouteurUpdateClose;
 import Source.Objet.CouleurBasique;
 import javax.swing.ImageIcon;
@@ -31,9 +32,11 @@ public class PanelFacture extends javax.swing.JPanel {
     private DataFacture dataFacture;
     private JProgressBar progress;
     public PanelContenuFacture pcfacture = null;
+    private EcouteurFreemium ef = null;
     
-    public PanelFacture(CouleurBasique couleurBasique, JProgressBar progress, JTabbedPane parent, DataFacture dataFacture, EcouteurFacture ecouteurFacture, EcouteurActualisationFacture ecouteurActualisationFacture) {
+    public PanelFacture(EcouteurFreemium ef, CouleurBasique couleurBasique, JProgressBar progress, JTabbedPane parent, DataFacture dataFacture, EcouteurFacture ecouteurFacture, EcouteurActualisationFacture ecouteurActualisationFacture) {
         initComponents();
+        this.ef = ef;
         this.progress = progress;
         this.couleurBasique = couleurBasique;
         this.parent = parent;
@@ -43,7 +46,7 @@ public class PanelFacture extends javax.swing.JPanel {
 
     
     private void setPanelFacture(DataFacture dataFacture, JProgressBar progress, EcouteurFacture ecouteurFacture, EcouteurActualisationFacture ecouteurActualisationFacture){
-        pcfacture = new PanelContenuFacture(couleurBasique, progress, dataFacture, ecouteurFacture, new EcouteurUpdateClose() {
+        pcfacture = new PanelContenuFacture(ef, couleurBasique, progress, dataFacture, ecouteurFacture, new EcouteurUpdateClose() {
             
             @Override
             public void onFermer() {

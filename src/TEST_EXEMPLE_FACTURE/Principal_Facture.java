@@ -15,6 +15,7 @@ import java.util.Vector;
 import SOURCES.Utilitaires_Facture.DonneesFacture;
 import SOURCES.Utilitaires_Facture.SortiesFacture;
 import SOURCES.Utilitaires_Facture.UtilFacture;
+import Source.Callbacks.EcouteurFreemium;
 import Source.Interface.InterfaceAyantDroit;
 import Source.Interface.InterfaceClasse;
 import Source.Interface.InterfaceEleve;
@@ -73,8 +74,7 @@ public class Principal_Facture extends javax.swing.JFrame {
     //Type des périodes
     public Periode periode_Trimestre01 = null;
     public Periode periode_Trimestre02 = null;
-    
-    
+
     public PanelFacture panelFacture = null;
 
     /**
@@ -84,7 +84,7 @@ public class Principal_Facture extends javax.swing.JFrame {
         initComponents();
         initData();
     }
-    
+
     private void initData() {
         //Initialisation de la méthode.
         entreprise = new Entreprise(1, "ECOLE CARESIENNE DE KINSHASA", "7e Rue Limeté Industrielle, Kinshasa/RDC", "+243844803514", "infos@cartesien.org", "wwww.cartesien.org", "logo.png", "RCCM/KD/CD/4513", "IDN00111454", "IMP00124100", "Equity Bank Congo SA", "AIB RDC Sarl", "000000121212400", "IBANNN0012", "SWIFTCDK");
@@ -105,8 +105,8 @@ public class Principal_Facture extends javax.swing.JFrame {
         l_c_inscr.add(new LiaisonFraisClasse(classe_CM2.getId(), "CM2A", classe_CM2.getSignature(), 100));
 
         Vector<LiaisonFraisPeriode> l_p_inscr = new Vector<>();
-        l_p_inscr.add(new LiaisonFraisPeriode(periode_Trimestre01.getId(), periode_Trimestre01.getNom()+"AAA", periode_Trimestre01.getSignature(), 100));
-        l_p_inscr.add(new LiaisonFraisPeriode(periode_Trimestre02.getId(), periode_Trimestre02.getNom()+"AAA", periode_Trimestre02.getSignature(), 0));
+        l_p_inscr.add(new LiaisonFraisPeriode(periode_Trimestre01.getId(), periode_Trimestre01.getNom() + "AAA", periode_Trimestre01.getSignature(), 100));
+        l_p_inscr.add(new LiaisonFraisPeriode(periode_Trimestre02.getId(), periode_Trimestre02.getNom() + "AAA", periode_Trimestre02.getSignature(), 0));
 
         frais_inscription = new Frais(1, utilisateur.getId(), entreprise.getId(), exercice.getId(), monnaie_USD.getId(), monnaie_USD.getSignature(), UtilFacture.generateSignature(), "INSCRIPTION", "USD", 1, l_c_inscr, l_p_inscr, 100, InterfaceFrais.BETA_EXISTANT);
 
@@ -115,8 +115,8 @@ public class Principal_Facture extends javax.swing.JFrame {
         l_c_min.add(new LiaisonFraisClasse(classe_CM2.getId(), "CM2", classe_CM2.getSignature(), 100));
 
         Vector<LiaisonFraisPeriode> l_p_min = new Vector<>();
-        l_p_min.add(new LiaisonFraisPeriode(periode_Trimestre01.getId(), periode_Trimestre01.getNom()+"AAA", periode_Trimestre01.getSignature(), 50));
-        l_p_min.add(new LiaisonFraisPeriode(periode_Trimestre02.getId(), periode_Trimestre02.getNom()+"AAA", periode_Trimestre02.getSignature(), 50));
+        l_p_min.add(new LiaisonFraisPeriode(periode_Trimestre01.getId(), periode_Trimestre01.getNom() + "AAA", periode_Trimestre01.getSignature(), 50));
+        l_p_min.add(new LiaisonFraisPeriode(periode_Trimestre02.getId(), periode_Trimestre02.getNom() + "AAA", periode_Trimestre02.getSignature(), 50));
 
         frais_minervale = new Frais(2, utilisateur.getId(), entreprise.getId(), exercice.getId(), monnaie_USD.getId(), monnaie_USD.getSignature(), UtilFacture.generateSignature(), "MINERVALE", "USD", 1, l_c_min, l_p_min, 500, InterfaceFrais.BETA_EXISTANT);
 
@@ -130,13 +130,12 @@ public class Principal_Facture extends javax.swing.JFrame {
         ayantdroit_SULA_BOSIO = new Ayantdroit(1, entreprise.getId(), utilisateur.getId(), exercice.getId(), eleve_SULA_BOSIO.getId(), eleve_SULA_BOSIO.getNom(), lfeSULA, UtilFacture.generateSignature(), eleve_SULA_BOSIO.getSignature(), InterfaceAyantDroit.BETA_EXISTANT);
         //System.out.println("INIT DATA EXECUTEE AVEC SUCCES!");
     }
-    
-    
+
     private ParametresFacture getParametres() {
         Vector<Classe> listeClasse = new Vector<>();
         listeClasse.addElement(classe_CM1);
         listeClasse.addElement(classe_CM2);
-        
+
         Vector<Monnaie> listeMonnaies = new Vector();
         listeMonnaies.addElement(monnaie_USD);
         listeMonnaies.addElement(monnaie_CDF);
@@ -144,7 +143,7 @@ public class Principal_Facture extends javax.swing.JFrame {
         Vector<Periode> listePeriodes = new Vector<>();
         listePeriodes.add(periode_Trimestre01);
         listePeriodes.add(periode_Trimestre02);
-        
+
         return new ParametresFacture(utilisateur, entreprise, exercice, monnaie_USD, listeMonnaies, listeClasse, listePeriodes);
     }
 
@@ -152,17 +151,14 @@ public class Principal_Facture extends javax.swing.JFrame {
         Vector<Frais> listeFrais_eleve_SULA_BOSIO = new Vector<>();
         listeFrais_eleve_SULA_BOSIO.add(frais_inscription);
         listeFrais_eleve_SULA_BOSIO.add(frais_minervale);
-        
+
         Vector<Ayantdroit> listeAyantDroits = new Vector<>();
         listeAyantDroits.add(ayantdroit_SULA_BOSIO);
-        
+
         Vector<Paiement> listePaiement_eleve_SULA_BOSIO = new Vector<>();
-        
+
         return new DonneesFacture(eleve_SULA_BOSIO, listeFrais_eleve_SULA_BOSIO, listePaiement_eleve_SULA_BOSIO, listeAyantDroits);
     }
-
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -211,19 +207,22 @@ public class Principal_Facture extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         //Initialisation du gestionnaire des factures
-        this.panelFacture = new PanelFacture(new CouleurBasique(), null, jTabbedPane1, new DataFacture(getDonnees(), getParametres()), new EcouteurFacture() {
+        this.panelFacture = new PanelFacture(new EcouteurFreemium() {
+            @Override
+            public boolean onVerifie() {
+                return true;
+            }
+        }, new CouleurBasique(), null, jTabbedPane1, new DataFacture(getDonnees(), getParametres()), new EcouteurFacture() {
             @Override
             public void onDetruitTousLesPaiements(int idEleve, int idExercice) {
                 System.out.println("DESCTRUCTION DE TOUS LES PAIEMENTS DE L'ELEVE " + idEleve + ", POUR L'EXERCICE " + idExercice);
             }
-            
-            
+
             @Override
             public void onDetruitPaiement(int idPaiement, long signature) {
                 System.out.println("DESCTRUCTION DU PAIEMENT " + idPaiement);
             }
-            
-            
+
             @Override
             public void onEnregistre(SortiesFacture sortiesFacture) {
 
@@ -243,7 +242,7 @@ public class Principal_Facture extends javax.swing.JFrame {
                                         paiement.setBeta(InterfacePaiement.BETA_EXISTANT);
                                     }
                                 }
-                                
+
                                 sortiesFacture.getEcouteurEnregistrement().onDone("Enregistré!");
                             }
 
@@ -261,7 +260,7 @@ public class Principal_Facture extends javax.swing.JFrame {
                 return new DataFacture(new DonneesFacture(eleve_SULA_BOSIO, new Vector<Frais>(), new Vector<Paiement>(), new Vector<>()), new ParametresFacture(utilisateur, entreprise, exercice, monnaie_USD, new Vector<Monnaie>(), new Vector<Classe>(), new Vector<>()));
             }
         });
-        
+
         //Chargement du gestionnaire sur l'onglet
         jTabbedPane1.add("Facture", panelFacture);
         jTabbedPane1.setSelectedComponent(panelFacture);
