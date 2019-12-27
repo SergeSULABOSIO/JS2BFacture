@@ -479,7 +479,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
     private void genererRecu() {
         if (ef != null) {
-            if (ef.onVerifie() == true) {
+            if (ef.onVerifieNombre(null) == true) {
                 if (paiementsSelected != null) {
                     int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter le reçu dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
                     if (dialogResult == JOptionPane.YES_OPTION) {
@@ -500,7 +500,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
     private void exporterPDF() {
         if (ef != null) {
-            if (ef.onVerifie() == true) {
+            if (ef.onVerifieNombre(null) == true) {
                 int dialogResult = JOptionPane.showConfirmDialog(this, "Voulez-vous les exporter dans un fichier PDF?", "Avertissement", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     try {
@@ -603,7 +603,7 @@ public class PanelContenuFacture extends javax.swing.JPanel {
 
     private void imprimer() {
         if (ef != null) {
-            if (ef.onVerifie() == true) {
+            if (ef.onVerifieNombre(null) == true) {
                 int dialogResult = JOptionPane.showConfirmDialog(this, "Etes-vous sûr de vouloir imprimer ce document?", "Avertissement", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     try {
