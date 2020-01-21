@@ -69,7 +69,7 @@ public class ModeleListePaiement extends AbstractTableModel {
             return null;
         }
     }
-    
+
     public void actualiser() {
         //System.out.println("actualiser - Revenu...");
         redessinerTable();
@@ -101,20 +101,21 @@ public class ModeleListePaiement extends AbstractTableModel {
             Paiement articl = listeData.elementAt(row);
             if (articl != null) {
                 int idASupp = articl.getId();
-                if (mustConfirm == true) {
-                    if (articl != null) {
-                        int dialogResult = JOptionPane.showConfirmDialog(parent, "Etes-vous sûr de vouloir supprimer cette ligne?", "Avertissement", JOptionPane.YES_NO_OPTION);
-                        if (dialogResult == JOptionPane.YES_OPTION) {
-                            deleteLigne(row);
-                            ecouteurSuppressionElement.onSuppressionConfirmee(idASupp, articl.getSignature());
+                if (ecouteurSuppressionElement.onCanDelete(idASupp, articl.getSignature()) == true) {
+                    if (mustConfirm == true) {
+                        if (articl != null) {
+                            int dialogResult = JOptionPane.showConfirmDialog(parent, "Etes-vous sûr de vouloir supprimer cette ligne?", "Avertissement", JOptionPane.YES_NO_OPTION);
+                            if (dialogResult == JOptionPane.YES_OPTION) {
+                                deleteLigne(row);
+                                ecouteurSuppressionElement.onDeletionComplete(idASupp, articl.getSignature());
+                            }
                         }
+                    } else {
+                        deleteLigne(row);
+                        ecouteurSuppressionElement.onDeletionComplete(idASupp, articl.getSignature());
                     }
-                } else {
-                    deleteLigne(row);
-                    ecouteurSuppressionElement.onSuppressionConfirmee(idASupp, articl.getSignature());
                 }
             }
-
         }
     }
 
@@ -355,7 +356,3 @@ public class ModeleListePaiement extends AbstractTableModel {
         }
     }
 }
-
-
-
-

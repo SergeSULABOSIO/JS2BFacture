@@ -259,6 +259,11 @@ public class Principal_Facture extends javax.swing.JFrame {
                 th.start();
 
             }
+
+            @Override
+            public boolean onCanDelete(int idPaiement, long signature) {
+                return true;
+            }
         }, new EcouteurActualisationFacture() {
             @Override
             public DataFacture onRechargeDonneesEtParametres() {

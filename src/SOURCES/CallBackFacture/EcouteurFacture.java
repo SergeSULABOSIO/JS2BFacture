@@ -14,6 +14,7 @@ import SOURCES.Utilitaires_Facture.SortiesFacture;
 public abstract class EcouteurFacture {
     public abstract void onEnregistre(SortiesFacture sortiesFacture);
     public abstract void onDetruitPaiement(int idPaiement, long signature);
+    public abstract boolean onCanDelete(int idPaiement, long signature);
     public abstract void onDetruitTousLesPaiements(int idEleve, int idExercice);
     
 }

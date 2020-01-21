@@ -681,17 +681,30 @@ public class PanelContenuFacture extends javax.swing.JPanel {
         switch (indexTabSelected) {
             case 0:
                 modeleListeArticles.SupprimerFrais(tableListeArticle.getSelectedRow(), new EcouteurSuppressionElement() {
+                    
                     @Override
-                    public void onSuppressionConfirmee(int idElement, long signature) {
+                    public void onDeletionComplete(int idElement, long signature) {
                         //System.out.println("Ce n'est pas ici qu'un frais peut être supprimé");
                     }
+
+                    @Override
+                    public boolean onCanDelete(int idElement, long signature) {
+                        return false;
+                    }
+                    
                 });
                 break;
             case 1:
                 modeleListePaiement.SupprimerPaiement(tableListePaiement.getSelectedRow(), true, new EcouteurSuppressionElement() {
+
                     @Override
-                    public void onSuppressionConfirmee(int idElement, long signature) {
+                    public void onDeletionComplete(int idElement, long signature) {
                         ecouteurFacture.onDetruitPaiement(idElement, signature);
+                    }
+
+                    @Override
+                    public boolean onCanDelete(int idElement, long signature) {
+                        return ecouteurFacture.onCanDelete(idElement, signature);
                     }
                 });
                 break;
