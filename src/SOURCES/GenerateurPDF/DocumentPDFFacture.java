@@ -45,6 +45,7 @@ import Source.Objet.Entreprise;
 import Source.Objet.Frais;
 import Source.Objet.Monnaie;
 import Source.Objet.Paiement;
+import Source.Objet.UtilObjet;
 
 /**
  *
@@ -105,11 +106,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
 
     private void parametre_construire_fichier() {
         try {
-            String nomFichier = "Facture_S2B.pdf";
-            if (this.gestionnaireFacture != null) {
-                nomFichier = this.gestionnaireFacture.getNomfichierPreuve();
-            }
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(nomFichier));
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(UtilObjet.SYSTEM_FICHIER_OUTPUT_PDF));
             writer.setPageEvent(new MarqueS2B());
             this.document.open();
             this.setDonneesBibliographiques();
@@ -122,11 +119,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     }
 
     private void parametres_ouvrir_fichier() {
-        String nomFichier = "Output.pdf";
-        if (this.gestionnaireFacture != null) {
-            nomFichier = this.gestionnaireFacture.getNomfichierPreuve();
-        }
-        File fic = new File(nomFichier);
+        File fic = new File(UtilObjet.SYSTEM_FICHIER_OUTPUT_PDF);
         if (fic.exists() == true) {
             try {
                 Desktop.getDesktop().open(fic);
@@ -145,11 +138,7 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
     }
 
     private void parametres_imprimer_fichier() {
-        String nomFichier = "Output.pdf";
-        if (this.gestionnaireFacture != null) {
-            nomFichier = this.gestionnaireFacture.getNomfichierPreuve();
-        }
-        File fic = new File(nomFichier);
+        File fic = new File(UtilObjet.SYSTEM_FICHIER_OUTPUT_PDF);
         if (fic.exists() == true) {
             try {
                 Desktop.getDesktop().print(fic);
@@ -257,15 +246,15 @@ public class DocumentPDFFacture extends PdfPageEventHelper {
             PdfPCell celluleLogoEntreprise = null;
             String logo = "";
             if (this.gestionnaireFacture != null) {
-                logo = this.gestionnaireFacture.getParametres().getEntreprise().getLogo();
-                //System.out.println("Fic logo: " + logo);
+                logo = (new File(this.gestionnaireFacture.getParametres().getEntreprise().getLogo())).getName();
+                System.out.println("Fic logo: " + logo);
             }
-            File ficLogo = new File(new File(logo).getName());
-            //System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath());
+            File ficLogo = new File(UtilObjet.SYSTEM_USER_HOME+"/"+logo);
+            System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath());
             if (ficLogo.exists() == true) {
                 //System.out.println("Fichier Logo: " + ficLogo.getAbsolutePath() + " - Trouvé!");
                 //Chargement du logo et redimensionnement afin que celui-ci convienne dans l'espace qui lui est accordé
-                Image Imglogo = Image.getInstance(ficLogo.getName());
+                Image Imglogo = Image.getInstance(ficLogo.getAbsolutePath());
                 Imglogo.scaleAbsoluteWidth(70);
                 Imglogo.scaleAbsoluteHeight(70);
                 celluleLogoEntreprise = new PdfPCell(Imglogo);
